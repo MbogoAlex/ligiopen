@@ -1,4 +1,4 @@
-package com.jabulani.ligiopen.ui.auth.registration
+package com.jabulani.ligiopen.ui.auth.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -18,28 +18,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -52,19 +40,19 @@ import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
-fun RegistrationScreenComposable(
+fun LoginScreenComposable(
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
-        RegistrationScreen()
+        LoginScreen()
     }
 }
 
 @Composable
-fun RegistrationScreen(
+fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -77,7 +65,7 @@ fun RegistrationScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Sign Up",
+            text = "Sign In",
             fontWeight = FontWeight.Bold,
             fontSize = screenFontSize(x = 22.0).sp,
             color = MaterialTheme.colorScheme.primary,
@@ -86,7 +74,7 @@ fun RegistrationScreen(
         )
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         Text(
-            text = "Please enter your details to continue",
+            text = "Welcome back! Please enter your details to continue",
             fontSize = screenFontSize(x = 14.0).sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -142,7 +130,7 @@ fun RegistrationScreen(
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         Row(
-           horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -153,30 +141,7 @@ fun RegistrationScreen(
             )
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        TextFieldComposable(
-            label = "Name",
-            value = "",
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next,
-                keyboardType = KeyboardType.Text
-            ),
-            onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        TextFieldComposable(
-            label = "Phone Number",
-            value = "",
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next,
-                keyboardType = KeyboardType.Phone
-            ),
-            onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+
         TextFieldComposable(
             label = "Email",
             value = "",
@@ -200,20 +165,18 @@ fun RegistrationScreen(
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        TextButton(onClick = { /*TODO*/ }) {
+
+        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+        TextButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .align(Alignment.End)
+        ) {
             Text(
-                text = "Terms of Service and Private Policy",
+                text = "Forgot Password?",
                 fontSize = screenFontSize(x = 14.0).sp
             )
         }
-        Text(
-            text = "By clicking Sign Up, you agree to our Terms of Service and Privacy Policy.",
-            fontSize = screenFontSize(x = 14.0).sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         Button(
             onClick = { /*TODO*/ },
@@ -221,7 +184,7 @@ fun RegistrationScreen(
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Create Account",
+                text = "Log In",
                 fontSize = screenFontSize(x = 14.0).sp,
             )
         }
@@ -229,9 +192,9 @@ fun RegistrationScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "Already have an account? ")
+            Text(text = "Don't have an account? ")
             Text(
-                text = "Sign In",
+                text = "Sign Up",
                 color = MaterialTheme.colorScheme.primary,
             )
         }
@@ -241,8 +204,8 @@ fun RegistrationScreen(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun RegistrationScreenPreview() {
+fun LoginScreenPreview() {
     LigiopenTheme {
-        RegistrationScreen()
+        LoginScreen()
     }
 }
