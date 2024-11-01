@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -153,14 +154,10 @@ fun HomeScreen(
                 }
             }
             HomeScreenTab.FIXTURES -> {
-                Box(
-                    contentAlignment = Alignment.Center,
+                FixturesScreenComposable(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .weight(1f)
-                ) {
-                    Text(text = "Fixtures")
-                }
+                )
             }
             HomeScreenTab.FINANCING -> {
                 Box(
