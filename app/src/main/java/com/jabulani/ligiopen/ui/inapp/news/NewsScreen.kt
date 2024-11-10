@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -69,6 +70,7 @@ fun NewsScreen(
                             top = screenHeight(x = 16.0)
                         )
                 )
+                HorizontalDivider()
             }
         }
     }
@@ -79,39 +81,34 @@ fun NewsTile(
     newsItem: NewsItem,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        onClick = { /*TODO*/ },
-        modifier = modifier
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(
-                    start = screenWidth(x = 8.0),
-                    end = screenWidth(x = 8.0)
-                )
-                .fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.sports_news_item),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(screenWidth(x = 150.0))
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(
+                start = screenWidth(x = 8.0),
+                end = screenWidth(x = 8.0)
             )
-            Spacer(modifier = Modifier.width(screenWidth(x = 12.0)))
-            Column {
-                Text(
-                    text = newsItem.title,
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                Text(
-                    text = newsItem.dateTime,
-                    fontSize = screenFontSize(x = 12.0).sp,
-                    fontStyle = FontStyle.Italic
-                )
-            }
+            .fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.sports_news_item),
+            contentDescription = null,
+            modifier = Modifier
+                .size(screenWidth(x = 150.0))
+        )
+        Spacer(modifier = Modifier.width(screenWidth(x = 12.0)))
+        Column {
+            Text(
+                text = newsItem.title,
+                fontSize = screenFontSize(x = 14.0).sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+            Text(
+                text = newsItem.dateTime,
+                fontSize = screenFontSize(x = 12.0).sp,
+                fontStyle = FontStyle.Italic
+            )
         }
     }
 }

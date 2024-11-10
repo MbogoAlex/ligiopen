@@ -1,8 +1,5 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,19 +25,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.scores.ScoresScreenComposable
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
-import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
@@ -133,26 +127,14 @@ fun HomeScreen(
                 modifier = Modifier
                     .weight(1f)
             )
-            HomeScreenTab.SCORES -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(text = "Scores")
-                }
-            }
-            HomeScreenTab.CLUBS -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(text = "Clubs")
-                }
-            }
+            HomeScreenTab.SCORES -> ScoresScreenComposable(
+                modifier = Modifier
+                    .weight(1f)
+            )
+            HomeScreenTab.CLUBS -> ClubsScreenComposable(
+                modifier = Modifier
+                    .weight(1f)
+            )
             HomeScreenTab.FIXTURES -> {
                 FixturesScreenComposable(
                     modifier = Modifier
