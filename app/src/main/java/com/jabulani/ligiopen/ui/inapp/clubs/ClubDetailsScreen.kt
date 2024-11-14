@@ -1,5 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
@@ -12,8 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +30,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,14 +52,39 @@ import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
 import com.jabulani.ligiopen.ui.inapp.scores.ScoreItemCell
+import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
+object ClubDetailsScreenDestination : AppNavigation {
+    override val title: String = "Club details screen"
+    override val route: String = "club-details-screen"
+}
+
+@Composable
+fun ClubDetailsScreenComposable(
+    navigateToPreviousScreen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val activity = LocalContext.current as Activity
+    BackHandler(onBack = navigateToPreviousScreen)
+    Box(
+        modifier = Modifier
+            .safeDrawingPadding()
+    ) {
+        ClubDetailsScreen(
+            clubName = "OveralClub FC",
+            navigateToPreviousScreen = navigateToPreviousScreen
+        )
+    }
+}
+
 @Composable
 fun ClubDetailsScreen(
     clubName: String,
+    navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val tabs = listOf(
@@ -65,7 +92,6 @@ fun ClubDetailsScreen(
         "News",
         "Fixtures",
         "Scores",
-        "Donations"
     )
 
     var selectedTab by rememberSaveable {
@@ -93,7 +119,7 @@ fun ClubDetailsScreen(
                         horizontal = screenWidth(x = 8.0)
                     )
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = navigateToPreviousScreen) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Previous screen"
@@ -118,6 +144,9 @@ fun ClubDetailsScreen(
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
+                .padding(
+                    start = screenWidth(x = 16.0)
+                )
 
         ) {
             tabs.forEach { tab ->
@@ -355,7 +384,8 @@ fun ClubDonationsScreen() {
 fun ClubDetailsScreenPreview() {
     LigiopenTheme {
         ClubDetailsScreen(
-            clubName = "OveralClub FC"
+            clubName = "OveralClub FC",
+            navigateToPreviousScreen = {}
         )
     }
 }

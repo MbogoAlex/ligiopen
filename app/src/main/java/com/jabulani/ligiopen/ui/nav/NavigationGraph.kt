@@ -10,6 +10,8 @@ import com.jabulani.ligiopen.ui.auth.login.LoginScreenDestination
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreen
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenComposable
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenDestination
+import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenDestination
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenComposable
@@ -54,11 +56,21 @@ fun NavigationGraph(
             HomeScreenComposable(
                 navigateToNewsDetailsScreen = {
                     navController.navigate(NewsDetailsScreenDestination.route)
+                },
+                navigateToClubDetailsScreen = {
+                    navController.navigate(ClubDetailsScreenDestination.route)
                 }
             )
         }
         composable(NewsDetailsScreenDestination.route) {
             NewsDetailsScreenComposable(
+                navigateToPreviousScreen = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable(ClubDetailsScreenDestination.route) {
+            ClubDetailsScreenComposable(
                 navigateToPreviousScreen = {
                     navController.navigateUp()
                 }

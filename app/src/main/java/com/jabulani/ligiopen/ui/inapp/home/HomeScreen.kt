@@ -51,6 +51,7 @@ object HomeScreenDestination : AppNavigation {
 @Composable
 fun HomeScreenComposable(
     navigateToNewsDetailsScreen: () -> Unit,
+    navigateToClubDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as Activity
@@ -62,7 +63,8 @@ fun HomeScreenComposable(
             .safeDrawingPadding()
     ) {
         HomeScreen(
-            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
+            navigateToClubDetailsScreen = navigateToClubDetailsScreen
         )
     }
 }
@@ -70,6 +72,7 @@ fun HomeScreenComposable(
 @Composable
 fun HomeScreen(
     navigateToNewsDetailsScreen: () -> Unit,
+    navigateToClubDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
@@ -146,6 +149,7 @@ fun HomeScreen(
                     .weight(1f)
             )
             HomeScreenTab.CLUBS -> ClubsScreenComposable(
+                navigateToClubDetailsScreen = navigateToClubDetailsScreen,
                 modifier = Modifier
                     .weight(1f)
             )
@@ -212,7 +216,8 @@ fun HomeBottomNavBar(
 fun HomeScreenPreview() {
     LigiopenTheme {
         HomeScreen(
-            navigateToNewsDetailsScreen = {}
+            navigateToNewsDetailsScreen = {},
+            navigateToClubDetailsScreen = {}
         )
     }
 }

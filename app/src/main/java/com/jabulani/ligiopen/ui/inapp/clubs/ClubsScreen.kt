@@ -1,11 +1,13 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -28,18 +30,22 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun ClubsScreenComposable(
+    navigateToClubDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .safeDrawingPadding()
     ) {
-        ClubsScreen()
+        ClubsScreen(
+            navigateToClubDetailsScreen = navigateToClubDetailsScreen
+        )
     }
 }
 
 @Composable
 fun ClubsScreen(
+    navigateToClubDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -58,6 +64,10 @@ fun ClubsScreen(
                             top = screenHeight(x = 8.0),
                             bottom = screenHeight(x = 8.0)
                         )
+                        .clickable {
+                            navigateToClubDetailsScreen()
+                        }
+                        .fillMaxSize()
                 )
                 HorizontalDivider()
             }
@@ -92,6 +102,8 @@ fun ClubItemTile(
 @Composable
 fun ClubsScreenPreview() {
     LigiopenTheme {
-        ClubsScreen()
+        ClubsScreen(
+            navigateToClubDetailsScreen = {}
+        )
     }
 }
