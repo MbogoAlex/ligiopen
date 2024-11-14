@@ -67,7 +67,7 @@ fun ClubsScreen(
                         .clickable {
                             navigateToClubDetailsScreen()
                         }
-                        .fillMaxSize()
+                        .fillMaxWidth()
                 )
                 HorizontalDivider()
             }

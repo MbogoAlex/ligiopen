@@ -65,6 +65,7 @@ object ClubDetailsScreenDestination : AppNavigation {
 
 @Composable
 fun ClubDetailsScreenComposable(
+    navigateToFixtureDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -76,7 +77,8 @@ fun ClubDetailsScreenComposable(
     ) {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
-            navigateToPreviousScreen = navigateToPreviousScreen
+            navigateToPreviousScreen = navigateToPreviousScreen,
+            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
         )
     }
 }
@@ -84,6 +86,7 @@ fun ClubDetailsScreenComposable(
 @Composable
 fun ClubDetailsScreen(
     clubName: String,
+    navigateToFixtureDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -186,6 +189,7 @@ fun ClubDetailsScreen(
             "Overview" -> ClubOverviewScreen()
             "News" -> ClubNewsScreen()
             "Fixtures" -> ClubFixturesScreen(
+                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                 modifier = Modifier
                     .padding(
                         vertical = screenHeight(x = 16.0),
@@ -330,6 +334,7 @@ fun ClubNewsScreen() {
 
 @Composable
 fun ClubFixturesScreen(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -337,6 +342,7 @@ fun ClubFixturesScreen(
     ) {
         items(10) {
             FixtureItemCell(
+                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                 modifier = Modifier
                     .padding(
                         top = screenHeight(x = 8.0),
@@ -385,7 +391,8 @@ fun ClubDetailsScreenPreview() {
     LigiopenTheme {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
-            navigateToPreviousScreen = {}
+            navigateToFixtureDetailsScreen = {},
+            navigateToPreviousScreen = {},
         )
     }
 }

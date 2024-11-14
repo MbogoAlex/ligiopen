@@ -1,5 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,25 +33,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
+object FixtureDetailsScreenDestination : AppNavigation {
+    override val title: String = "Fixture details screen"
+    override val route: String = "fixture-details-screen"
+}
+
 @Composable
 fun FixtureDetailsScreenComposable(
+    navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    BackHandler(onBack = navigateToPreviousScreen)
     Box(
         modifier = modifier
             .safeDrawingPadding()
     ) {
-        FixtureDetailsScreen()
+        FixtureDetailsScreen(
+            navigateToPreviousScreen = navigateToPreviousScreen
+        )
     }
 }
 
 @Composable
 fun FixtureDetailsScreen(
+    navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -63,7 +75,7 @@ fun FixtureDetailsScreen(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = navigateToPreviousScreen) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Previous screen"
@@ -236,7 +248,9 @@ fun FixtureDetailsScreen(
 @Composable
 fun FixtureDetailsScreenPreview() {
     LigiopenTheme {
-        FixtureDetailsScreen()
+        FixtureDetailsScreen(
+            navigateToPreviousScreen = {}
+        )
     }
 
 }

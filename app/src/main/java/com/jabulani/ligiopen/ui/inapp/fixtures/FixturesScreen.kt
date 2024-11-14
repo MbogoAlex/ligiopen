@@ -1,5 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,18 +32,22 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun FixturesScreenComposable(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .safeDrawingPadding()
     ) {
-        FixturesScreen()
+        FixturesScreen(
+            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
+        )
     }
 }
 
 @Composable
 fun FixturesScreen(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -56,11 +61,13 @@ fun FixturesScreen(
         LazyColumn {
             items(10) {
                 FixtureItemCell(
+                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                     modifier = Modifier
                         .padding(
                             top = screenHeight(x = 8.0),
                             bottom = screenHeight(x = 8.0)
                         )
+                        .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 HorizontalDivider()
@@ -72,6 +79,7 @@ fun FixturesScreen(
 
 @Composable
 fun FixtureItemCell(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -79,6 +87,9 @@ fun FixtureItemCell(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
+            .clickable {
+                navigateToFixtureDetailsScreen()
+            }
     ) {
         Box(
             modifier = Modifier
@@ -152,7 +163,7 @@ fun FixtureItemCell(
                 }
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 OutlinedButton(
-                    onClick = { /*TODO*/ }
+                    onClick = navigateToFixtureDetailsScreen
                 ) {
                     Text(
                         text = "Buy Tickets",
@@ -168,6 +179,8 @@ fun FixtureItemCell(
 @Composable
 fun FixturesScreenPreview() {
     LigiopenTheme {
-        FixturesScreen()
+        FixturesScreen(
+            navigateToFixtureDetailsScreen = {}
+        )
     }
 }
