@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.auth.registration
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.reusables.composables.PasswordFieldComposable
 import com.jabulani.ligiopen.utils.reusables.composables.TextFieldComposable
@@ -51,20 +53,30 @@ import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
+object RegistrationScreenDestination : AppNavigation {
+    override val title: String = "Registration screen"
+    override val route: String = "registration-screen"
+
+}
+
 @Composable
 fun RegistrationScreenComposable(
+    navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
-        RegistrationScreen()
+        RegistrationScreen(
+            navigateToLoginScreen = navigateToLoginScreen
+        )
     }
 }
 
 @Composable
 fun RegistrationScreen(
+    navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -216,7 +228,7 @@ fun RegistrationScreen(
         )
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = navigateToLoginScreen,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -233,6 +245,10 @@ fun RegistrationScreen(
             Text(
                 text = "Sign In",
                 color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable {
+                        navigateToLoginScreen()
+                    }
             )
         }
     }
@@ -243,6 +259,8 @@ fun RegistrationScreen(
 @Composable
 fun RegistrationScreenPreview() {
     LigiopenTheme {
-        RegistrationScreen()
+        RegistrationScreen(
+            navigateToLoginScreen = {}
+        )
     }
 }
