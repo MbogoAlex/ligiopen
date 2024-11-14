@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.news
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,17 +41,21 @@ val newsItem = NewsItem(
 
 @Composable
 fun NewsScreenComposable(
+    navigateToNewsDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
     ) {
-        NewsScreen()
+        NewsScreen(
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
+        )
     }
 }
 
 @Composable
 fun NewsScreen(
+    navigateToNewsDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -69,6 +74,9 @@ fun NewsScreen(
                         .padding(
                             top = screenHeight(x = 16.0)
                         )
+                        .clickable {
+                            navigateToNewsDetailsScreen()
+                        }
                 )
                 HorizontalDivider()
             }
@@ -83,7 +91,7 @@ fun NewsTile(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .padding(
                 start = screenWidth(x = 8.0),
                 end = screenWidth(x = 8.0)
@@ -117,6 +125,8 @@ fun NewsTile(
 @Composable
 fun NewsScreenPreview() {
     LigiopenTheme {
-        NewsScreen()
+        NewsScreen(
+            navigateToNewsDetailsScreen = {}
+        )
     }
 }

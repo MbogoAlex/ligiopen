@@ -12,6 +12,8 @@ import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenComposable
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenDestination
+import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenDestination
 import com.jabulani.ligiopen.ui.start.SplashScreenComposable
 import com.jabulani.ligiopen.ui.start.SplashScreenDestination
 
@@ -49,7 +51,18 @@ fun NavigationGraph(
             )
         }
         composable(HomeScreenDestination.route) {
-            HomeScreenComposable()
+            HomeScreenComposable(
+                navigateToNewsDetailsScreen = {
+                    navController.navigate(NewsDetailsScreenDestination.route)
+                }
+            )
+        }
+        composable(NewsDetailsScreenDestination.route) {
+            NewsDetailsScreenComposable(
+                navigateToPreviousScreen = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
