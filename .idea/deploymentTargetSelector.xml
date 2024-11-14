@@ -17,6 +17,9 @@
       <SelectionState runConfigName="FixtureDetailsScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="ClubDetailsScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

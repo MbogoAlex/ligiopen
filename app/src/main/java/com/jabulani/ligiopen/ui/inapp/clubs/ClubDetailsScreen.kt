@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,9 +24,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +46,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
+import com.jabulani.ligiopen.ui.inapp.news.NewsTile
+import com.jabulani.ligiopen.ui.inapp.news.newsItem
+import com.jabulani.ligiopen.ui.inapp.scores.ScoreItemCell
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
@@ -147,7 +156,13 @@ fun ClubDetailsScreen(
         when(selectedTab) {
             "Overview" -> ClubOverviewScreen()
             "News" -> ClubNewsScreen()
-            "Fixtures" -> ClubFixturesScreen()
+            "Fixtures" -> ClubFixturesScreen(
+                modifier = Modifier
+                    .padding(
+                        vertical = screenHeight(x = 16.0),
+                        horizontal = screenWidth(x = 16.0)
+                    )
+            )
             "Scores" -> ClubScoresScreen()
             "Donations" -> ClubDonationsScreen()
         }
@@ -261,16 +276,73 @@ fun PlayerCell(
 
 @Composable
 fun ClubNewsScreen() {
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+//                vertical = screenHeight(x = 16.0),
+//                horizontal = screenWidth(x = 16.0)
+            )
+    ) {
+        LazyColumn {
+            items(10) {index ->
+                NewsTile(
+                    newsItem = newsItem,
+                    modifier = Modifier
+                        .padding(
+                            top = screenHeight(x = 16.0)
+                        )
+                )
+                HorizontalDivider()
+            }
+        }
+    }
 }
 
 @Composable
-fun ClubFixturesScreen() {
-
+fun ClubFixturesScreen(
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        items(10) {
+            FixtureItemCell(
+                modifier = Modifier
+                    .padding(
+                        top = screenHeight(x = 8.0),
+                        bottom = screenHeight(x = 8.0)
+                    )
+            )
+            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+        }
+    }
 }
 
 @Composable
 fun ClubScoresScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                horizontal = screenWidth(x = 16.0),
+                vertical = screenHeight(x = 16.0)
+            )
+    ) {
+        LazyColumn {
+            items(10) {
+                ScoreItemCell(
+                    modifier = Modifier
+                        .padding(
+                            top = screenHeight(x = 8.0),
+                            bottom = screenHeight(x = 8.0)
+                        )
+                )
+            }
+        }
+    }
 }
 
 @Composable
