@@ -1,5 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +35,11 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun FixturesScreenComposable(
+    switchToHomeTab: () -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    BackHandler(onBack = switchToHomeTab)
     Box(
         modifier = modifier
             .safeDrawingPadding()
@@ -52,6 +57,7 @@ fun FixturesScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
                 vertical = screenHeight(x = 16.0),
@@ -60,18 +66,27 @@ fun FixturesScreen(
     ) {
         LazyColumn {
             items(10) {
-                FixtureItemCell(
-                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                Column(
                     modifier = Modifier
-                        .padding(
-                            top = screenHeight(x = 8.0),
-                            bottom = screenHeight(x = 8.0)
-                        )
-                        .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                        .clickable {
+                            navigateToFixtureDetailsScreen()
+                        }
+                ) {
+                    FixtureItemCell(
+                        navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                        modifier = Modifier
+                            .padding(
+                                start = screenWidth(x = 4.0),
+                                end = screenWidth(x = 4.0),
+                                top = screenHeight(x = 8.0),
+                                bottom = screenHeight(x = 8.0)
+                            )
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                }
             }
         }
     }
@@ -87,9 +102,6 @@ fun FixtureItemCell(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                navigateToFixtureDetailsScreen()
-            }
     ) {
         Box(
             modifier = Modifier
@@ -97,6 +109,7 @@ fun FixtureItemCell(
         ) {
             Column {
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = "Aug. 20, 2024 11:40am",
                     fontSize = screenFontSize(x = 14.0).sp
                 )
@@ -108,12 +121,14 @@ fun FixtureItemCell(
                         .fillMaxWidth()
                 ) {
                     Icon(
+                        tint = MaterialTheme.colorScheme.onBackground,
                         painter = painterResource(id = R.drawable.football_club),
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
                     Text(
-                        text = "Kisumu FC",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "OveralClub FC",
                         fontWeight = FontWeight.Bold,
                         fontSize = screenFontSize(x = 14.0).sp
                     )
@@ -126,11 +141,13 @@ fun FixtureItemCell(
                         .fillMaxWidth()
                 ) {
                     Icon(
+                        tint = MaterialTheme.colorScheme.onBackground,
                         painter = painterResource(id = R.drawable.football_club),
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
                     Text(
+                        color = MaterialTheme.colorScheme.onBackground,
                         text = "Obunga FC",
                         fontWeight = FontWeight.Bold,
                         fontSize = screenFontSize(x = 14.0).sp
@@ -152,11 +169,13 @@ fun FixtureItemCell(
                         .fillMaxWidth()
                 ) {
                     Icon(
+                        tint = MaterialTheme.colorScheme.onBackground,
                         painter = painterResource(id = R.drawable.location),
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
                     Text(
+                        color = MaterialTheme.colorScheme.onBackground,
                         text = "Kisumu stadium",
                         fontSize = screenFontSize(x = 14.0).sp
                     )
@@ -166,6 +185,7 @@ fun FixtureItemCell(
                     onClick = navigateToFixtureDetailsScreen
                 ) {
                     Text(
+                        color = MaterialTheme.colorScheme.onBackground,
                         text = "Buy Tickets",
                         fontSize = screenFontSize(x = 14.0).sp
                     )

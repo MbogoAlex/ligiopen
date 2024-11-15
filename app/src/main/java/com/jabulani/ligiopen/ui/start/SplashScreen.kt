@@ -1,11 +1,14 @@
 package com.jabulani.ligiopen.ui.start
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -50,12 +53,13 @@ fun SplashScreen(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
     ) {
-        Image(
+        Icon(
+            tint = MaterialTheme.colorScheme.onBackground,
             painter = painterResource(id = R.drawable.ligiopen_icon),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(screenWidth(x = 150.0))
                 .clip(CircleShape)

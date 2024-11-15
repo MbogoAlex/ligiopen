@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.auth.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,6 +72,7 @@ fun LoginScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 16.0),
@@ -77,17 +80,26 @@ fun LoginScreen(
             )
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
-            text = "Sign In",
-            fontWeight = FontWeight.Bold,
-            fontSize = screenFontSize(x = 22.0).sp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                tint = MaterialTheme.colorScheme.onBackground,
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null
+            )
+            Text(
+                color = MaterialTheme.colorScheme.onBackground,
+                text = "Welcome back!",
+                fontSize = screenFontSize(x = 16.0).sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(modifier = Modifier.height(screenHeight(x = 32.0)))
         Text(
-            text = "Welcome back! Please enter your details to continue",
+            color = MaterialTheme.colorScheme.onBackground,
+            text = "Sign in with",
             fontSize = screenFontSize(x = 14.0).sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -115,7 +127,9 @@ fun LoginScreen(
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                     Text(
-                        text = "Facebook"
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Facebook",
+                        fontSize = screenFontSize(x = 14.0).sp
                     )
                 }
             }
@@ -136,7 +150,9 @@ fun LoginScreen(
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                     Text(
-                        text = "Google"
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Google",
+                        fontSize = screenFontSize(x = 14.0).sp
                     )
                 }
             }
@@ -148,6 +164,7 @@ fun LoginScreen(
                 .fillMaxWidth()
         ) {
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "Or",
                 fontSize = screenFontSize(x = 14.0).sp,
                 fontWeight = FontWeight.Bold
@@ -207,9 +224,14 @@ fun LoginScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "Don't have an account? ")
+            Text(
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = screenFontSize(x = 14.0).sp,
+                text = "Don't have an account? "
+            )
             Text(
                 text = "Sign Up",
+                fontSize = screenFontSize(x = 14.0).sp,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .clickable {

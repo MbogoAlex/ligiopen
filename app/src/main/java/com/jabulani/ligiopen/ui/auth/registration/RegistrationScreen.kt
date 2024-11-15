@@ -1,6 +1,9 @@
 package com.jabulani.ligiopen.ui.auth.registration
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -64,6 +68,10 @@ fun RegistrationScreenComposable(
     navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val activity = LocalContext.current as Activity
+    BackHandler(onBack = {
+        activity.finish()
+    })
     Box(
         modifier = Modifier
             .safeDrawingPadding()
@@ -81,6 +89,7 @@ fun RegistrationScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 16.0),
@@ -88,21 +97,30 @@ fun RegistrationScreen(
             )
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
-            text = "Sign Up",
-            fontWeight = FontWeight.Bold,
-            fontSize = screenFontSize(x = 22.0).sp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
+        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                tint = MaterialTheme.colorScheme.onBackground,
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null
+            )
+            Text(
+                color = MaterialTheme.colorScheme.onBackground,
+                text = "Welcome to Ligi Open!",
+                fontSize = screenFontSize(x = 16.0).sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         Text(
-            text = "Please enter your details to continue",
+            color = MaterialTheme.colorScheme.onBackground,
+            text = "Are you new here? Please create an account to continue:",
             fontSize = screenFontSize(x = 14.0).sp,
-            textAlign = TextAlign.Center,
+//            textAlign = TextAlign.Center,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+//                .align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         Row(
@@ -126,7 +144,8 @@ fun RegistrationScreen(
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                     Text(
-                        text = "Facebook"
+                        text = "Facebook",
+                        fontSize = screenFontSize(x = 14.0).sp
                     )
                 }
             }
@@ -147,7 +166,9 @@ fun RegistrationScreen(
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                     Text(
-                        text = "Google"
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Google",
+                        fontSize = screenFontSize(x = 14.0).sp
                     )
                 }
             }
@@ -159,6 +180,7 @@ fun RegistrationScreen(
                 .fillMaxWidth()
         ) {
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "Or",
                 fontSize = screenFontSize(x = 14.0).sp,
                 fontWeight = FontWeight.Bold
@@ -220,6 +242,7 @@ fun RegistrationScreen(
             )
         }
         Text(
+            color = MaterialTheme.colorScheme.onBackground,
             text = "By clicking Sign Up, you agree to our Terms of Service and Privacy Policy.",
             fontSize = screenFontSize(x = 14.0).sp,
             textAlign = TextAlign.Center,
@@ -241,10 +264,15 @@ fun RegistrationScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "Already have an account? ")
+            Text(
+                color = MaterialTheme.colorScheme.onBackground,
+                text = "Already have an account? ",
+                fontSize = screenFontSize(x = 14.0).sp
+            )
             Text(
                 text = "Sign In",
                 color = MaterialTheme.colorScheme.primary,
+                fontSize = screenFontSize(x = 14.0).sp,
                 modifier = Modifier
                     .clickable {
                         navigateToLoginScreen()

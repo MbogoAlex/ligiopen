@@ -3,6 +3,8 @@ package com.jabulani.ligiopen.ui.inapp.news
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,15 +23,19 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
@@ -69,6 +75,7 @@ fun NewsDetailsScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
     ) {
         ElevatedCard(
@@ -96,28 +103,75 @@ fun NewsDetailsScreen(
                 )
             }
         }
-        Image(
-            painter = painterResource(id = R.drawable.sports_news_item),
-            contentDescription = null
-        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal = screenWidth(x = 16.0),
-                    vertical = screenWidth(x = 16.0)
-                )
-        ){
-            Text(
-                text = item.title,
-                fontSize = screenFontSize(x = 16.0).sp,
-                fontWeight = FontWeight.Bold
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.sports_news_item),
+                contentDescription = null
             )
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            Divider()
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            Text(text = item.body)
+            Column(
+                modifier = Modifier
+                    .padding(
+                        horizontal = screenWidth(x = 16.0),
+                        vertical = screenWidth(x = 16.0)
+                    )
+            ){
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = item.title,
+                    textAlign = TextAlign.Center,
+                    fontSize = screenFontSize(x = 16.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "${item.author} - ",
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "2024 Jun 19th",
+                        fontStyle = FontStyle.Italic,
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = item.body,
+                    fontSize = screenFontSize(x = 14.0).sp
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = item.body.take(400),
+                    fontSize = screenFontSize(x = 14.0).sp
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 48.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = "Related Stories",
+                    fontSize = screenFontSize(x = 16.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                for(i in 1..3) {
+                    NewsTile(newsItem = newsItem)
+                }
+            }
         }
     }
 }

@@ -76,6 +76,9 @@ fun NavigationGraph(
         }
         composable(ClubDetailsScreenDestination.route) {
             ClubDetailsScreenComposable(
+                navigateToNewsDetailsScreen = {
+                    navController.navigate(NewsDetailsScreenDestination.route)
+                },
                 navigateToFixtureDetailsScreen = {
                     navController.navigate(FixtureDetailsScreenDestination.route)
                 },

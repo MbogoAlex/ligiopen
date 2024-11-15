@@ -1,7 +1,9 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -55,10 +58,6 @@ fun HomeScreenComposable(
     navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activity = LocalContext.current as Activity
-    BackHandler(onBack = {
-        activity.finish()
-    })
     Box(
         modifier = Modifier
             .safeDrawingPadding()
@@ -108,6 +107,7 @@ fun HomeScreen(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
         ElevatedCard(
@@ -148,16 +148,25 @@ fun HomeScreen(
                     .weight(1f)
             )
             HomeScreenTab.SCORES -> ScoresScreenComposable(
+                switchToHomeTab = {
+                    currentTab = HomeScreenTab.NEWS
+                },
                 modifier = Modifier
                     .weight(1f)
             )
             HomeScreenTab.CLUBS -> ClubsScreenComposable(
+                switchToHomeTab = {
+                    currentTab = HomeScreenTab.NEWS
+                },
                 navigateToClubDetailsScreen = navigateToClubDetailsScreen,
                 modifier = Modifier
                     .weight(1f)
             )
             HomeScreenTab.FIXTURES -> {
                 FixturesScreenComposable(
+                    switchToHomeTab = {
+                        currentTab = HomeScreenTab.NEWS
+                    },
                     navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                     modifier = Modifier
                         .weight(1f)
@@ -200,7 +209,7 @@ fun HomeBottomNavBar(
                         fontSize = screenFontSize(x = 10.0).sp
                     )
                 },
-                selected = tab.name == selectedTab.name,
+                selected = tab.tab == selectedTab,
                 onClick = {
                     onChangeTab(tab.tab)
                 },

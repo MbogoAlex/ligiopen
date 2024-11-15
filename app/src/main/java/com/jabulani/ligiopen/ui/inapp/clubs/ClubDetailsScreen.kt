@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
@@ -66,6 +69,7 @@ object ClubDetailsScreenDestination : AppNavigation {
 @Composable
 fun ClubDetailsScreenComposable(
     navigateToFixtureDetailsScreen: () -> Unit,
+    navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -77,6 +81,7 @@ fun ClubDetailsScreenComposable(
     ) {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
             navigateToPreviousScreen = navigateToPreviousScreen,
             navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
         )
@@ -87,6 +92,7 @@ fun ClubDetailsScreenComposable(
 fun ClubDetailsScreen(
     clubName: String,
     navigateToFixtureDetailsScreen: () -> Unit,
+    navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -107,13 +113,16 @@ fun ClubDetailsScreen(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(
 //                vertical = screenHeight(x = 16.0),
 //                horizontal = screenWidth(x = 16.0)
             )
     ) {
-        ElevatedCard {
+        ElevatedCard(
+            shape = RoundedCornerShape(0.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -156,12 +165,12 @@ fun ClubDetailsScreen(
                 Card(
                     shape = RoundedCornerShape(0),
                     colors = CardDefaults.cardColors(
-                        containerColor = if(selectedTab == tab) MaterialTheme.colorScheme.surfaceTint else Color.Transparent
+                        containerColor = if(selectedTab == tab) MaterialTheme.colorScheme.primary else Color.Transparent
 
                     ),
                     border = BorderStroke(
                         width = screenWidth(x = 1.0),
-                        color = if(selectedTab == tab) MaterialTheme.colorScheme.surfaceTint else Color.Black
+                        color = if(selectedTab == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                     ),
                     onClick = {
                         selectedTab = tab
@@ -172,6 +181,7 @@ fun ClubDetailsScreen(
                         )
                 ) {
                     Text(
+                        color = MaterialTheme.colorScheme.onBackground,
                         text = tab,
                         fontWeight = if(selectedTab == tab) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier
@@ -187,7 +197,9 @@ fun ClubDetailsScreen(
 //        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         when(selectedTab) {
             "Overview" -> ClubOverviewScreen()
-            "News" -> ClubNewsScreen()
+            "News" -> ClubNewsScreen(
+                navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
+            )
             "Fixtures" -> ClubFixturesScreen(
                 navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                 modifier = Modifier
@@ -225,17 +237,20 @@ fun ClubOverviewScreen() {
                 )
         ) {
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "OveralClub FC",
                 fontSize = screenFontSize(x = 16.0).sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
                 fontSize = screenFontSize(x = 14.0).sp
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "Players",
                 fontSize = screenFontSize(x = 16.0).sp,
                 fontWeight = FontWeight.Bold
@@ -276,11 +291,13 @@ fun PlayerCell(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = "Name: ",
                     fontWeight = FontWeight.Bold,
                     fontSize = screenFontSize(x = 14.0).sp
                 )
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = "Mark Oloo",
                     fontSize = screenFontSize(x = 14.0).sp
                 )
@@ -289,16 +306,19 @@ fun PlayerCell(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = "Age: ",
                     fontWeight = FontWeight.Bold,
                     fontSize = screenFontSize(x = 14.0).sp
                 )
                 Text(
+                    color = MaterialTheme.colorScheme.onBackground,
                     text = "28 years",
                     fontSize = screenFontSize(x = 14.0).sp
                 )
             }
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = "Goal keeper",
                 fontSize = screenFontSize(x = 14.0).sp
             )
@@ -308,9 +328,12 @@ fun PlayerCell(
 
 
 @Composable
-fun ClubNewsScreen() {
+fun ClubNewsScreen(
+    navigateToNewsDetailsScreen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(
 //                vertical = screenHeight(x = 16.0),
@@ -319,14 +342,21 @@ fun ClubNewsScreen() {
     ) {
         LazyColumn {
             items(10) {index ->
-                NewsTile(
-                    newsItem = newsItem,
+                Column(
                     modifier = Modifier
-                        .padding(
-                            top = screenHeight(x = 16.0)
-                        )
-                )
-                HorizontalDivider()
+                        .clickable {
+                            navigateToNewsDetailsScreen()
+                        }
+                ) {
+                    NewsTile(
+                        newsItem = newsItem,
+                        modifier = Modifier
+                            .padding(
+                                top = screenHeight(x = 8.0)
+                            )
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }
@@ -341,17 +371,29 @@ fun ClubFixturesScreen(
         modifier = modifier
     ) {
         items(10) {
-            FixtureItemCell(
-                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+            Column(
                 modifier = Modifier
-                    .padding(
-                        top = screenHeight(x = 8.0),
-                        bottom = screenHeight(x = 8.0)
-                    )
-            )
-            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    .clickable {
+                        navigateToFixtureDetailsScreen()
+                    }
+            ) {
+                FixtureItemCell(
+                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                    modifier = Modifier
+                        .padding(
+                            start = screenWidth(x = 4.0),
+                            end = screenWidth(x = 4.0),
+                            top = screenHeight(x = 8.0),
+                            bottom = screenHeight(x = 8.0)
+                        )
+                        .clickable {
+                            navigateToFixtureDetailsScreen()
+                        }
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+            }
         }
     }
 }
@@ -362,8 +404,8 @@ fun ClubScoresScreen() {
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                horizontal = screenWidth(x = 16.0),
-                vertical = screenHeight(x = 16.0)
+                horizontal = screenWidth(x = 20.0),
+                vertical = screenHeight(x = 20.0)
             )
     ) {
         LazyColumn {
@@ -375,6 +417,9 @@ fun ClubScoresScreen() {
                             bottom = screenHeight(x = 8.0)
                         )
                 )
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
             }
         }
     }
@@ -391,6 +436,7 @@ fun ClubDetailsScreenPreview() {
     LigiopenTheme {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
+            navigateToNewsDetailsScreen = {},
             navigateToFixtureDetailsScreen = {},
             navigateToPreviousScreen = {},
         )

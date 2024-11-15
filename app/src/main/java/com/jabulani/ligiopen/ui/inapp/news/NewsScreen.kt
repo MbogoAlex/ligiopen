@@ -1,6 +1,9 @@
 package com.jabulani.ligiopen.ui.inapp.news
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +49,10 @@ fun NewsScreenComposable(
     navigateToNewsDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val activity = LocalContext.current as Activity
+    BackHandler(onBack = {
+        activity.finish()
+    })
     Box(
         modifier = modifier
     ) {
@@ -60,6 +69,7 @@ fun NewsScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
 //                vertical = screenHeight(x = 16.0),
@@ -68,17 +78,21 @@ fun NewsScreen(
     ) {
         LazyColumn {
             items(10) {index ->
-                NewsTile(
-                    newsItem = newsItem,
+                Column(
                     modifier = Modifier
-                        .padding(
-                            top = screenHeight(x = 16.0)
-                        )
                         .clickable {
                             navigateToNewsDetailsScreen()
                         }
-                )
-                HorizontalDivider()
+                ) {
+                    NewsTile(
+                        newsItem = newsItem,
+                        modifier = Modifier
+                            .padding(
+                                top = screenHeight(x = 8.0)
+                            )
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }
@@ -107,12 +121,14 @@ fun NewsTile(
         Spacer(modifier = Modifier.width(screenWidth(x = 12.0)))
         Column {
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = newsItem.title,
                 fontSize = screenFontSize(x = 14.0).sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = newsItem.dateTime,
                 fontSize = screenFontSize(x = 12.0).sp,
                 fontStyle = FontStyle.Italic

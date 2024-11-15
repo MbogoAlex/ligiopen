@@ -1,6 +1,8 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,9 +33,11 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun ClubsScreenComposable(
+    switchToHomeTab: () -> Unit,
     navigateToClubDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    BackHandler(onBack = switchToHomeTab)
     Box(
         modifier = modifier
             .safeDrawingPadding()
@@ -50,6 +55,7 @@ fun ClubsScreen(
 ) {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 16.0),
@@ -58,18 +64,22 @@ fun ClubsScreen(
     ) {
         LazyColumn {
             items(10) {
-                ClubItemTile(
+                Column(
                     modifier = Modifier
-                        .padding(
-                            top = screenHeight(x = 8.0),
-                            bottom = screenHeight(x = 8.0)
-                        )
                         .clickable {
                             navigateToClubDetailsScreen()
                         }
-                        .fillMaxWidth()
-                )
-                HorizontalDivider()
+                ) {
+                    ClubItemTile(
+                        modifier = Modifier
+                            .padding(
+                                top = screenHeight(x = 8.0),
+                                bottom = screenHeight(x = 8.0)
+                            )
+                            .fillMaxWidth()
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }
@@ -92,6 +102,7 @@ fun ClubItemTile(
         )
         Spacer(modifier = Modifier.size(screenWidth(x = 16.0)))
         Text(
+            color = MaterialTheme.colorScheme.onBackground,
             text = "OveralClub FC",
             fontSize = screenFontSize(x = 14.0).sp
         )
