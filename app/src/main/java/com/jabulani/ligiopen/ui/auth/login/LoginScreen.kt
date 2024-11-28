@@ -101,7 +101,7 @@ fun LoginScreen(
             color = MaterialTheme.colorScheme.onBackground,
             text = "Sign in with",
             fontSize = screenFontSize(x = 14.0).sp,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )

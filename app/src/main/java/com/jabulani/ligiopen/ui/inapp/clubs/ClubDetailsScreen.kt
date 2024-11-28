@@ -54,7 +54,7 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
-import com.jabulani.ligiopen.ui.inapp.scores.ScoreItemCell
+import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoreItemCell
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize

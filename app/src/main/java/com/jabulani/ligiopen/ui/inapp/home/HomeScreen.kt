@@ -1,8 +1,5 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
-import android.app.Activity
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +27,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +35,7 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
-import com.jabulani.ligiopen.ui.inapp.scores.ScoresScreenComposable
+import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoresScreenComposable
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
