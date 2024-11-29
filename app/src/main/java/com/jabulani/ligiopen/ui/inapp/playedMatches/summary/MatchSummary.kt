@@ -92,7 +92,7 @@ fun MatchSummary(
                         )
                     ) {
                         Text(
-                            text = "1",
+                            text = "0",
                             fontSize = screenFontSize(x = 18.0).sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
@@ -106,7 +106,7 @@ fun MatchSummary(
                         )
                     ) {
                         Text(
-                            text = "0",
+                            text = "2",
                             fontSize = screenFontSize(x = 18.0).sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier

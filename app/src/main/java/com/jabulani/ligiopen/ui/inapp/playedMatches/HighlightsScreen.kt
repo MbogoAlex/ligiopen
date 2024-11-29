@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.playedMatches.lineup.PlayersLineupScreenComposable
+import com.jabulani.ligiopen.ui.inapp.playedMatches.stats.MatchStatisticsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.playedMatches.summary.MatchSummaryComposable
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -128,7 +129,7 @@ fun HighlightsScreen(
                             .size(screenWidth(x = 24.0))
                     )
                     Text(
-                        text = "1",
+                        text = "0",
                         fontSize = screenFontSize(x = 16.0).sp
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
@@ -138,7 +139,7 @@ fun HighlightsScreen(
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                     Text(
-                        text = "0",
+                        text = "2",
                         fontSize = screenFontSize(x = 16.0).sp
                     )
                     Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
@@ -174,14 +175,10 @@ fun HighlightsScreen(
                     )
                 }
                 HighlightsScreenTabs.STATS -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
+                    MatchStatisticsScreenComposable(
                         modifier = Modifier
-                            .fillMaxSize()
                             .weight(1f)
-                    ) {
-                        Text(text = "Stats")
-                    }
+                    )
                 }
             }
             HighlightScreenBottomBar(
