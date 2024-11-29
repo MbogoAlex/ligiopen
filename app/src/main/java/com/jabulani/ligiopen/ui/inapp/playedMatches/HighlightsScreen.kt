@@ -1,5 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.playedMatches
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.inapp.playedMatches.lineup.PlayersLineupScreenComposable
 import com.jabulani.ligiopen.ui.inapp.playedMatches.summary.MatchSummaryComposable
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -166,14 +168,10 @@ fun HighlightsScreen(
                     }
                 }
                 HighlightsScreenTabs.LINEUPS -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
+                    PlayersLineupScreenComposable(
                         modifier = Modifier
-                            .fillMaxSize()
                             .weight(1f)
-                    ) {
-                        Text(text = "Lineups")
-                    }
+                    )
                 }
                 HighlightsScreenTabs.STATS -> {
                     Box(
@@ -257,7 +255,7 @@ fun HighlightsScreenPreview() {
     LigiopenTheme {
         HighlightsScreen(
             tabs = tabs,
-            currentTab = HighlightsScreenTabs.SUMMARY,
+            currentTab = currentTab,
             onChangeTab = {
                 currentTab = it
             }

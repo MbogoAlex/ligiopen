@@ -24,7 +24,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.GOALKEEPER,
         name = "John Doe",
-        team = "NYC",
+        team = "ORL",
         number = 1,
         home = true,
         substituted = false,
@@ -36,7 +36,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "Michael Johnson",
-        team = "NYC",
+        team = "ORL",
         number = 2,
         home = true,
         substituted = false,
@@ -48,7 +48,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "Chris Lee",
-        team = "NYC",
+        team = "ORL",
         number = 3,
         home = true,
         substituted = false,
@@ -60,7 +60,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "David Kim",
-        team = "NYC",
+        team = "ORL",
         number = 4,
         home = true,
         substituted = false,
@@ -72,7 +72,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "James Brown",
-        team = "NYC",
+        team = "ORL",
         number = 5,
         home = true,
         substituted = false,
@@ -84,7 +84,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.MIDFIELDER,
         name = "Daniel Garcia",
-        team = "NYC",
+        team = "ORL",
         number = 6,
         home = true,
         substituted = false,
@@ -96,7 +96,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.MIDFIELDER,
         name = "Kevin Martinez",
-        team = "NYC",
+        team = "ORL",
         number = 8,
         home = true,
         substituted = false,
@@ -108,7 +108,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.MIDFIELDER,
         name = "Brian Anderson",
-        team = "NYC",
+        team = "ORL",
         number = 10,
         home = true,
         substituted = true,
@@ -120,7 +120,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.FORWARD,
         name = "Robert White",
-        team = "NYC",
+        team = "ORL",
         number = 7,
         home = true,
         substituted = true,
@@ -132,7 +132,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.FORWARD,
         name = "Michael Harris",
-        team = "NYC",
+        team = "ORL",
         number = 9,
         home = true,
         substituted = false,
@@ -144,7 +144,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "Richard Clark",
-        team = "NYC",
+        team = "ORL",
         number = 17,
         home = true,
         substituted = false,
@@ -156,7 +156,7 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "Thomas Lewis",
-        team = "NYC",
+        team = "ORL",
         number = 18,
         home = true,
         substituted = false,
@@ -168,9 +168,168 @@ val playersInlineup = listOf(
     PlayerInLineup(
         position = PlayerPosition.DEFENDER,
         name = "James Brown",
-        team = "NYC",
+        team = "ORL",
         number = 5,
         home = true,
+        substituted = true,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = true
+    ),
+
+    // Other team
+
+    PlayerInLineup(
+        position = PlayerPosition.GOALKEEPER,
+        name = "Henry Dawson",
+        team = "ALT",
+        number = 1,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Lucas Chapman",
+        team = "ALT",
+        number = 2,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Elijah Morgan   ",
+        team = "ALT",
+        number = 3,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Caleb Sanders",
+        team = "ALT",
+        number = 4,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = true,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Liam Anderson",
+        team = "ALT",
+        number = 5,
+        home = false,
+        substituted = false,
+        yellowCard = true,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.MIDFIELDER,
+        name = "Sebastian Green",
+        team = "ALT",
+        number = 6,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.MIDFIELDER,
+        name = "Julian Bell",
+        team = "ALT",
+        number = 8,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.MIDFIELDER,
+        name = "Oliver Clarke",
+        team = "ALT",
+        number = 10,
+        home = false,
+        substituted = true,
+        yellowCard = true,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.FORWARD,
+        name = "Finn Walker",
+        team = "ALT",
+        number = 7,
+        home = false,
+        substituted = true,
+        yellowCard = false,
+        redCard = false,
+        scored = true,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.FORWARD,
+        name = "Dominic Brooks",
+        team = "ALT",
+        number = 9,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = true,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Mason Rivera",
+        team = "ALT",
+        number = 17,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = false
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Zachary Ellis",
+        team = "ALT",
+        number = 18,
+        home = false,
+        substituted = false,
+        yellowCard = false,
+        redCard = false,
+        scored = false,
+        bench = true
+    ),
+    PlayerInLineup(
+        position = PlayerPosition.DEFENDER,
+        name = "Grayson Bennett",
+        team = "ALT",
+        number = 5,
+        home = false,
         substituted = true,
         yellowCard = false,
         redCard = false,
