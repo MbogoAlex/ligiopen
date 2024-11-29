@@ -1,6 +1,8 @@
 package com.jabulani.ligiopen.ui.inapp.playedMatches.stats
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,8 +53,8 @@ fun MatchStatisticsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                vertical = screenHeight(x = 14.0),
-                horizontal = screenWidth(x = 14.0)
+                vertical = screenHeight(x = 16.0),
+                horizontal = screenWidth(x = 16.0)
             )
     ) {
         Row(
@@ -110,17 +113,23 @@ fun MatchStatisticRow(
     awayValue: String,
     modifier: Modifier = Modifier
 ) {
+
     Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = screenHeight(x = 8.0)),
+//            .background(Color.Yellow)
+            .padding(
+                vertical = screenHeight(x = 8.0),
+                horizontal = screenWidth(x = 16.0)
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Home team value
         Text(
             text = homeValue,
             textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
+//            modifier = Modifier.weight(1f),
             fontSize = screenFontSize(x = 16.0).sp,
             fontWeight = FontWeight.Bold
         )
@@ -129,7 +138,7 @@ fun MatchStatisticRow(
         Text(
             text = label,
             textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
+//            modifier = Modifier.weight(1f),
             fontSize = screenFontSize(x = 14.0).sp
         )
 
@@ -137,7 +146,7 @@ fun MatchStatisticRow(
         Text(
             text = awayValue,
             textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
+//            modifier = Modifier.weight(1f),
             fontSize = screenFontSize(x = 16.0).sp,
             fontWeight = FontWeight.Bold
         )
