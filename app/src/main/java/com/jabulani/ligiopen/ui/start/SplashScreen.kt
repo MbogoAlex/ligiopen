@@ -30,12 +30,12 @@ object SplashScreenDestination : AppNavigation {
 
 @Composable
 fun SplashScreenComposable(
-    navigateToRegistrationScreen: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
         delay(2000)
-        navigateToRegistrationScreen()
+        navigateToLoginScreen()
     }
 
     Box(

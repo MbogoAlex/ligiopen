@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jabulani.ligiopen.ui.auth.login.LoginScreenComposable
 import com.jabulani.ligiopen.ui.auth.login.LoginScreenDestination
-import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreen
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenComposable
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenDestination
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenComposable
@@ -32,8 +31,8 @@ fun NavigationGraph(
     ) {
         composable(SplashScreenDestination.route) {
             SplashScreenComposable(
-                navigateToRegistrationScreen = {
-                    navController.navigate(RegistrationScreenDestination.route)
+                navigateToLoginScreen = {
+                    navController.navigate(LoginScreenDestination.route)
                 }
             )
         }
