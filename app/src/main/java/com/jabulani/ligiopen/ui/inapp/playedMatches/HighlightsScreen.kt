@@ -1,6 +1,5 @@
 package com.jabulani.ligiopen.ui.inapp.playedMatches
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,14 +14,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,12 +35,19 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.playedMatches.lineup.PlayersLineupScreenComposable
 import com.jabulani.ligiopen.ui.inapp.playedMatches.stats.MatchStatisticsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.playedMatches.summary.MatchSummaryComposable
+import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenWidth
 
+object HighlightsScreenDestination: AppNavigation {
+    override val route: String = "highlights screen"
+    override val title: String = "Highlights-screen"
+}
+
 @Composable
 fun HighlightsScreenComposable(
+    navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val tabs = listOf(
@@ -76,7 +79,14 @@ fun HighlightsScreenComposable(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
-
+        HighlightsScreen(
+            tabs = tabs,
+            currentTab = currentTab,
+            onChangeTab = {
+                currentTab = it
+            },
+            navigateToPreviousScreen = navigateToPreviousScreen
+        )
     }
 }
 
@@ -85,6 +95,7 @@ fun HighlightsScreen(
     tabs: List<HighlightsScreenTabItem>,
     currentTab: HighlightsScreenTabs,
     onChangeTab: (tab: HighlightsScreenTabs) -> Unit,
+    navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,7 +113,7 @@ fun HighlightsScreen(
                     .padding(screenWidth(x = 8.0))
 
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = navigateToPreviousScreen) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Previous screen"
@@ -255,7 +266,8 @@ fun HighlightsScreenPreview() {
             currentTab = currentTab,
             onChangeTab = {
                 currentTab = it
-            }
+            },
+            navigateToPreviousScreen = {}
         )
     }
 }

@@ -5,7 +5,8 @@ enum class HomeScreenTab {
     SCORES,
     CLUBS,
     FIXTURES,
-    FINANCING
+    FINANCING,
+    PROFILE
 }
 
 data class HomeScreenTabItem(

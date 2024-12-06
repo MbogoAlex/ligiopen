@@ -9,6 +9,7 @@ data class UserAccount(
     val id: Int = 0,
     val username: String,
     val email: String,
+    val password: String,
     val role: String,
     val createdAt: String,
     val token: String

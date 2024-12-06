@@ -341,17 +341,17 @@ fun MatchEventCell(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            text = event.player!!,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = screenFontSize(x = 14.0).sp,
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                         Image(
                             painter = painterResource(id = R.drawable.yellow_card),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = event.player!!,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
                         )
                     }
                 }

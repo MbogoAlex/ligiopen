@@ -2,6 +2,7 @@ package com.jabulani.ligiopen.ui.inapp.playedMatches
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,18 +34,22 @@ import com.jabulani.ligiopen.utils.screenWidth
 @Composable
 fun ScoresScreenComposable(
     switchToHomeTab: () -> Unit,
+    navigateToHighlightsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = switchToHomeTab)
     Box(
         modifier = modifier
     ) {
-        ScoresScreen()
+        ScoresScreen(
+            navigateToHighlightsScreen = navigateToHighlightsScreen
+        )
     }
 }
 
 @Composable
 fun ScoresScreen(
+    navigateToHighlightsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -66,6 +71,9 @@ fun ScoresScreen(
                             top = screenHeight(x = 8.0),
                             bottom = screenHeight(x = 8.0)
                         )
+                        .clickable {
+                            navigateToHighlightsScreen()
+                        }
                 )
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 HorizontalDivider()
@@ -177,6 +185,8 @@ fun ScoreItemCell(
 @Composable
 fun ScoresScreenPreview() {
     LigiopenTheme {
-        ScoresScreen()
+        ScoresScreen(
+            navigateToHighlightsScreen = {}
+        )
     }
 }

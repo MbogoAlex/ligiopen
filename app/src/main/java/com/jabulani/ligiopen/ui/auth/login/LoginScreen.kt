@@ -1,5 +1,8 @@
 package com.jabulani.ligiopen.ui.auth.login
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +28,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -34,7 +40,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenDestination
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.reusables.composables.PasswordFieldComposable
@@ -42,10 +51,13 @@ import com.jabulani.ligiopen.utils.reusables.composables.TextFieldComposable
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
+
 object LoginScreenDestination : AppNavigation {
     override val title: String = "Login screen"
     override val route: String = "login-screen"
-
+    val email: String = "email"
+    val password: String = "password"
+    val routeWithArgs: String = "$route/{$email}/{$password}"
 }
 @Composable
 fun LoginScreenComposable(
@@ -53,21 +65,55 @@ fun LoginScreenComposable(
     navigateToRegistrationScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val activity = LocalContext.current as Activity
+    val context = LocalContext.current
+
+    val viewModel: LoginViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    val uiState by viewModel.uiState.collectAsState()
+
+    if(uiState.loginStatus == LoginStatus.SUCCESS) {
+        navigateToHomeScreen()
+        viewModel.resetStatus()
+    } else if(uiState.loginStatus == LoginStatus.FAIL) {
+        Toast.makeText(context, uiState.loginMessage, Toast.LENGTH_LONG).show()
+        viewModel.resetStatus()
+    }
+
+    BackHandler(onBack = {
+        activity.finish()
+    })
+
     Box(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
         LoginScreen(
-            navigateToHomeScreen = navigateToHomeScreen,
-            navigateToRegistrationScreen = navigateToRegistrationScreen
+            email = uiState.email,
+            password = uiState.password,
+            isButtonEnabled = uiState.isButtonEnabled,
+            onChangeEmail = {
+                viewModel.updateEmail(it)
+            },
+            onChangePassword = {
+                viewModel.updatePassword(it)
+            },
+            onLoginUser = viewModel::loginUser,
+            navigateToRegistrationScreen = navigateToRegistrationScreen,
+            loginStatus = uiState.loginStatus
         )
     }
 }
 
 @Composable
 fun LoginScreen(
-    navigateToHomeScreen: () -> Unit,
+    email: String,
+    onChangeEmail: (email: String) -> Unit,
+    password: String,
+    onChangePassword: (password: String) -> Unit,
+    isButtonEnabled: Boolean,
+    onLoginUser: () -> Unit,
     navigateToRegistrationScreen: () -> Unit,
+    loginStatus: LoginStatus,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -174,24 +220,24 @@ fun LoginScreen(
 
         TextFieldComposable(
             label = "Email",
-            value = "",
+            value = email,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next,
                 keyboardType = KeyboardType.Email
             ),
-            onValueChange = {},
+            onValueChange = onChangeEmail,
             modifier = Modifier
                 .fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         PasswordFieldComposable(
             label = "Password",
-            value = "",
+            value = password,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password
             ),
-            onValueChange = {},
+            onValueChange = onChangePassword,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -200,7 +246,7 @@ fun LoginScreen(
         TextButton(
             onClick = { /*TODO*/ },
             modifier = Modifier
-                .align(Alignment.End)
+//                .align(Alignment.End)
         ) {
             Text(
                 text = "Forgot Password?",
@@ -209,16 +255,22 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
         Button(
-            onClick = {
-                navigateToHomeScreen()
-            },
+            enabled = isButtonEnabled,
+            onClick = onLoginUser,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text(
-                text = "Log In",
-                fontSize = screenFontSize(x = 14.0).sp,
-            )
+            if(loginStatus == LoginStatus.LOADING) {
+                Text(
+                    text = "Logging in...",
+                    fontSize = screenFontSize(x = 14.0).sp,
+                )
+            } else {
+                Text(
+                    text = "Log In",
+                    fontSize = screenFontSize(x = 14.0).sp,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         Row(
@@ -248,7 +300,13 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LigiopenTheme {
         LoginScreen(
-            navigateToHomeScreen = {},
+            email = "",
+            password = "",
+            onChangeEmail = {},
+            onChangePassword = {},
+            isButtonEnabled = false,
+            loginStatus = LoginStatus.INITIAL,
+            onLoginUser = {},
             navigateToRegistrationScreen = {}
         )
     }

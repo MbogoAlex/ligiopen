@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -32,6 +33,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +57,8 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
+import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenTabItem
+import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenTabs
 import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoreItemCell
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -75,12 +80,46 @@ fun ClubDetailsScreenComposable(
 ) {
     val activity = LocalContext.current as Activity
     BackHandler(onBack = navigateToPreviousScreen)
+
+    val tabs = listOf(
+        ClubScreenTabItem(
+            name = "Overview",
+            icon = R.drawable.info,
+            tab = ClubScreenTab.INFO
+        ),
+        ClubScreenTabItem(
+            name = "News",
+            icon = R.drawable.news,
+            tab = ClubScreenTab.NEWS
+        ),
+        ClubScreenTabItem(
+            name = "Fixtures",
+            icon = R.drawable.fixtures,
+            tab = ClubScreenTab.FIXTURES
+        ),
+        ClubScreenTabItem(
+            name = "Scores",
+            icon = R.drawable.scores,
+            tab = ClubScreenTab.FIXTURES
+        ),
+    )
+
+    var selectedTab by rememberSaveable {
+        mutableStateOf(ClubScreenTab.INFO)
+    }
+
+
     Box(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
+            tabs = tabs,
+            onChangeTab = {
+                selectedTab = it
+            },
+            selectedTab = selectedTab,
             navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
             navigateToPreviousScreen = navigateToPreviousScreen,
             navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
@@ -91,25 +130,15 @@ fun ClubDetailsScreenComposable(
 @Composable
 fun ClubDetailsScreen(
     clubName: String,
+    tabs: List<ClubScreenTabItem>,
+    onChangeTab: (tab: ClubScreenTab) -> Unit,
+    selectedTab: ClubScreenTab,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tabs = listOf(
-        "Overview",
-        "News",
-        "Fixtures",
-        "Scores",
-    )
 
-    var selectedTab by rememberSaveable {
-        mutableStateOf("Overview")
-    }
-
-    var selectedTabWidth by rememberSaveable {
-        mutableDoubleStateOf(0.0)
-    }
 
     Column(
         modifier = Modifier
@@ -128,7 +157,8 @@ fun ClubDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = screenWidth(x = 8.0)
+                        horizontal = screenWidth(x = 8.0),
+                        vertical = screenHeight(x = 4.0)
                     )
             ) {
                 IconButton(onClick = navigateToPreviousScreen) {
@@ -137,6 +167,7 @@ fun ClubDetailsScreen(
                         contentDescription = "Previous screen"
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = R.drawable.club_logo),
                     contentDescription = null,
@@ -144,7 +175,7 @@ fun ClubDetailsScreen(
                         .size(screenWidth(x = 24.0))
                         .clip(CircleShape)
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                 Text(
                     text = clubName.takeIf { it.length < 15 } ?: (clubName.take(15) + "..."),
                     fontWeight = FontWeight.Bold,
@@ -153,72 +184,54 @@ fun ClubDetailsScreen(
             }
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .padding(
-                    start = screenWidth(x = 16.0)
-                )
-
-        ) {
-            tabs.forEach { tab ->
-                Card(
-                    shape = RoundedCornerShape(0),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if(selectedTab == tab) MaterialTheme.colorScheme.primary else Color.Transparent
-
-                    ),
-                    border = BorderStroke(
-                        width = screenWidth(x = 1.0),
-                        color = if(selectedTab == tab) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                    ),
-                    onClick = {
-                        selectedTab = tab
-                    },
-                    modifier = Modifier
-                        .padding(
-                            horizontal = screenWidth(x = 2.0)
-                        )
-                ) {
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = tab,
-                        fontWeight = if(selectedTab == tab) FontWeight.Bold else FontWeight.Normal,
-                        modifier = Modifier
-                            .padding(
-                                vertical = screenHeight(x = 8.0),
-                                horizontal = screenWidth(x = 16.0)
-
-                            )
-                    )
-                }
-            }
-        }
 //        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         when(selectedTab) {
-            "Overview" -> ClubOverviewScreen()
-            "News" -> ClubNewsScreen(
-                navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
-            )
-            "Fixtures" -> ClubFixturesScreen(
-                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
-                modifier = Modifier
-                    .padding(
-                        vertical = screenHeight(x = 16.0),
-                        horizontal = screenWidth(x = 16.0)
-                    )
-            )
-            "Scores" -> ClubScoresScreen()
-            "Donations" -> ClubDonationsScreen()
+            ClubScreenTab.INFO -> {
+                ClubOverviewScreen(
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            ClubScreenTab.NEWS -> {
+                ClubNewsScreen(
+                    navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
+            ClubScreenTab.FIXTURES -> {
+                ClubFixturesScreen(
+                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                    modifier = Modifier
+                        .padding(
+                            vertical = screenHeight(x = 16.0),
+                            horizontal = screenWidth(x = 16.0)
+                        )
+                        .weight(1f)
+                )
+            }
+            ClubScreenTab.SCORES -> {
+                ClubScoresScreen(
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
         }
+        ClubDetailsScreenBottomBar(
+            tabs = tabs,
+            currentTab = selectedTab,
+            onChangeTab = onChangeTab
+        )
     }
 }
 
 @Composable
-fun ClubOverviewScreen() {
+fun ClubOverviewScreen(
+    modifier: Modifier = Modifier
+) {
     val rows = listOf(1, 2, 3, 4, 5)
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
@@ -399,9 +412,11 @@ fun ClubFixturesScreen(
 }
 
 @Composable
-fun ClubScoresScreen() {
+fun ClubScoresScreen(
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 20.0),
@@ -430,15 +445,78 @@ fun ClubDonationsScreen() {
 
 }
 
+@Composable
+fun ClubDetailsScreenBottomBar(
+    tabs: List<ClubScreenTabItem>,
+    currentTab: ClubScreenTab,
+    onChangeTab: (tab: ClubScreenTab) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    NavigationBar {
+        for(tab in tabs) {
+            NavigationBarItem(
+                label = {
+                    Text(
+                        text = tab.name,
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                },
+                selected = currentTab == tab.tab,
+                onClick = {
+                    onChangeTab(tab.tab)
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = tab.icon),
+                        contentDescription = tab.name
+                    )
+                }
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ClubDetailsScreenPreview() {
+
+    val tabs = listOf(
+        ClubScreenTabItem(
+            name = "Overview",
+            icon = R.drawable.info,
+            tab = ClubScreenTab.INFO
+        ),
+        ClubScreenTabItem(
+            name = "News",
+            icon = R.drawable.news,
+            tab = ClubScreenTab.NEWS
+        ),
+        ClubScreenTabItem(
+            name = "Fixtures",
+            icon = R.drawable.fixtures,
+            tab = ClubScreenTab.FIXTURES
+        ),
+        ClubScreenTabItem(
+            name = "Scores",
+            icon = R.drawable.scores,
+            tab = ClubScreenTab.FIXTURES
+        ),
+    )
+
+    var selectedTab by rememberSaveable {
+        mutableStateOf(ClubScreenTab.INFO)
+    }
+
     LigiopenTheme {
         ClubDetailsScreen(
             clubName = "OveralClub FC",
-            navigateToNewsDetailsScreen = {},
-            navigateToFixtureDetailsScreen = {},
-            navigateToPreviousScreen = {},
-        )
+            tabs = tabs,
+            onChangeTab = {
+                selectedTab = it
+            },
+            selectedTab = selectedTab,
+            navigateToFixtureDetailsScreen = { /*TODO*/ },
+            navigateToNewsDetailsScreen = { /*TODO*/ },
+            navigateToPreviousScreen = { /*TODO*/ })
     }
 }

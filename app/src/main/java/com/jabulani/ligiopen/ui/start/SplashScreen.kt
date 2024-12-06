@@ -11,12 +11,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -31,11 +35,23 @@ object SplashScreenDestination : AppNavigation {
 @Composable
 fun SplashScreenComposable(
     navigateToLoginScreen: () -> Unit,
+    navigateToHomeScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val viewModel: SplashViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    val uiState by viewModel.uiState.collectAsState()
+
     LaunchedEffect(Unit) {
         delay(2000)
-        navigateToLoginScreen()
+        if(uiState.isLoading) {
+            if(uiState.users.isEmpty()) {
+                navigateToLoginScreen()
+            } else {
+                navigateToHomeScreen()
+            }
+        }
+        viewModel.changeLoadingStatus()
     }
 
     Box(

@@ -36,6 +36,7 @@ import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoresScreenComposable
+import com.jabulani.ligiopen.ui.inapp.profile.ProfileScreenComposable
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -52,6 +53,7 @@ fun HomeScreenComposable(
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToClubDetailsScreen: () -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
+    navigateToHighlightsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -61,7 +63,8 @@ fun HomeScreenComposable(
         HomeScreen(
             navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
             navigateToClubDetailsScreen = navigateToClubDetailsScreen,
-            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
+            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+            navigateToHighlightsScreen = navigateToHighlightsScreen
         )
     }
 }
@@ -71,6 +74,7 @@ fun HomeScreen(
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToClubDetailsScreen: () -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
+    navigateToHighlightsScreen: () -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
@@ -94,6 +98,11 @@ fun HomeScreen(
             name = "Fixtures",
             icon = R.drawable.fixtures,
             tab = HomeScreenTab.FIXTURES
+        ),
+        HomeScreenTabItem(
+            name = "Profile",
+            icon = R.drawable.account_circle,
+            tab = HomeScreenTab.PROFILE
         ),
     )
 
@@ -128,6 +137,12 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Sam N",
+                    fontSize = screenFontSize(x = 14.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Default.AccountBox,
@@ -147,6 +162,7 @@ fun HomeScreen(
                 switchToHomeTab = {
                     currentTab = HomeScreenTab.NEWS
                 },
+                navigateToHighlightsScreen = navigateToHighlightsScreen,
                 modifier = Modifier
                     .weight(1f)
             )
@@ -177,6 +193,12 @@ fun HomeScreen(
                 ) {
                     Text(text = "Financing")
                 }
+            }
+            HomeScreenTab.PROFILE -> {
+                ProfileScreenComposable(
+                    modifier = Modifier
+                        .weight(1f)
+                )
             }
         }
         HomeBottomNavBar(
@@ -227,7 +249,8 @@ fun HomeScreenPreview() {
         HomeScreen(
             navigateToNewsDetailsScreen = {},
             navigateToClubDetailsScreen = {},
-            navigateToFixtureDetailsScreen = {}
+            navigateToFixtureDetailsScreen = {},
+            navigateToHighlightsScreen = {}
         )
     }
 }
