@@ -54,13 +54,19 @@ fun FixtureDetailsScreenComposable(
     modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = navigateToPreviousScreen)
-    Box(
-        modifier = modifier
-            .safeDrawingPadding()
+    ElevatedCard(
+        shape = RoundedCornerShape(0.dp),
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
-        FixtureDetailsScreen(
-            navigateToPreviousScreen = navigateToPreviousScreen
-        )
+        Box(
+            modifier = modifier
+                .safeDrawingPadding()
+        ) {
+            FixtureDetailsScreen(
+                navigateToPreviousScreen = navigateToPreviousScreen
+            )
+        }
     }
 }
 
@@ -91,14 +97,14 @@ fun FixtureDetailsScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Match Details",
+                    text = "But ticket",
                     fontSize = screenFontSize(x = 14.0).sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+//        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())

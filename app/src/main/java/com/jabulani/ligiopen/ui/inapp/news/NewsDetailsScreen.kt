@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.nav.AppNavigation
@@ -56,13 +57,19 @@ fun NewsDetailsScreenComposable(
 ) {
     val activity = LocalContext.current as Activity
     BackHandler(onBack = navigateToPreviousScreen)
-    Box(
-        modifier = modifier
-            .safeDrawingPadding()
+    ElevatedCard(
+        shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
-        NewsDetailsScreen(
-            navigateToPreviousScreen = navigateToPreviousScreen
-        )
+        Box(
+            modifier = modifier
+                .safeDrawingPadding()
+        ) {
+            NewsDetailsScreen(
+                navigateToPreviousScreen = navigateToPreviousScreen
+            )
+        }
     }
 }
 
@@ -79,7 +86,7 @@ fun NewsDetailsScreen(
             .fillMaxSize()
     ) {
         ElevatedCard(
-            shape = RoundedCornerShape(0),
+            shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
         ) {
             Row(
 //            horizontalArrangement = Arrangement.SpaceBetween,
@@ -103,6 +110,7 @@ fun NewsDetailsScreen(
                 )
             }
         }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -100,7 +101,7 @@ fun ClubDetailsScreenComposable(
         ClubScreenTabItem(
             name = "Scores",
             icon = R.drawable.scores,
-            tab = ClubScreenTab.FIXTURES
+            tab = ClubScreenTab.SCORES
         ),
     )
 
@@ -108,23 +109,29 @@ fun ClubDetailsScreenComposable(
         mutableStateOf(ClubScreenTab.INFO)
     }
 
-
-    Box(
+    ElevatedCard(
+        shape = RoundedCornerShape(0.dp),
         modifier = Modifier
-            .safeDrawingPadding()
+            .fillMaxWidth()
     ) {
-        ClubDetailsScreen(
-            clubName = "OveralClub FC",
-            tabs = tabs,
-            onChangeTab = {
-                selectedTab = it
-            },
-            selectedTab = selectedTab,
-            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
-            navigateToPreviousScreen = navigateToPreviousScreen,
-            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
-        )
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+        ) {
+            ClubDetailsScreen(
+                clubName = "OveralClub FC",
+                tabs = tabs,
+                onChangeTab = {
+                    selectedTab = it
+                },
+                selectedTab = selectedTab,
+                navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
+                navigateToPreviousScreen = navigateToPreviousScreen,
+                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
+            )
+        }
     }
+
 }
 
 @Composable
@@ -153,20 +160,29 @@ fun ClubDetailsScreen(
             shape = RoundedCornerShape(0.dp)
         ) {
             Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = screenWidth(x = 8.0),
-                        vertical = screenHeight(x = 4.0)
-                    )
+                    .padding(screenWidth(x = 8.0))
+
             ) {
                 IconButton(onClick = navigateToPreviousScreen) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Previous screen"
                     )
                 }
+                Icon(
+                    painter = painterResource(id = R.drawable.ligiopen_icon),
+                    contentDescription = null,
+                )
+                Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
+                Text(
+                    text = selectedTab.name,
+                    fontSize = screenFontSize(x = 16.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = R.drawable.club_logo),
@@ -182,8 +198,9 @@ fun ClubDetailsScreen(
                     fontSize = screenFontSize(x = 14.0).sp
                 )
             }
+
         }
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+//        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
 //        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         when(selectedTab) {
             ClubScreenTab.INFO -> {
@@ -212,6 +229,7 @@ fun ClubDetailsScreen(
             }
             ClubScreenTab.SCORES -> {
                 ClubScoresScreen(
+                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -364,9 +382,9 @@ fun ClubNewsScreen(
                     NewsTile(
                         newsItem = newsItem,
                         modifier = Modifier
-                            .padding(
-                                top = screenHeight(x = 8.0)
-                            )
+//                            .padding(
+//                                top = screenHeight(x = 8.0)
+//                            )
                     )
                     HorizontalDivider()
                 }
@@ -396,7 +414,7 @@ fun ClubFixturesScreen(
                         .padding(
                             start = screenWidth(x = 4.0),
                             end = screenWidth(x = 4.0),
-                            top = screenHeight(x = 8.0),
+//                            top = screenHeight(x = 8.0),
                             bottom = screenHeight(x = 8.0)
                         )
                         .clickable {
@@ -413,6 +431,7 @@ fun ClubFixturesScreen(
 
 @Composable
 fun ClubScoresScreen(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -420,7 +439,7 @@ fun ClubScoresScreen(
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 20.0),
-                vertical = screenHeight(x = 20.0)
+                vertical = screenHeight(x = 10.0)
             )
     ) {
         LazyColumn {
@@ -468,7 +487,9 @@ fun ClubDetailsScreenBottomBar(
                 icon = {
                     Icon(
                         painter = painterResource(id = tab.icon),
-                        contentDescription = tab.name
+                        contentDescription = tab.name,
+                        modifier = Modifier
+                            .size(screenWidth(x = 20.0))
                     )
                 }
             )

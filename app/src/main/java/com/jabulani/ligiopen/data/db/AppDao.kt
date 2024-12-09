@@ -21,4 +21,7 @@ interface AppDao {
 
     @Query("SELECT * FROM user WHERE id = :id")
     fun getUserByUserId(id: Int): Flow<UserAccount>
+
+    @Query("DELETE FROM user")
+    fun deleteUsers();
 }

@@ -14,4 +14,6 @@ interface DBRepository {
 
 
     fun getUserByUserId(id: Int): Flow<UserAccount>
+
+    suspend fun deleteUsers()
 }

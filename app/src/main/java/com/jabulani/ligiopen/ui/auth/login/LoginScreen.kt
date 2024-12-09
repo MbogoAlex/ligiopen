@@ -85,22 +85,27 @@ fun LoginScreenComposable(
 
     Box(
         modifier = Modifier
-            .safeDrawingPadding()
+            .fillMaxSize()
     ) {
-        LoginScreen(
-            email = uiState.email,
-            password = uiState.password,
-            isButtonEnabled = uiState.isButtonEnabled,
-            onChangeEmail = {
-                viewModel.updateEmail(it)
-            },
-            onChangePassword = {
-                viewModel.updatePassword(it)
-            },
-            onLoginUser = viewModel::loginUser,
-            navigateToRegistrationScreen = navigateToRegistrationScreen,
-            loginStatus = uiState.loginStatus
-        )
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+        ) {
+            LoginScreen(
+                email = uiState.email,
+                password = uiState.password,
+                isButtonEnabled = uiState.isButtonEnabled,
+                onChangeEmail = {
+                    viewModel.updateEmail(it)
+                },
+                onChangePassword = {
+                    viewModel.updatePassword(it)
+                },
+                onLoginUser = viewModel::loginUser,
+                navigateToRegistrationScreen = navigateToRegistrationScreen,
+                loginStatus = uiState.loginStatus
+            )
+        }
     }
 }
 

@@ -72,7 +72,6 @@ fun MatchStatisticsScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .size(screenWidth(x = 24.0))
-                    .padding(horizontal = screenWidth(x = 4.0))
             )
             Spacer(modifier = Modifier.weight(1f))
             Image(
@@ -80,7 +79,7 @@ fun MatchStatisticsScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .size(screenWidth(x = 24.0))
-                    .padding(horizontal = screenWidth(x = 4.0))
+//                    .padding(horizontal = screenWidth(x = 4.0))
             )
             Text(
                 text = matchStats.awayTeamName,

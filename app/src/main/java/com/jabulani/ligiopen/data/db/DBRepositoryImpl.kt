@@ -11,4 +11,5 @@ class DBRepositoryImpl(private val appDao: AppDao): DBRepository {
     override fun getUsers(): Flow<List<UserAccount>> = appDao.getUsers()
 
     override fun getUserByUserId(id: Int): Flow<UserAccount> = appDao.getUserByUserId(id = id)
+    override suspend fun deleteUsers() = appDao.deleteUsers()
 }

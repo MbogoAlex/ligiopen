@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.playedMatches
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.playedMatches.lineup.PlayersLineupScreenComposable
@@ -54,7 +57,7 @@ fun HighlightsScreenComposable(
         HighlightsScreenTabItem(
             name = "Summary",
             tab = HighlightsScreenTabs.SUMMARY,
-            icon = R.drawable.ball_summary
+            icon = R.drawable.full_time2
         ),
         HighlightsScreenTabItem(
             name = "Timeline",
@@ -64,7 +67,7 @@ fun HighlightsScreenComposable(
         HighlightsScreenTabItem(
             name = "Lineups",
             tab = HighlightsScreenTabs.LINEUPS,
-            icon = R.drawable.lineup
+            icon = R.drawable.lineup_2
         ),
         HighlightsScreenTabItem(
             name = "Stats",
@@ -75,19 +78,26 @@ fun HighlightsScreenComposable(
     var currentTab by rememberSaveable {
         mutableStateOf(HighlightsScreenTabs.SUMMARY)
     }
-    Box(
+    ElevatedCard(
+        shape = RoundedCornerShape(0.dp),
         modifier = Modifier
-            .safeDrawingPadding()
+            .fillMaxWidth()
     ) {
-        HighlightsScreen(
-            tabs = tabs,
-            currentTab = currentTab,
-            onChangeTab = {
-                currentTab = it
-            },
-            navigateToPreviousScreen = navigateToPreviousScreen
-        )
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+        ) {
+            HighlightsScreen(
+                tabs = tabs,
+                currentTab = currentTab,
+                onChangeTab = {
+                    currentTab = it
+                },
+                navigateToPreviousScreen = navigateToPreviousScreen
+            )
+        }
     }
+
 }
 
 @Composable
@@ -175,6 +185,7 @@ fun HighlightsScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f)
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         Text(text = "Timeline")
                     }
@@ -224,7 +235,9 @@ fun HighlightScreenBottomBar(
                 icon = {
                     Icon(
                         painter = painterResource(id = tab.icon),
-                        contentDescription = tab.name
+                        contentDescription = tab.name,
+                        modifier = Modifier
+                            .size(screenWidth(x = 20.0))
                     )
                 }
             )

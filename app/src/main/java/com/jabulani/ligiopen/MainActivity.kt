@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.jabulani.ligiopen.ui.nav.NavigationGraph
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -20,8 +23,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            LigiopenTheme {
-                NavigationGraph(navController = rememberNavController())
+            val viewModel: MainActivityViewModel = viewModel(factory = AppViewModelFactory.Factory)
+            val uiState by viewModel.uiState.collectAsState()
+            LigiopenTheme(
+                darkTheme = uiState.userAccount.darkMode
+            ) {
+                NavigationGraph(
+                    navController = rememberNavController(),
+                    onSwitchTheme = {
+                        viewModel.switchTheme()
+                    }
+                )
             }
         }
     }

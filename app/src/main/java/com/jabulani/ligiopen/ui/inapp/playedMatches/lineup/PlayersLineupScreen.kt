@@ -102,7 +102,7 @@ fun PlayersLineupScreen(
                 Text(
                     text = position.name.lowercase().replaceFirstChar { it.uppercase() },
                     fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 16.0).sp,
+                    fontSize = screenFontSize(x = 14.0).sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(vertical = screenHeight(x = 8.0))

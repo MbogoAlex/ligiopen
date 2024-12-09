@@ -53,6 +53,7 @@ fun NewsScreenComposable(
     BackHandler(onBack = {
         activity.finish()
     })
+
     Box(
         modifier = modifier
     ) {

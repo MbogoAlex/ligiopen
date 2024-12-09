@@ -27,6 +27,7 @@ import com.jabulani.ligiopen.ui.start.SplashScreenDestination
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
+    onSwitchTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -86,6 +87,7 @@ fun NavigationGraph(
         }
         composable(HomeScreenDestination.route) {
             HomeScreenComposable(
+                onSwitchTheme = onSwitchTheme,
                 navigateToNewsDetailsScreen = {
                     navController.navigate(NewsDetailsScreenDestination.route)
                 },
@@ -97,6 +99,9 @@ fun NavigationGraph(
                 },
                 navigateToHighlightsScreen = {
                     navController.navigate(HighlightsScreenDestination.route)
+                },
+                navigateToLoginScreenWithArgs = {email, password ->
+                    navController.navigate("${LoginScreenDestination.route}/$email/$password")
                 }
             )
         }

@@ -56,7 +56,7 @@ fun SplashScreenComposable(
 
     Box(
         modifier = Modifier
-            .safeDrawingPadding()
+//            .safeDrawingPadding()
     ) {
         SplashScreen()
     }

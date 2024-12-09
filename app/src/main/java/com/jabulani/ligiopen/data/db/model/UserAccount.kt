@@ -12,5 +12,6 @@ data class UserAccount(
     val password: String,
     val role: String,
     val createdAt: String,
-    val token: String
+    val token: String,
+    val darkMode: Boolean = false
 )

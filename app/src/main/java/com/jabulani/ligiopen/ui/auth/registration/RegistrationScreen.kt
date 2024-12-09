@@ -89,38 +89,43 @@ fun RegistrationScreenComposable(
 
     Box(
         modifier = Modifier
-            .safeDrawingPadding()
+            .fillMaxSize()
     ) {
-        RegistrationScreen(
-            username = uiState.username,
-            email = uiState.email,
-            password = uiState.password,
-            confirmPassword = uiState.confirmPassword,
-            isButtonEnabled = uiState.isButtonEnabled,
-            onChangeUsername = {
-                viewModel.updateUsername(it)
-            },
-            onChangeEmail = {
-                viewModel.updateEmail(it)
-            },
-            onChangePassword = {
-                viewModel.updatePassword(it)
-            },
-            onChangeConfirmPassword = {
-                viewModel.updateConfirmPassword(it)
-            },
-            onRegisterUser = {
-                if(uiState.password.length < 6) {
-                    Toast.makeText(context, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
-                } else if(uiState.password != uiState.confirmPassword) {
-                    Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                } else {
-                    viewModel.registerUser()
-                }
-            },
-            registrationStatus = uiState.registrationStatus,
-            navigateToLoginScreen = navigateToLoginScreen
-        )
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+        ) {
+            RegistrationScreen(
+                username = uiState.username,
+                email = uiState.email,
+                password = uiState.password,
+                confirmPassword = uiState.confirmPassword,
+                isButtonEnabled = uiState.isButtonEnabled,
+                onChangeUsername = {
+                    viewModel.updateUsername(it)
+                },
+                onChangeEmail = {
+                    viewModel.updateEmail(it)
+                },
+                onChangePassword = {
+                    viewModel.updatePassword(it)
+                },
+                onChangeConfirmPassword = {
+                    viewModel.updateConfirmPassword(it)
+                },
+                onRegisterUser = {
+                    if(uiState.password.length < 6) {
+                        Toast.makeText(context, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                    } else if(uiState.password != uiState.confirmPassword) {
+                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.registerUser()
+                    }
+                },
+                registrationStatus = uiState.registrationStatus,
+                navigateToLoginScreen = navigateToLoginScreen
+            )
+        }
     }
 }
 
