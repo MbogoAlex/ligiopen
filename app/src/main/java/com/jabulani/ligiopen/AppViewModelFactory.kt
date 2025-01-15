@@ -7,6 +7,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.jabulani.ligiopen.ui.auth.login.LoginViewModel
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationViewModel
+import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsViewModel
+import com.jabulani.ligiopen.ui.inapp.clubs.ClubsViewModel
+import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsViewModel
 import com.jabulani.ligiopen.ui.inapp.home.HomeViewModel
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileViewModel
 import com.jabulani.ligiopen.ui.start.SplashViewModel
@@ -50,6 +53,29 @@ object AppViewModelFactory {
         initializer {
             HomeViewModel(
                 dbRepository = ligiopenApplication().container.dbRepository
+            )
+        }
+
+        initializer {
+            ClubsViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository
+            )
+        }
+
+        initializer {
+            ClubDetailsViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
+            )
+        }
+
+        initializer {
+            PlayerDetailsViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
             )
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.data.network.model.club.ClubDetails
+import com.jabulani.ligiopen.data.network.model.club.PlayerDetails
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
@@ -70,6 +76,8 @@ import com.jabulani.ligiopen.utils.screenWidth
 object ClubDetailsScreenDestination : AppNavigation {
     override val title: String = "Club details screen"
     override val route: String = "club-details-screen"
+    val clubId: String = "clubId"
+    val routeWithArgs: String = "$route/{$clubId}"
 }
 
 @Composable
@@ -77,10 +85,14 @@ fun ClubDetailsScreenComposable(
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
+    navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as Activity
     BackHandler(onBack = navigateToPreviousScreen)
+
+    val viewModel: ClubDetailsViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    val uiState by viewModel.uiState.collectAsState()
 
     val tabs = listOf(
         ClubScreenTabItem(
@@ -119,7 +131,7 @@ fun ClubDetailsScreenComposable(
                 .safeDrawingPadding()
         ) {
             ClubDetailsScreen(
-                clubName = "OveralClub FC",
+                clubDetails = uiState.clubDetails,
                 tabs = tabs,
                 onChangeTab = {
                     selectedTab = it
@@ -127,7 +139,8 @@ fun ClubDetailsScreenComposable(
                 selectedTab = selectedTab,
                 navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
                 navigateToPreviousScreen = navigateToPreviousScreen,
-                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
+                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
             )
         }
     }
@@ -136,13 +149,14 @@ fun ClubDetailsScreenComposable(
 
 @Composable
 fun ClubDetailsScreen(
-    clubName: String,
+    clubDetails: ClubDetails,
     tabs: List<ClubScreenTabItem>,
     onChangeTab: (tab: ClubScreenTab) -> Unit,
     selectedTab: ClubScreenTab,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
+    navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -193,7 +207,7 @@ fun ClubDetailsScreen(
                 )
                 Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                 Text(
-                    text = clubName.takeIf { it.length < 15 } ?: (clubName.take(15) + "..."),
+                    text = clubDetails.name.takeIf { it.length < 15 } ?: (clubDetails.name.take(15) + "..."),
                     fontWeight = FontWeight.Bold,
                     fontSize = screenFontSize(x = 14.0).sp
                 )
@@ -205,6 +219,8 @@ fun ClubDetailsScreen(
         when(selectedTab) {
             ClubScreenTab.INFO -> {
                 ClubOverviewScreen(
+                    clubDetails = clubDetails,
+                    navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen,
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -245,16 +261,26 @@ fun ClubDetailsScreen(
 
 @Composable
 fun ClubOverviewScreen(
+    clubDetails: ClubDetails,
+    navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rows = listOf(1, 2, 3, 4, 5)
+
+    val painter = rememberAsyncImagePainter(
+        model = clubDetails.clubMainPhoto ?: R.drawable.no_photo
+        , // Fallback to local drawable if URL is null
+        placeholder = painterResource(id = R.drawable.loading),
+        error = painterResource(id = R.drawable.broken_image)
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         Image(
-            painter = painterResource(id = R.drawable.football),
+            painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -269,14 +295,14 @@ fun ClubOverviewScreen(
         ) {
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = "OveralClub FC",
+                text = clubDetails.name,
                 fontSize = screenFontSize(x = 16.0).sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
+                text = clubDetails.description,
                 fontSize = screenFontSize(x = 14.0).sp
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
@@ -287,12 +313,16 @@ fun ClubOverviewScreen(
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            rows.forEach {
+            clubDetails.players.forEach { player ->
                 PlayerCell(
+                    playerDetails = player,
                     modifier = Modifier
                         .padding(
                             vertical = screenHeight(x = 8.0)
                         )
+                        .clickable {
+                            navigateToPlayerDetailsScreen(player.playerId.toString())
+                        }
                 )
             }
         }
@@ -301,14 +331,23 @@ fun ClubOverviewScreen(
 
 @Composable
 fun PlayerCell(
+    playerDetails: PlayerDetails,
     modifier: Modifier = Modifier
 ) {
+    val painter = rememberAsyncImagePainter(
+        model = playerDetails.mainPhoto ?: R.drawable.no_photo
+        , // Fallback to local drawable if URL is null
+        placeholder = painterResource(id = R.drawable.loading),
+        error = painterResource(id = R.drawable.broken_image)
+    )
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .fillMaxWidth()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.soccer_player),
+            painter = painter,
             contentDescription = null,
             modifier = Modifier
                 .size(screenWidth(x = 72.0))
@@ -329,7 +368,7 @@ fun PlayerCell(
                 )
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    text = "Mark Oloo",
+                    text = playerDetails.username,
                     fontSize = screenFontSize(x = 14.0).sp
                 )
             }
@@ -344,13 +383,13 @@ fun PlayerCell(
                 )
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    text = "28 years",
+                    text = "${playerDetails.age} years",
                     fontSize = screenFontSize(x = 14.0).sp
                 )
             }
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = "Goal keeper",
+                text = playerDetails.playerPosition.lowercase().replaceFirstChar { it.uppercase() },
                 fontSize = screenFontSize(x = 14.0).sp
             )
         }
@@ -530,7 +569,7 @@ fun ClubDetailsScreenPreview() {
 
     LigiopenTheme {
         ClubDetailsScreen(
-            clubName = "OveralClub FC",
+            clubDetails = ClubDetails(0, "", "", "", "", "", "", "", "", "", false, "", emptyList(), emptyList()),
             tabs = tabs,
             onChangeTab = {
                 selectedTab = it
@@ -538,6 +577,8 @@ fun ClubDetailsScreenPreview() {
             selectedTab = selectedTab,
             navigateToFixtureDetailsScreen = { /*TODO*/ },
             navigateToNewsDetailsScreen = { /*TODO*/ },
-            navigateToPreviousScreen = { /*TODO*/ })
+            navigateToPreviousScreen = { /*TODO*/ },
+            navigateToPlayerDetailsScreen = {}
+        )
     }
 }

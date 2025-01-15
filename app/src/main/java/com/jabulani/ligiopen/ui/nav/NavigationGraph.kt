@@ -13,6 +13,8 @@ import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenComposable
 import com.jabulani.ligiopen.ui.auth.registration.RegistrationScreenDestination
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenDestination
+import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureDetailsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
@@ -92,7 +94,7 @@ fun NavigationGraph(
                     navController.navigate(NewsDetailsScreenDestination.route)
                 },
                 navigateToClubDetailsScreen = {
-                    navController.navigate(ClubDetailsScreenDestination.route)
+                    navController.navigate("${ClubDetailsScreenDestination.route}/${it}")
                 },
                 navigateToFixtureDetailsScreen = {
                     navController.navigate(FixtureDetailsScreenDestination.route)
@@ -129,6 +131,32 @@ fun NavigationGraph(
                 },
                 navigateToPreviousScreen = {
                     navController.navigateUp()
+                },
+                navigateToPlayerDetailsScreen = {
+                    navController.navigate("${PlayerDetailsScreenDestination.route}/${it}")
+                }
+            )
+        }
+        composable(
+            ClubDetailsScreenDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(ClubDetailsScreenDestination.clubId) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            ClubDetailsScreenComposable(
+                navigateToNewsDetailsScreen = {
+                    navController.navigate(NewsDetailsScreenDestination.route)
+                },
+                navigateToFixtureDetailsScreen = {
+                    navController.navigate(FixtureDetailsScreenDestination.route)
+                },
+                navigateToPreviousScreen = {
+                    navController.navigateUp()
+                },
+                navigateToPlayerDetailsScreen = {
+                    navController.navigate("${PlayerDetailsScreenDestination.route}/${it}")
                 }
             )
         }
@@ -137,6 +165,19 @@ fun NavigationGraph(
                 navigateToPreviousScreen = {
                     navController.navigateUp()
                 }
+            )
+        }
+
+        composable(
+            PlayerDetailsScreenDestination.routeWithPlayerId,
+            arguments = listOf(
+                navArgument(PlayerDetailsScreenDestination.playerId) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            PlayerDetailsScreenComposable(
+                navigateToPreviousScreen = { navController.navigateUp() }
             )
         }
     }

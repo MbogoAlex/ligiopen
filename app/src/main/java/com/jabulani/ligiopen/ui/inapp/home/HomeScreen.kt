@@ -96,7 +96,7 @@ object HomeScreenDestination : AppNavigation {
 fun HomeScreenComposable(
     onSwitchTheme: () -> Unit,
     navigateToNewsDetailsScreen: () -> Unit,
-    navigateToClubDetailsScreen: () -> Unit,
+    navigateToClubDetailsScreen: (clubId: String) -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
@@ -191,7 +191,7 @@ fun HomeScreen(
     onChangeTab: (tab: HomeScreenTab) -> Unit,
     tabs: List<HomeScreenTabItem>,
     navigateToNewsDetailsScreen: () -> Unit,
-    navigateToClubDetailsScreen: () -> Unit,
+    navigateToClubDetailsScreen: (clubId: String) -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
