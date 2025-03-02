@@ -85,7 +85,7 @@ fun ClubsScreen(
                 ) {
                     ClubItemTile(
                         clubName = club.name,
-                        clubLogo = club.clubLogo,
+                        clubLogo = club.clubLogo.link,
                         modifier = Modifier
                             .padding(
                                 top = screenHeight(x = 8.0),

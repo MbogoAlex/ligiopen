@@ -2,11 +2,9 @@ package com.jabulani.ligiopen.ui.inapp.clubs
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,9 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,14 +35,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,12 +53,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
-import com.jabulani.ligiopen.data.network.model.club.PlayerDetails
+import com.jabulani.ligiopen.data.network.model.club.club
+import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
-import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenTabItem
-import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenTabs
 import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoreItemCell
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -389,7 +381,7 @@ fun PlayerCell(
             }
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = playerDetails.playerPosition.lowercase().replaceFirstChar { it.uppercase() },
+                text = playerDetails.playerPosition.name.lowercase().replaceFirstChar { it.uppercase() },
                 fontSize = screenFontSize(x = 14.0).sp
             )
         }
@@ -569,7 +561,7 @@ fun ClubDetailsScreenPreview() {
 
     LigiopenTheme {
         ClubDetailsScreen(
-            clubDetails = ClubDetails(0, "", "", "", "", "", "", "", "", "", false, "", emptyList(), emptyList()),
+            clubDetails = club,
             tabs = tabs,
             onChangeTab = {
                 selectedTab = it

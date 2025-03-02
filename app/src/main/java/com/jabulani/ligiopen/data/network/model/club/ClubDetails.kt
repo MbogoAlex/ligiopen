@@ -1,13 +1,16 @@
 package com.jabulani.ligiopen.data.network.model.club
 
+import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
+import com.jabulani.ligiopen.data.network.model.file.FileData
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClubDetails(
     val clubId: Int,
-    val clubLogo: String?,
-    val clubMainPhoto: String?,
+    val clubLogo: FileData,
+    val clubMainPhoto: FileData?,
     val name: String,
+    val clubAbbreviation: String?,
     val description: String,
     val country: String,
     val county: String,
@@ -16,6 +19,5 @@ data class ClubDetails(
     val createdAt: String,
     val archived: Boolean,
     val archivedAt: String?,
-    val players: List<PlayerDetails>,
-    val files: List<String>
+    val players: List<PlayerDetails>
 )

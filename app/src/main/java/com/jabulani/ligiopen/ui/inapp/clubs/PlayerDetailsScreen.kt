@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,7 +41,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
-import com.jabulani.ligiopen.data.network.model.club.PlayerDetails
+import com.jabulani.ligiopen.data.network.model.club.club
+import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
+import com.jabulani.ligiopen.data.network.model.player.player
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -64,6 +68,7 @@ fun PlayerDetailsScreenComposable(
     Box(
         modifier = Modifier
             .safeDrawingPadding()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         PlayerDetailsScreen(
             playerDetails = uiState.playerDetails,
@@ -131,8 +136,9 @@ fun PlayerDetailsScreen(
                 contentDescription = "Player's picture",
                 modifier = Modifier
                     .fillMaxWidth()
-                .height(screenHeight(x = 350.0))
+                    .height(screenHeight(x = 350.0))
             )
+            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             ElevatedCard(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White
@@ -206,7 +212,7 @@ fun PlayerDetailsScreen(
                         )
                         Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                         Text(
-                            text = playerDetails.playerPosition,
+                            text = playerDetails.playerPosition.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
                             fontSize = screenFontSize(x = 16.0).sp,
                             fontWeight = FontWeight.W600
                         )
@@ -269,10 +275,8 @@ fun PlayerDetailsScreenPreview(
 ) {
     LigiopenTheme {
         PlayerDetailsScreen(
-            playerDetails = PlayerDetails(0, "", "", 0, "", 0, 0.0, 0.0, "", "", "", 0,
-                emptyList()
-            ),
-            clubDetails = ClubDetails(0, "", "", "", "", "", "", "", "", "", false, "", emptyList(), emptyList()),
+            playerDetails = player,
+            clubDetails = club,
             navigateToPreviousScreen = {}
         )
     }
