@@ -1,4 +1,4 @@
-package com.jabulani.ligiopen.ui.inapp.playedMatches.stats
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.stats
 
 // Data class for statistics
 data class MatchStatistic(

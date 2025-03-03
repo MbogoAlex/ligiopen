@@ -1,6 +1,7 @@
-package com.jabulani.ligiopen.ui.inapp.playedMatches.summary
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.summary
 
 import com.jabulani.ligiopen.R
+
 
 enum class EventType {
     GOAL,

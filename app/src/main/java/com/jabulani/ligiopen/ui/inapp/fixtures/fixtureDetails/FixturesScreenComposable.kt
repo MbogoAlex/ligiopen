@@ -1,4 +1,4 @@
-package com.jabulani.ligiopen.ui.inapp.playedMatches
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,24 +34,25 @@ import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
-fun ScoresScreenComposable(
+fun FixturesScreenComposable(
     switchToHomeTab: () -> Unit,
-    navigateToHighlightsScreen: () -> Unit,
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = switchToHomeTab)
     Box(
         modifier = modifier
+            .safeDrawingPadding()
     ) {
-        ScoresScreen(
-            navigateToHighlightsScreen = navigateToHighlightsScreen
+        FixturesScreen(
+            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen
         )
     }
 }
 
 @Composable
-fun ScoresScreen(
-    navigateToHighlightsScreen: () -> Unit,
+fun FixturesScreen(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -57,34 +60,41 @@ fun ScoresScreen(
             .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
-                horizontal = screenWidth(x = 16.0),
-                vertical = screenHeight(x = 16.0)
+                vertical = screenHeight(x = 16.0),
+                horizontal = screenWidth(x = 16.0)
             )
     ) {
         LazyColumn {
             items(10) {
-                ScoreItemCell(
+                Column(
                     modifier = Modifier
-                        .padding(
-                            start = screenWidth(x = 4.0),
-                            end = screenWidth(x = 4.0),
-                            top = screenHeight(x = 8.0),
-                            bottom = screenHeight(x = 8.0)
-                        )
                         .clickable {
-                            navigateToHighlightsScreen()
+                            navigateToFixtureDetailsScreen()
                         }
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                ) {
+                    FixtureItemCell(
+                        navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                        modifier = Modifier
+                            .padding(
+                                start = screenWidth(x = 4.0),
+                                end = screenWidth(x = 4.0),
+                                top = screenHeight(x = 8.0),
+                                bottom = screenHeight(x = 8.0)
+                            )
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                }
             }
         }
     }
 }
 
 @Composable
-fun ScoreItemCell(
+fun FixtureItemCell(
+    navigateToFixtureDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -98,30 +108,11 @@ fun ScoreItemCell(
                 .weight(1f)
         ) {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = "Aug. 20, 2024 11:40am",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        painter = painterResource(id = R.drawable.location),
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = "Kisumu stadium",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = "Aug. 20, 2024 11:40am",
+                    fontSize = screenFontSize(x = 14.0).sp
+                )
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -138,13 +129,6 @@ fun ScoreItemCell(
                     Text(
                         color = MaterialTheme.colorScheme.onBackground,
                         text = "OveralClub FC",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        text = "1",
                         fontWeight = FontWeight.Bold,
                         fontSize = screenFontSize(x = 14.0).sp
                     )
@@ -168,11 +152,41 @@ fun ScoreItemCell(
                         fontWeight = FontWeight.Bold,
                         fontSize = screenFontSize(x = 14.0).sp
                     )
-                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Icon(
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        painter = painterResource(id = R.drawable.location),
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
                     Text(
                         color = MaterialTheme.colorScheme.onBackground,
-                        text = "0",
-                        fontWeight = FontWeight.Bold,
+                        text = "Kisumu stadium",
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                OutlinedButton(
+                    onClick = navigateToFixtureDetailsScreen
+                ) {
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Buy Tickets",
                         fontSize = screenFontSize(x = 14.0).sp
                     )
                 }
@@ -183,10 +197,10 @@ fun ScoreItemCell(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ScoresScreenPreview() {
+fun FixturesScreenPreview() {
     LigiopenTheme {
-        ScoresScreen(
-            navigateToHighlightsScreen = {}
+        FixturesScreen(
+            navigateToFixtureDetailsScreen = {}
         )
     }
 }

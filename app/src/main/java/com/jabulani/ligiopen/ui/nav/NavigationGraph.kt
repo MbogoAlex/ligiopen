@@ -15,14 +15,14 @@ import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsScreenDestination
-import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureDetailsScreenComposable
-import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureDetailsScreenDestination
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureDetailsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureDetailsScreenDestination
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenDestination
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenDestination
-import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenComposable
-import com.jabulani.ligiopen.ui.inapp.playedMatches.HighlightsScreenDestination
 import com.jabulani.ligiopen.ui.start.SplashScreenComposable
 import com.jabulani.ligiopen.ui.start.SplashScreenDestination
 
@@ -104,13 +104,9 @@ fun NavigationGraph(
                 },
                 navigateToLoginScreenWithArgs = {email, password ->
                     navController.navigate("${LoginScreenDestination.route}/$email/$password")
-                }
-            )
-        }
-        composable(HighlightsScreenDestination.route) {
-            HighlightsScreenComposable(
-                navigateToPreviousScreen = {
-                    navController.navigateUp()
+                },
+                navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->
+                    navController.navigate("${HighlightsScreenDestination.route}/${postMatchId}/${fixtureId}/${locationId}")
                 }
             )
         }
@@ -177,6 +173,24 @@ fun NavigationGraph(
             )
         ) {
             PlayerDetailsScreenComposable(
+                navigateToPreviousScreen = { navController.navigateUp() }
+            )
+        }
+        composable(
+            HighlightsScreenDestination.routeWithPostMatchIdAndFixtureIdAndLocationId,
+            arguments = listOf(
+                navArgument(HighlightsScreenDestination.postMatchId) {
+                    type = NavType.StringType
+                },
+                navArgument(HighlightsScreenDestination.fixtureId) {
+                    type = NavType.StringType
+                },
+                navArgument(HighlightsScreenDestination.locationId) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            HighlightsScreenComposable(
                 navigateToPreviousScreen = { navController.navigateUp() }
             )
         }

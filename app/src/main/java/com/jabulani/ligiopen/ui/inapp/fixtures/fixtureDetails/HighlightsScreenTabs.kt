@@ -1,10 +1,11 @@
-package com.jabulani.ligiopen.ui.inapp.playedMatches
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails
 
 enum class HighlightsScreenTabs {
     SUMMARY,
     TIMELINE,
     LINEUPS,
-    STATS
+    STATS,
+    EDIT
 }
 
 data class HighlightsScreenTabItem(

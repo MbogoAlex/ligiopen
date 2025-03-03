@@ -55,10 +55,9 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
 import com.jabulani.ligiopen.data.network.model.club.club
 import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
-import com.jabulani.ligiopen.ui.inapp.fixtures.FixtureItemCell
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureItemCell
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
-import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoreItemCell
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -475,13 +474,7 @@ fun ClubScoresScreen(
     ) {
         LazyColumn {
             items(10) {
-                ScoreItemCell(
-                    modifier = Modifier
-                        .padding(
-                            top = screenHeight(x = 8.0),
-                            bottom = screenHeight(x = 8.0)
-                        )
-                )
+                Text(text = "Sasa")
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 HorizontalDivider()
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))

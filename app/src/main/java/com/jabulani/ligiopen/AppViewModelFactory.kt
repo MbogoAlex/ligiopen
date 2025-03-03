@@ -10,6 +10,8 @@ import com.jabulani.ligiopen.ui.auth.registration.RegistrationViewModel
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubDetailsViewModel
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubsViewModel
 import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsViewModel
+import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesViewModel
+import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenViewModel
 import com.jabulani.ligiopen.ui.inapp.home.HomeViewModel
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileViewModel
 import com.jabulani.ligiopen.ui.start.SplashViewModel
@@ -76,6 +78,21 @@ object AppViewModelFactory {
                 apiRepository = ligiopenApplication().container.apiRepository,
                 dbRepository = ligiopenApplication().container.dbRepository,
                 savedStateHandle = this.createSavedStateHandle()
+            )
+        }
+
+        initializer {
+            HighlightsScreenViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
+            )
+        }
+
+        initializer {
+            FixturesViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository
             )
         }
     }

@@ -19,6 +19,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("auth/register")
@@ -43,57 +44,64 @@ interface ApiService {
         @Path("id") id: Int
     ): Response<PlayerResponseBody>
 
-    //    Get match location
+    @GET("match-location/{locationId}")
     suspend fun getMatchLocation(
-        token: String,
-        locationId: Int,
+        @Header("Authorization") token: String,
+        @Path("locationId") locationId: Int,
     ): Response<MatchLocationResponseBody>
 
-    //    Get match locations
+    @GET("match-location/all")
     suspend fun getMatchLocations(
-        token: String,
+        @Header("Authorization") token: String,
     ): Response<MatchLocationsResponseBody>
 
     //    Get match fixture
+    @GET("match-fixture/{fixtureId}")
     suspend fun getMatchFixture(
-        token: String,
-        fixtureId: Int,
+        @Header("Authorization") token: String,
+        @Path("fixtureId") fixtureId: Int,
     ): Response<FixtureResponseBody>
 
     //    Get match fixtures
+    @GET("match-fixture/all")
     suspend fun getMatchFixtures(
-        token: String,
-        status: String?,
+        @Header("Authorization") token: String,
+        @Query("status") status: String?,
     ): Response<FixturesResponseBody>
 
     //    Get match commentary
+    @GET("match-commentary/{commentaryId}")
     suspend fun getMatchCommentary(
-        token: String,
-        commentaryId: Int,
+        @Header("Authorization") token: String,
+        @Path("commentaryId") commentaryId: Int,
     ): Response<MatchCommentaryResponseBody>
 
     //    Get full match details
+    @GET("post-match-details/{postMatchAnalysisId}")
     suspend fun getFullMatchDetails(
-        token: String,
-        postMatchAnalysisId: Int,
+        @Header("Authorization") token: String,
+        @Path("postMatchAnalysisId") postMatchAnalysisId: Int,
     ): Response<FullMatchResponseBody>
 
     //    Get clubs
+    @GET("club")
     suspend fun getClubs(
-        token: String
+        @Header("Authorization") token: String
     ): Response<ClubsResponseBody>
 
     //    Get club
+    @GET("club/{clubId}")
     suspend fun getClub(
-        token: String,
-        clubId: Int,
+        @Header("Authorization") token: String,
+        @Path("clubId") clubId: Int,
     ): Response<ClubResponseBody>
 
     //    Get player
+    @GET("player/{playerId}")
     suspend fun getPlayer(
-        token: String,
-        playerId: Int,
-    ): Response<com.jabulani.ligiopen.data.network.model.player.PlayerResponseBody>
+        @Header("Authorization") token: String,
+        @Path("playerId") playerId: Int,
+    ): Response<PlayerResponseBody>
 
 
 }

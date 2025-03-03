@@ -1,4 +1,4 @@
-package com.jabulani.ligiopen.ui.inapp.fixtures
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image

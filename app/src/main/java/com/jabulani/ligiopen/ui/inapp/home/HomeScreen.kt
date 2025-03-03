@@ -12,28 +12,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedCard
@@ -47,7 +39,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -59,7 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -74,7 +64,6 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
-import com.jabulani.ligiopen.ui.inapp.playedMatches.ScoresScreenComposable
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileScreenComposable
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -82,7 +71,6 @@ import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -100,6 +88,7 @@ fun HomeScreenComposable(
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
+    navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -173,7 +162,8 @@ fun HomeScreenComposable(
                 navigateToClubDetailsScreen = navigateToClubDetailsScreen,
                 navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
                 navigateToHighlightsScreen = navigateToHighlightsScreen,
-                navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs
+                navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
+                navigateToPostMatchScreen = navigateToPostMatchScreen
             )
 
         }
@@ -195,6 +185,7 @@ fun HomeScreen(
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
+    navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
@@ -338,14 +329,7 @@ fun HomeScreen(
                     modifier = Modifier
 
                 )
-                HomeScreenTab.SCORES -> ScoresScreenComposable(
-                    switchToHomeTab = {
-                        onChangeTab(HomeScreenTab.NEWS)
-                    },
-                    navigateToHighlightsScreen = navigateToHighlightsScreen,
-                    modifier = Modifier
-
-                )
+                HomeScreenTab.SCORES -> {}
                 HomeScreenTab.CLUBS -> ClubsScreenComposable(
                     switchToHomeTab = {
                         onChangeTab(HomeScreenTab.NEWS)
@@ -356,10 +340,8 @@ fun HomeScreen(
                 )
                 HomeScreenTab.FIXTURES -> {
                     FixturesScreenComposable(
-                        switchToHomeTab = {
-                            onChangeTab(HomeScreenTab.NEWS)
-                        },
-                        navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+                        navigateToPostMatchScreen = navigateToPostMatchScreen,
+                        navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
                         modifier = Modifier
                     )
                 }
@@ -507,7 +489,8 @@ fun HomeScreenPreview() {
             navigateToClubDetailsScreen = {},
             navigateToFixtureDetailsScreen = {},
             navigateToHighlightsScreen = {},
-            navigateToLoginScreenWithArgs = {email, password ->}
+            navigateToLoginScreenWithArgs = {email, password ->},
+            navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->}
         )
     }
 }

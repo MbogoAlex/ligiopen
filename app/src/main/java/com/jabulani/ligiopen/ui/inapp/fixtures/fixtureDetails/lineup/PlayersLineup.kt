@@ -1,11 +1,7 @@
-package com.jabulani.ligiopen.ui.inapp.playedMatches.lineup
+package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.lineup
 
-enum class PlayerPosition {
-    GOALKEEPER,
-    DEFENDER,
-    MIDFIELDER,
-    FORWARD,
-}
+import com.jabulani.ligiopen.data.network.model.player.PlayerPosition
+
 
 data class PlayerInLineup (
     val position: PlayerPosition,

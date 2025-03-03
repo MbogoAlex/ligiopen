@@ -1,8 +1,14 @@
 package com.jabulani.ligiopen.data.network
 
+import com.admin.ligiopen.data.network.models.match.location.MatchLocationResponseBody
+import com.admin.ligiopen.data.network.models.match.location.MatchLocationsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.PlayerResponseBody
+import com.jabulani.ligiopen.data.network.model.match.commentary.FullMatchResponseBody
+import com.jabulani.ligiopen.data.network.model.match.commentary.MatchCommentaryResponseBody
+import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureResponseBody
+import com.jabulani.ligiopen.data.network.model.match.fixture.FixturesResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginRequestBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationRequestBody
@@ -33,6 +39,68 @@ class ApiRepositoryImpl(private val apiService: ApiService): ApiRepository {
         apiService.getPlayerById(
             token = "Bearer $token",
             id = id
+        )
+
+    override suspend fun getMatchLocation(
+        token: String,
+        locationId: Int
+    ): Response<MatchLocationResponseBody> =
+        apiService.getMatchLocation(
+            token = "Bearer $token",
+            locationId = locationId
+        )
+
+    override suspend fun getMatchLocations(token: String): Response<MatchLocationsResponseBody> =
+        apiService.getMatchLocations(
+            token = "Bearer $token",
+        )
+
+    override suspend fun getMatchFixture(
+        token: String,
+        fixtureId: Int
+    ): Response<FixtureResponseBody> =
+        apiService.getMatchFixture(
+            token = "Bearer $token",
+            fixtureId = fixtureId
+        )
+
+    override suspend fun getMatchFixtures(
+        token: String,
+        status: String?
+    ): Response<FixturesResponseBody> =
+        apiService.getMatchFixtures(
+            token = "Bearer $token",
+            status = status
+        )
+
+    override suspend fun getMatchCommentary(
+        token: String,
+        commentaryId: Int
+    ): Response<MatchCommentaryResponseBody> =
+        apiService.getMatchCommentary(
+            token = "Bearer $token",
+            commentaryId = commentaryId
+        )
+
+    override suspend fun getFullMatchDetails(
+        token: String,
+        postMatchAnalysisId: Int
+    ): Response<FullMatchResponseBody> =
+        apiService.getFullMatchDetails(
+            token = "Bearer $token",
+            postMatchAnalysisId = postMatchAnalysisId
+        )
+
+    override suspend fun getClub(token: String, clubId: Int): Response<ClubResponseBody> =
+        apiService.getClub(
+            token = "Bearer $token",
+            clubId = clubId
+        )
+
+    override suspend fun getPlayer(token: String, playerId: Int): Response<PlayerResponseBody> =
+        apiService.getPlayer(
+            token = "Bearer $token",
+            playerId = playerId
         )
 
 
