@@ -102,12 +102,12 @@ fun ClubDetailsScreenComposable(
         ),
         ClubScreenTabItem(
             name = "News",
-            icon = R.drawable.news,
+            icon = R.drawable.newspaper,
             tab = ClubScreenTab.NEWS
         ),
         ClubScreenTabItem(
             name = "Matches",
-            icon = R.drawable.matches,
+            icon = R.drawable.score2,
             tab = ClubScreenTab.MATCHES
         ),
         ClubScreenTabItem(

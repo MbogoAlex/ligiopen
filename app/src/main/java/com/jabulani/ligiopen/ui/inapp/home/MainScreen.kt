@@ -128,12 +128,12 @@ fun MainScreenComposable(
     val tabs = listOf(
         HomeScreenTabItem(
             name = "Home",
-            icon = R.drawable.home,
+            icon = R.drawable.home2,
             tab = HomeScreenTab.HOME
         ),
         HomeScreenTabItem(
             name = "Matches",
-            icon = R.drawable.matches,
+            icon = R.drawable.score2,
             tab = HomeScreenTab.MATCHES
         ),
         HomeScreenTabItem(
@@ -143,12 +143,12 @@ fun MainScreenComposable(
         ),
         HomeScreenTabItem(
             name = "News",
-            icon = R.drawable.news,
+            icon = R.drawable.newspaper,
             tab = HomeScreenTab.NEWS
         ),
         HomeScreenTabItem(
             name = "Standings",
-            icon = R.drawable.standings,
+            icon = R.drawable.league_2,
             tab = HomeScreenTab.STANDINGS
         ),
     )
@@ -282,7 +282,9 @@ fun MainScreen(
 //                        fontWeight = FontWeight.Bold
 //                    )
 //                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    IconButton(onClick = {
+                    IconButton(
+                        enabled = false,
+                        onClick = {
                         onChangeTab(HomeScreenTab.PROFILE)
                     }) {
                         Icon(
@@ -294,6 +296,7 @@ fun MainScreen(
 
                 when(currentTab) {
                     HomeScreenTab.NEWS -> NewsScreenComposable(
+                        addTopPadding = true,
                         navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
                         modifier = Modifier
 

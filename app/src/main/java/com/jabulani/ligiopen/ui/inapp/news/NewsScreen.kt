@@ -58,18 +58,16 @@ val news = List(10) {
 
 @Composable
 fun NewsScreenComposable(
+    addTopPadding: Boolean = false,
     navigateToNewsDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activity = LocalContext.current as Activity
-    BackHandler(onBack = {
-        activity.finish()
-    })
 
     Box(
         modifier = modifier
     ) {
         NewsScreen(
+            addTopPadding = addTopPadding,
             navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
         )
     }
@@ -77,11 +75,17 @@ fun NewsScreenComposable(
 
 @Composable
 fun NewsScreen(
+    addTopPadding: Boolean,
     navigateToNewsDetailsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
+        modifier = if(addTopPadding) modifier
+            .fillMaxSize()
+            .padding(
+                vertical = screenHeight(x = 16.0),
+                horizontal = screenWidth(x = 16.0)
+            ) else modifier
             .fillMaxSize()
             .padding(
 //                vertical = screenHeight(x = 16.0),
@@ -196,6 +200,7 @@ fun NewsTile(
 fun NewsScreenPreview() {
     LigiopenTheme {
         NewsScreen(
+            addTopPadding = false,
             navigateToNewsDetailsScreen = {}
         )
     }

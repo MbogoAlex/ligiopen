@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,15 +31,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
@@ -126,19 +132,22 @@ fun PlayerDetailsScreen(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            Image(
-                painter = painter,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(playerDetails.mainPhoto?.link)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                error = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop,
-                contentDescription = "Player's picture",
+                contentDescription = "Player photo",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight(x = 350.0))
+                    .aspectRatio(16f / 9f) // Adjust the ratio as needed
             )
+
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             ElevatedCard(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
                 modifier = Modifier
                     .padding(
                         horizontal = screenWidth(x = 16.0)

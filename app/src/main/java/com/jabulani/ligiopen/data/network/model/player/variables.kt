@@ -20,6 +20,23 @@ val player = PlayerDetails(
     playerState = PlayerState.ACTIVE
 )
 
+val emptyPlayer = PlayerDetails(
+    playerId = 0,
+    mainPhoto = fileData,
+    username = "",
+    number = 0,
+    playerPosition = PlayerPosition.FORWARD,
+    age = 0,
+    height = 0.0,
+    weight = 0.0,
+    country = "",
+    county = "",
+    town = "",
+    clubId = 1,
+    files = fileDts,
+    playerState = PlayerState.ACTIVE
+)
+
 val players = List(10) { index ->
     PlayerDetails(
         playerId = 2 + index,
