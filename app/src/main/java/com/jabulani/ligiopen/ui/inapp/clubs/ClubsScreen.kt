@@ -68,7 +68,6 @@ fun ClubsScreen(
 ) {
     Column(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
             .padding(
                 horizontal = screenWidth(x = 16.0),

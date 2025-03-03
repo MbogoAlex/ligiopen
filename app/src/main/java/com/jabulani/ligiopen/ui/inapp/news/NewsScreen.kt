@@ -69,8 +69,7 @@ fun NewsScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background,)
+        modifier = modifier
             .fillMaxSize()
             .padding(
 //                vertical = screenHeight(x = 16.0),
@@ -88,11 +87,10 @@ fun NewsScreen(
                     NewsTile(
                         newsItem = newsItem,
                         modifier = Modifier
-                            .padding(
-                                top = screenHeight(x = 8.0)
-                            )
                     )
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                     HorizontalDivider()
+                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 }
             }
         }

@@ -98,12 +98,12 @@ fun ClubDetailsScreenComposable(
         ),
         ClubScreenTabItem(
             name = "Fixtures",
-            icon = R.drawable.fixtures,
+            icon = R.drawable.standings,
             tab = ClubScreenTab.FIXTURES
         ),
         ClubScreenTabItem(
             name = "Scores",
-            icon = R.drawable.scores,
+            icon = R.drawable.matches,
             tab = ClubScreenTab.SCORES
         ),
     )
@@ -538,12 +538,12 @@ fun ClubDetailsScreenPreview() {
         ),
         ClubScreenTabItem(
             name = "Fixtures",
-            icon = R.drawable.fixtures,
+            icon = R.drawable.standings,
             tab = ClubScreenTab.FIXTURES
         ),
         ClubScreenTabItem(
             name = "Scores",
-            icon = R.drawable.scores,
+            icon = R.drawable.matches,
             tab = ClubScreenTab.FIXTURES
         ),
     )

@@ -61,7 +61,7 @@ object LoginScreenDestination : AppNavigation {
 }
 @Composable
 fun LoginScreenComposable(
-    navigateToHomeScreen: () -> Unit,
+    navigateToMainScreen: () -> Unit,
     navigateToRegistrationScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -72,7 +72,7 @@ fun LoginScreenComposable(
     val uiState by viewModel.uiState.collectAsState()
 
     if(uiState.loginStatus == LoginStatus.SUCCESS) {
-        navigateToHomeScreen()
+        navigateToMainScreen()
         viewModel.resetStatus()
     } else if(uiState.loginStatus == LoginStatus.FAIL) {
         Toast.makeText(context, uiState.loginMessage, Toast.LENGTH_LONG).show()

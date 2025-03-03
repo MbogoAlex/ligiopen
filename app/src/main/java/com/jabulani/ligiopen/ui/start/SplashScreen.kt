@@ -35,7 +35,7 @@ object SplashScreenDestination : AppNavigation {
 @Composable
 fun SplashScreenComposable(
     navigateToLoginScreen: () -> Unit,
-    navigateToHomeScreen: () -> Unit,
+    navigateToMainScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -48,7 +48,7 @@ fun SplashScreenComposable(
             if(uiState.users.isEmpty()) {
                 navigateToLoginScreen()
             } else {
-                navigateToHomeScreen()
+                navigateToMainScreen()
             }
         }
         viewModel.changeLoadingStatus()
@@ -69,7 +69,6 @@ fun SplashScreen(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background,)
             .fillMaxSize()
     ) {
         Icon(

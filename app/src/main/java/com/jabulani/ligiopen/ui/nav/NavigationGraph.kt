@@ -21,6 +21,8 @@ import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenCo
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenDestination
+import com.jabulani.ligiopen.ui.inapp.home.MainScreenComposable
+import com.jabulani.ligiopen.ui.inapp.home.MainScreenDestination
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenDestination
 import com.jabulani.ligiopen.ui.start.SplashScreenComposable
@@ -38,7 +40,7 @@ fun NavigationGraph(
     ) {
         composable(SplashScreenDestination.route) {
             SplashScreenComposable(
-                navigateToHomeScreen = {
+                navigateToMainScreen = {
                     navController.navigate(HomeScreenDestination.route)
                 },
                 navigateToLoginScreen = {
@@ -58,7 +60,7 @@ fun NavigationGraph(
         }
         composable(LoginScreenDestination.route) {
             LoginScreenComposable(
-                navigateToHomeScreen = {
+                navigateToMainScreen = {
                     navController.navigate(HomeScreenDestination.route)
                 },
                 navigateToRegistrationScreen = {
@@ -79,16 +81,16 @@ fun NavigationGraph(
             )
         ) {
             LoginScreenComposable(
-                navigateToHomeScreen = {
-                    navController.navigate(HomeScreenDestination.route)
+                navigateToMainScreen = {
+                    navController.navigate(MainScreenDestination.route)
                 },
                 navigateToRegistrationScreen = {
                     navController.navigate(RegistrationScreenDestination.route)
                 }
             )
         }
-        composable(HomeScreenDestination.route) {
-            HomeScreenComposable(
+        composable(MainScreenDestination.route) {
+            MainScreenComposable(
                 onSwitchTheme = onSwitchTheme,
                 navigateToNewsDetailsScreen = {
                     navController.navigate(NewsDetailsScreenDestination.route)

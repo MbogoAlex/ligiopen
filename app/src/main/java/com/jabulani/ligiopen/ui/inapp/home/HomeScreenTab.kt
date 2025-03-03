@@ -2,11 +2,13 @@ package com.jabulani.ligiopen.ui.inapp.home
 
 enum class HomeScreenTab {
     NEWS,
+    HOME,
     SCORES,
     CLUBS,
-    FIXTURES,
+    MATCHES,
     FINANCING,
-    PROFILE
+    PROFILE,
+    STANDINGS
 }
 
 data class HomeScreenTabItem(
