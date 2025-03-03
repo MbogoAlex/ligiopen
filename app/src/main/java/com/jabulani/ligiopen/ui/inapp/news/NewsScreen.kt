@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -43,6 +45,16 @@ val newsItem = NewsItem(
     dateTime = "3:40 PM, July 15th, 2024",
     titleImage = R.drawable.sports_news_item
 )
+
+val news = List(10) {
+    NewsItem(
+        title = "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        body = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)",
+        author = "Mike Kevin",
+        dateTime = "3:40 PM, July 15th, 2024",
+        titleImage = R.drawable.sports_news_item
+    )
+}
 
 @Composable
 fun NewsScreenComposable(
@@ -77,7 +89,15 @@ fun NewsScreen(
             )
     ) {
         LazyColumn {
-            items(10) {index ->
+            item {
+                NewsTile(
+                    newsItem = newsItem,
+                    fullScreen = true,
+                    modifier = Modifier
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+            }
+            items(news) { newsItem ->
                 Column(
                     modifier = Modifier
                         .clickable {
@@ -88,9 +108,7 @@ fun NewsScreen(
                         newsItem = newsItem,
                         modifier = Modifier
                     )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
                 }
             }
         }
@@ -100,29 +118,25 @@ fun NewsScreen(
 @Composable
 fun NewsTile(
     newsItem: NewsItem,
+    fullScreen: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(
-                start = screenWidth(x = 8.0),
-                end = screenWidth(x = 8.0)
-            )
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.sports_news_item),
-            contentDescription = null,
-            modifier = Modifier
-                .size(screenWidth(x = 150.0))
-        )
-        Spacer(modifier = Modifier.width(screenWidth(x = 12.0)))
+    if(fullScreen) {
         Column {
+            Card {
+                Image(
+                    painter = painterResource(id = R.drawable.gor_celebrate2),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 text = newsItem.title,
-                fontSize = screenFontSize(x = 14.0).sp,
+                fontSize = screenFontSize(x = 18.0).sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
@@ -132,6 +146,47 @@ fun NewsTile(
                 fontSize = screenFontSize(x = 12.0).sp,
                 fontStyle = FontStyle.Italic
             )
+        }
+    } else {
+        Row(
+            verticalAlignment = Alignment.Top,
+            modifier = modifier
+                .padding(
+                    start = screenWidth(x = 8.0),
+                    end = screenWidth(x = 8.0)
+                )
+                .fillMaxWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .width(screenWidth(x = 140.0))
+                    .height(screenHeight(x = 80.0))
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.sports_news_item),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+
+                )
+            }
+            Spacer(modifier = Modifier.width(screenWidth(x = 12.0)))
+            Column {
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = newsItem.title,
+                    maxLines = 2,
+                    fontSize = screenFontSize(x = 14.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = newsItem.dateTime,
+                    fontSize = screenFontSize(x = 12.0).sp,
+                    fontStyle = FontStyle.Italic
+                )
+            }
         }
     }
 }

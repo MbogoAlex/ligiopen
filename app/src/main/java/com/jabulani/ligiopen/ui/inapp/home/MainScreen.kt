@@ -1,6 +1,8 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
+import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -87,6 +89,8 @@ fun MainScreenComposable(
     val context = LocalContext.current
     val viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    BackHandler(onBack = { (context as Activity?)?.finish() })
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 

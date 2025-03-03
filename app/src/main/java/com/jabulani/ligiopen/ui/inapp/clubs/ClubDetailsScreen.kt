@@ -161,52 +161,45 @@ fun ClubDetailsScreen(
 //                horizontal = screenWidth(x = 16.0)
             )
     ) {
-        ElevatedCard(
-            shape = RoundedCornerShape(0.dp)
-        ) {
-            Row(
+        Row(
 //            horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(screenWidth(x = 8.0))
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(screenWidth(x = 8.0))
 
-            ) {
-                IconButton(onClick = navigateToPreviousScreen) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Previous screen"
-                    )
-                }
+        ) {
+            IconButton(onClick = navigateToPreviousScreen) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ligiopen_icon),
-                    contentDescription = null,
-                )
-                Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
-                Text(
-                    text = selectedTab.name,
-                    fontSize = screenFontSize(x = 16.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Image(
-                    painter = painterResource(id = R.drawable.club_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(screenWidth(x = 24.0))
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                Text(
-                    text = clubDetails.name.takeIf { it.length < 15 } ?: (clubDetails.name.take(15) + "..."),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 14.0).sp
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Previous screen"
                 )
             }
-
+            Icon(
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 3.0)))
+            Text(
+                text = selectedTab.name,
+                fontSize = screenFontSize(x = 16.0).sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Image(
+                painter = painterResource(id = R.drawable.club_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(screenWidth(x = 24.0))
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+            Text(
+                text = clubDetails.name.takeIf { it.length < 15 } ?: (clubDetails.name.take(15) + "..."),
+                fontWeight = FontWeight.Bold,
+                fontSize = screenFontSize(x = 14.0).sp
+            )
         }
-//        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-//        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         when(selectedTab) {
             ClubScreenTab.INFO -> {
                 ClubOverviewScreen(
@@ -259,7 +252,7 @@ fun ClubOverviewScreen(
     val rows = listOf(1, 2, 3, 4, 5)
 
     val painter = rememberAsyncImagePainter(
-        model = clubDetails.clubMainPhoto ?: R.drawable.no_photo
+        model = clubDetails.clubMainPhoto?.link ?: R.drawable.no_photo
         , // Fallback to local drawable if URL is null
         placeholder = painterResource(id = R.drawable.loading),
         error = painterResource(id = R.drawable.broken_image)
@@ -326,7 +319,7 @@ fun PlayerCell(
     modifier: Modifier = Modifier
 ) {
     val painter = rememberAsyncImagePainter(
-        model = playerDetails.mainPhoto ?: R.drawable.no_photo
+        model = playerDetails.mainPhoto?.link ?: R.drawable.no_photo
         , // Fallback to local drawable if URL is null
         placeholder = painterResource(id = R.drawable.loading),
         error = painterResource(id = R.drawable.broken_image)

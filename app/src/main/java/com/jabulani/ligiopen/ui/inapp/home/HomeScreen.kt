@@ -1,25 +1,19 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jabulani.ligiopen.AppViewModelFactory
-import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
+import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 
@@ -42,23 +36,24 @@ fun HomeScreenComposable(
         modifier = Modifier
             .safeDrawingPadding()
     ) {
-        HomeScreen()
+        HomeScreen(
+            fixtures = fixtures
+        )
 
     }
 }
 
 @Composable
 fun HomeScreen(
-
+    fixtures: List<FixtureData>,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Text(text = "Home")
+
     }
 }
 
@@ -66,6 +61,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     LigiopenTheme {
-        HomeScreen()
+        HomeScreen(
+            fixtures = fixtures
+        )
     }
 }

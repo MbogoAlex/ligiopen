@@ -87,13 +87,13 @@ fun PlayerDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val painter = rememberAsyncImagePainter(
-        model = playerDetails.mainPhoto ?: R.drawable.no_photo
+        model = playerDetails.mainPhoto?.link ?: R.drawable.no_photo
         , // Fallback to local drawable if URL is null
         placeholder = painterResource(id = R.drawable.loading),
         error = painterResource(id = R.drawable.broken_image)
     )
     val painter2 = rememberAsyncImagePainter(
-        model = clubDetails.clubLogo ?: R.drawable.no_photo
+        model = clubDetails.clubLogo.link
         , // Fallback to local drawable if URL is null
         placeholder = painterResource(id = R.drawable.loading),
         error = painterResource(id = R.drawable.broken_image)
@@ -102,28 +102,24 @@ fun PlayerDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        ElevatedCard(
-            shape = RoundedCornerShape(0.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                IconButton(onClick = navigateToPreviousScreen) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Previous screen"
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "Player Profile",
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    fontWeight = FontWeight.Bold,
+            IconButton(onClick = navigateToPreviousScreen) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Previous screen"
                 )
-                Spacer(modifier = Modifier.weight(1f))
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Player Profile",
+                fontSize = screenFontSize(x = 14.0).sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.weight(1f))
         }
 //        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
         Column(
