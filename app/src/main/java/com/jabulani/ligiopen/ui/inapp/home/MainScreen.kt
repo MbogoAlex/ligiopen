@@ -23,9 +23,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -36,6 +34,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,16 +46,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
+import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
+import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileScreenComposable
@@ -87,8 +91,33 @@ fun MainScreenComposable(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    val viewModel: MainScreenViewModel = viewModel(factory = AppViewModelFactory.Factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        when(lifecycleState) {
+            Lifecycle.State.DESTROYED -> {}
+            Lifecycle.State.INITIALIZED -> {}
+            Lifecycle.State.CREATED -> {}
+            Lifecycle.State.STARTED -> {}
+            Lifecycle.State.RESUMED -> {
+                viewModel.getInitialData()
+            }
+        }
+    }
+
+    if(uiState.loadingStatus == LoadingStatus.FAIL) {
+        if(uiState.unauthorized) {
+            val email = uiState.userAccount.email
+            val password = uiState.userAccount.password
+
+            navigateToLoginScreenWithArgs(email, password)
+        }
+        viewModel.resetStatus()
+    }
 
     BackHandler(onBack = { (context as Activity?)?.finish() })
 
@@ -150,6 +179,7 @@ fun MainScreenComposable(
                 currentTab = it
             },
             tabs = tabs,
+            fixtures = uiState.fixtures,
             navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
             navigateToClubDetailsScreen = navigateToClubDetailsScreen,
             navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
@@ -171,6 +201,7 @@ fun MainScreen(
     currentTab: HomeScreenTab,
     onChangeTab: (tab: HomeScreenTab) -> Unit,
     tabs: List<HomeScreenTabItem>,
+    fixtures: List<FixtureData>,
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToClubDetailsScreen: (clubId: String) -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
@@ -297,7 +328,10 @@ fun MainScreen(
                     }
 
                     HomeScreenTab.HOME -> {
-                        HomeScreenComposable()
+                        HomeScreenComposable(
+                            fixtures = fixtures,
+                            navigateToPostMatchScreen = navigateToPostMatchScreen
+                        )
                     }
                     HomeScreenTab.STANDINGS -> {
                         StandingsScreenComposable()
@@ -423,6 +457,7 @@ fun MainScreenPreview() {
             currentTab = HomeScreenTab.NEWS,
             onChangeTab = {},
             tabs = listOf(),
+            fixtures = fixtures,
             scope = null,
             navigateToNewsDetailsScreen = {},
             navigateToClubDetailsScreen = {},

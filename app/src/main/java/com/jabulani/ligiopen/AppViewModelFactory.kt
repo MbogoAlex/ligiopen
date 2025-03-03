@@ -13,6 +13,7 @@ import com.jabulani.ligiopen.ui.inapp.clubs.PlayerDetailsViewModel
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesViewModel
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenViewModel
 import com.jabulani.ligiopen.ui.inapp.home.HomeViewModel
+import com.jabulani.ligiopen.ui.inapp.home.MainScreenViewModel
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileViewModel
 import com.jabulani.ligiopen.ui.start.SplashViewModel
 
@@ -91,6 +92,13 @@ object AppViewModelFactory {
 
         initializer {
             FixturesViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository
+            )
+        }
+
+        initializer {
+            MainScreenViewModel(
                 apiRepository = ligiopenApplication().container.apiRepository,
                 dbRepository = ligiopenApplication().container.dbRepository
             )

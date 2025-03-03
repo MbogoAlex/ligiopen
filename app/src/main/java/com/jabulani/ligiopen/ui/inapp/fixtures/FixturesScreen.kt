@@ -20,8 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -130,9 +131,7 @@ fun FixturesScreen(
                         fixtureData = fixture,
                         navigateToPostMatchScreen = navigateToPostMatchScreen
                     )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
                 }
             }
 
@@ -147,204 +146,214 @@ fun FixtureCard(
     modifier: Modifier = Modifier
 ) {
 
-    Column(
-        modifier = Modifier
-            .clickable {
-                navigateToPostMatchScreen(fixtureData.postMatchAnalysisId.toString(), fixtureData.matchFixtureId.toString(), fixtureData.matchLocationId.toString())
-            }
+    ElevatedCard(
+        onClick = {
+            navigateToPostMatchScreen(
+                fixtureData.postMatchAnalysisId.toString(),
+                fixtureData.matchFixtureId.toString(),
+                fixtureData.matchLocationId.toString()
+            )
+        }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .padding(
+                    screenWidth(x = 16.0)
+                )
         ) {
-            Box(
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
             ) {
-                Row {
-                    AsyncImage(
-                        model = fixtureData.homeClub.clubLogo.link,
-                        contentDescription = fixtureData.homeClub.name,
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(RoundedCornerShape(screenWidth(x = 8.0))),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    Column {
-                        Text(
-                            text = fixtureData.homeClub.name,
-                            fontSize = screenFontSize(x = 16.0).sp
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row {
+                        AsyncImage(
+                            model = fixtureData.homeClub.clubLogo.link,
+                            contentDescription = fixtureData.homeClub.name,
+                            modifier = Modifier
+                                .size(screenWidth(x = 24.0))
+                                .clip(RoundedCornerShape(screenWidth(x = 8.0))),
+                            contentScale = ContentScale.Crop
                         )
+                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                        Column {
+                            Text(
+                                text = fixtureData.homeClub.name,
+                                fontSize = screenFontSize(x = 16.0).sp
+                            )
+                            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                            Text(
+                                text = "HOME",
+                                fontSize = screenFontSize(x = 10.0).sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "VS",
+                        fontSize = screenFontSize(x = 16.0).sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if(fixtureData.matchStatus != MatchStatus.CANCELLED && fixtureData.matchStatus != MatchStatus.PENDING) {
                         Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                        Text(
-                            text = "HOME",
-                            fontSize = screenFontSize(x = 10.0).sp,
-                            fontWeight = FontWeight.Bold
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = fixtureData.homeClubScore!!.toString(),
+                                fontSize = screenFontSize(x = 14.0).sp
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                            Text(
+                                text = ":",
+                                fontSize = screenFontSize(x = 14.0).sp
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                            Text(
+                                text = fixtureData.awayClubScore!!.toString(),
+                                fontSize = screenFontSize(x = 14.0).sp
+                            )
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = fixtureData.awayClub.name,
+                                fontSize = screenFontSize(x = 16.0).sp
+                            )
+                            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                            Text(
+                                text = "AWAY",
+                                fontSize = screenFontSize(x = 10.0).sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                        AsyncImage(
+                            model = fixtureData.awayClub.clubLogo.link,
+                            contentDescription = fixtureData.awayClub.name,
+                            modifier = Modifier
+                                .size(screenWidth(x = 24.0))
+                                .clip(RoundedCornerShape(screenWidth(x = 8.0))),
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
             }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(screenWidth(x = 4.0)),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                val matchStatusColor = when (fixtureData.matchStatus) {
+                    MatchStatus.PENDING -> Color(0xFF9E9E9E) // Gray - Neutral for pending matches
+                    MatchStatus.COMPLETED -> Color(0xFF4CAF50) // Green - Indicates match completion
+                    MatchStatus.CANCELLED -> Color(0xFFF44336) // Red - Signifies cancellation
+                    MatchStatus.FIRST_HALF -> Color(0xFFFFC107) // Amber - Active but early stage
+                    MatchStatus.HALF_TIME -> Color(0xFFFF9800) // Orange - Signals break time
+                    MatchStatus.SECOND_HALF -> Color(0xFFFFC107) // Amber - Ongoing second half
+                    MatchStatus.EXTRA_TIME_FIRST_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
+                    MatchStatus.EXTRA_TIME_HALF_TIME -> Color(0xFFFF9800) // Orange - Half-time in extra time
+                    MatchStatus.EXTRA_TIME_SECOND_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
+                    MatchStatus.PENALTY_SHOOTOUT -> Color(0xFF673AB7) // Purple - Indicates a high-stakes moment
+                }
+
+
+                val matchStatusIcon = when (fixtureData.matchStatus) {
+                    MatchStatus.PENDING -> R.drawable.clock // Clock icon
+                    MatchStatus.COMPLETED -> R.drawable.check_mark // Checkmark icon
+                    MatchStatus.CANCELLED -> R.drawable.close // Cross icon
+                    MatchStatus.FIRST_HALF -> R.drawable.ball
+                    MatchStatus.HALF_TIME -> R.drawable.half_time
+                    MatchStatus.SECOND_HALF -> R.drawable.ball
+                    MatchStatus.EXTRA_TIME_FIRST_HALF -> R.drawable.ball
+                    MatchStatus.EXTRA_TIME_HALF_TIME -> R.drawable.half_time
+                    MatchStatus.EXTRA_TIME_SECOND_HALF -> R.drawable.ball
+                    MatchStatus.PENALTY_SHOOTOUT -> R.drawable.ball
+                }
+
+                Icon(
+                    painter = painterResource(id = matchStatusIcon),
+                    contentDescription = fixtureData.matchStatus.name,
+                    tint = matchStatusColor,
+                    modifier = Modifier.size(screenWidth(x = 16.0))
+                )
+
+                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                 Text(
-                    text = "VS",
-                    fontSize = screenFontSize(x = 16.0).sp,
+                    text = fixtureData.matchStatus.name,
+                    color = matchStatusColor,
+                    fontSize = screenFontSize(x = 14.0).sp,
                     fontWeight = FontWeight.Bold
                 )
-                if(fixtureData.matchStatus != MatchStatus.CANCELLED && fixtureData.matchStatus != MatchStatus.PENDING) {
-                    Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+
+                Spacer(modifier = Modifier.weight(1f))
+
+
+                TextButton(
+                    onClick = {
+                        navigateToPostMatchScreen(fixtureData.postMatchAnalysisId.toString(), fixtureData.matchFixtureId.toString(), fixtureData.matchLocationId.toString())
+                    }
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = fixtureData.homeClubScore!!.toString(),
+                            text = "Match details",
                             fontSize = screenFontSize(x = 14.0).sp
                         )
                         Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                        Text(
-                            text = ":",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                        Text(
-                            text = fixtureData.awayClubScore!!.toString(),
-                            fontSize = screenFontSize(x = 14.0).sp
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Match details"
                         )
                     }
                 }
             }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Text(
-                            text = fixtureData.awayClub.name,
-                            fontSize = screenFontSize(x = 16.0).sp
-                        )
-                        Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                        Text(
-                            text = "AWAY",
-                            fontSize = screenFontSize(x = 10.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    AsyncImage(
-                        model = fixtureData.awayClub.clubLogo.link,
-                        contentDescription = fixtureData.awayClub.name,
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(RoundedCornerShape(screenWidth(x = 8.0))),
-                        contentScale = ContentScale.Crop
+            // Show "Buy Tickets" button if match is PENDING
+            if (fixtureData.matchStatus == MatchStatus.PENDING) {
+                Button(
+                    onClick = { /* Handle ticket purchase */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2962FF), // Blue button
+                        contentColor = Color.White
                     )
-                }
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(screenWidth(x = 4.0)),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val matchStatusColor = when (fixtureData.matchStatus) {
-                MatchStatus.PENDING -> Color(0xFF9E9E9E) // Gray - Neutral for pending matches
-                MatchStatus.COMPLETED -> Color(0xFF4CAF50) // Green - Indicates match completion
-                MatchStatus.CANCELLED -> Color(0xFFF44336) // Red - Signifies cancellation
-                MatchStatus.FIRST_HALF -> Color(0xFFFFC107) // Amber - Active but early stage
-                MatchStatus.HALF_TIME -> Color(0xFFFF9800) // Orange - Signals break time
-                MatchStatus.SECOND_HALF -> Color(0xFFFFC107) // Amber - Ongoing second half
-                MatchStatus.EXTRA_TIME_FIRST_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
-                MatchStatus.EXTRA_TIME_HALF_TIME -> Color(0xFFFF9800) // Orange - Half-time in extra time
-                MatchStatus.EXTRA_TIME_SECOND_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
-                MatchStatus.PENALTY_SHOOTOUT -> Color(0xFF673AB7) // Purple - Indicates a high-stakes moment
-            }
-
-
-            val matchStatusIcon = when (fixtureData.matchStatus) {
-                MatchStatus.PENDING -> R.drawable.clock // Clock icon
-                MatchStatus.COMPLETED -> R.drawable.check_mark // Checkmark icon
-                MatchStatus.CANCELLED -> R.drawable.close // Cross icon
-                MatchStatus.FIRST_HALF -> R.drawable.ball
-                MatchStatus.HALF_TIME -> R.drawable.half_time
-                MatchStatus.SECOND_HALF -> R.drawable.ball
-                MatchStatus.EXTRA_TIME_FIRST_HALF -> R.drawable.ball
-                MatchStatus.EXTRA_TIME_HALF_TIME -> R.drawable.half_time
-                MatchStatus.EXTRA_TIME_SECOND_HALF -> R.drawable.ball
-                MatchStatus.PENALTY_SHOOTOUT -> R.drawable.ball
-            }
-
-            Icon(
-                painter = painterResource(id = matchStatusIcon),
-                contentDescription = fixtureData.matchStatus.name,
-                tint = matchStatusColor,
-                modifier = Modifier.size(screenWidth(x = 16.0))
-            )
-
-            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-            Text(
-                text = fixtureData.matchStatus.name,
-                color = matchStatusColor,
-                fontSize = screenFontSize(x = 14.0).sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-
-            TextButton(
-                onClick = {
-                    navigateToPostMatchScreen(fixtureData.postMatchAnalysisId.toString(), fixtureData.matchFixtureId.toString(), fixtureData.matchLocationId.toString())
-                }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Match details",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
+                    Text(text = "Buy Tickets", fontSize = screenFontSize(x = 14.0).sp)
                     Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Match details"
+                        painter = painterResource(id = R.drawable.ticket),
+                        contentDescription = "Buy Tickets"
                     )
                 }
+                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
             }
-        }
-        // Show "Buy Tickets" button if match is PENDING
-        if (fixtureData.matchStatus == MatchStatus.PENDING) {
-            Button(
-                onClick = { /* Handle ticket purchase */ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2962FF), // Blue button
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Buy Tickets", fontSize = screenFontSize(x = 14.0).sp)
-                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                Icon(
-                    painter = painterResource(id = R.drawable.ticket),
-                    contentDescription = "Buy Tickets"
-                )
-            }
-            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
         }
     }
 }
