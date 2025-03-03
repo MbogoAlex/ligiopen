@@ -523,7 +523,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -559,7 +559,7 @@ fun SingleMatchCommentaryComposable(
                             Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                             Text(
                                 fontSize = screenFontSize(x = 14.0).sp,
-                                text = matchCommentaryData.ownGoalEvent!!.summary,
+                                text = matchCommentaryData.ownGoalEvent?.summary ?: "Own goal by Gor Mahia team",
                                 fontWeight = FontWeight.W400
                             )
 
@@ -595,7 +595,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -683,7 +683,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -744,7 +744,7 @@ fun SingleMatchCommentaryComposable(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Assist:",
+                                    text = "Offender:",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = screenFontSize(x = 14.0).sp
                                 )
@@ -771,7 +771,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -827,7 +827,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -883,7 +883,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -954,7 +954,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1026,7 +1026,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1098,7 +1098,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1171,7 +1171,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1244,7 +1244,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1316,7 +1316,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)
@@ -1389,7 +1389,7 @@ fun SingleMatchCommentaryComposable(
                                     modifier = Modifier
                                         .size(screenWidth(x = 48.0))
                                         .clip(CircleShape)
-                                        .background(Color.Red)
+                                        .background(Color.White)
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(context = LocalContext.current)

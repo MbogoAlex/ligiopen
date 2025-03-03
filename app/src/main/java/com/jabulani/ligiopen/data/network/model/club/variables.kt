@@ -20,6 +20,23 @@ val club = ClubDetails(
     players = players
 )
 
+val emptyClub = ClubDetails(
+    clubId = 0,
+    clubLogo = fileData,
+    clubMainPhoto = fileData,
+    name = "",
+    clubAbbreviation = "",
+    description = "",
+    country = "",
+    county = "",
+    town = "",
+    startedOn = "",
+    createdAt = "",
+    archived = false,
+    archivedAt = null,
+    players = emptyList()
+)
+
 val clubs = List(10) {index ->
     ClubDetails(
         clubId = 1 + index,

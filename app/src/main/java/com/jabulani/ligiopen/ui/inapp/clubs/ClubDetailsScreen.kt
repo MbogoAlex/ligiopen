@@ -305,7 +305,7 @@ fun ClubOverviewScreen(
             ) {
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    text = "${clubDetails.name} (${clubDetails.clubAbbreviation})",
+                    text = if(clubDetails.name.isNotEmpty()) "${clubDetails.name} (${clubDetails.clubAbbreviation})" else "",
                     fontSize = screenFontSize(x = 22.0).sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)

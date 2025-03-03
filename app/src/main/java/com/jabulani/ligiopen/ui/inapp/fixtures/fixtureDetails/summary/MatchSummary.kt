@@ -107,7 +107,7 @@ fun MatchSummary(
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.ic_broken_image),
+                error = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop,
                 contentDescription = "Match location",
                 modifier = Modifier
@@ -136,7 +136,7 @@ fun MatchSummary(
                             .crossfade(true)
                             .build(),
                         placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
+                        error = painterResource(id = R.drawable.loading_img),
                         contentScale = ContentScale.Crop,
                         contentDescription = "Home club logo",
                         modifier = Modifier
@@ -179,7 +179,7 @@ fun MatchSummary(
                             .crossfade(true)
                             .build(),
                         placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
+                        error = painterResource(id = R.drawable.loading_img),
                         contentScale = ContentScale.Crop,
                         contentDescription = "Away club logo",
                         modifier = Modifier
@@ -249,7 +249,7 @@ fun MatchSummary(
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(id = R.drawable.loading_img),
-                    error = painterResource(id = R.drawable.ic_broken_image),
+                    error = painterResource(id = R.drawable.loading_img),
                     contentScale = ContentScale.Crop,
                     contentDescription = "Home club logo",
                     modifier = Modifier
@@ -263,7 +263,7 @@ fun MatchSummary(
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(id = R.drawable.loading_img),
-                    error = painterResource(id = R.drawable.ic_broken_image),
+                    error = painterResource(id = R.drawable.loading_img),
                     contentScale = ContentScale.Crop,
                     contentDescription = "Away club logo",
                     modifier = Modifier
@@ -294,7 +294,7 @@ fun MatchEventCell(
     commentary: MatchCommentaryData,
     modifier: Modifier = Modifier
 ) {
-    if(commentary.mainPlayer?.clubId == commentary.homeClub.clubId) {
+    if(commentary.mainPlayer?.clubId == commentary.homeClub.clubId && commentary.matchEventType != MatchEventType.KICK_OFF) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -767,13 +767,22 @@ fun MatchEventCell(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = screenFontSize(x = 14.0).sp,
                         )
-                        if(commentary.penaltyEvent!!.isScored) {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Scored)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        if(commentary.penaltyEvent?.isScored != null) {
+                            if(commentary.penaltyEvent.isScored) {
+                                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                                Text(
+                                    text = "(Scored)",
+                                    fontSize = screenFontSize(x = 14.0).sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                                Text(
+                                    text = "(Missed)",
+                                    fontSize = screenFontSize(x = 14.0).sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         } else {
                             Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
                             Text(
