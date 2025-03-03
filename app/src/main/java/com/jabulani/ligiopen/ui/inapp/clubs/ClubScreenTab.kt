@@ -4,8 +4,8 @@ package com.jabulani.ligiopen.ui.inapp.clubs
 enum class ClubScreenTab {
     INFO,
     NEWS,
-    FIXTURES,
-    SCORES
+    MATCHES,
+    SHOP
 }
 
 data class ClubScreenTabItem(

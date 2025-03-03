@@ -8,6 +8,7 @@ import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 data class FixturesUiData(
     val userAccount: UserAccount = userAccountDt,
     val fixtures: List<FixtureData> = emptyList(),
+    val clubId: Int? = null,
     val unauthorized: Boolean = false,
     val loadingStatus: LoadingStatus = LoadingStatus.LOADING
 )

@@ -132,6 +132,12 @@ fun NavigationGraph(
                 },
                 navigateToPlayerDetailsScreen = {
                     navController.navigate("${PlayerDetailsScreenDestination.route}/${it}")
+                },
+                navigateToLoginScreenWithArgs = {email, password ->
+                    navController.navigate("${LoginScreenDestination.route}/$email/$password")
+                },
+                navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->
+                    navController.navigate("${HighlightsScreenDestination.route}/${postMatchId}/${fixtureId}/${locationId}")
                 }
             )
         }
@@ -155,6 +161,12 @@ fun NavigationGraph(
                 },
                 navigateToPlayerDetailsScreen = {
                     navController.navigate("${PlayerDetailsScreenDestination.route}/${it}")
+                },
+                navigateToLoginScreenWithArgs = {email, password ->
+                    navController.navigate("${LoginScreenDestination.route}/$email/$password")
+                },
+                navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->
+                    navController.navigate("${HighlightsScreenDestination.route}/${postMatchId}/${fixtureId}/${locationId}")
                 }
             )
         }

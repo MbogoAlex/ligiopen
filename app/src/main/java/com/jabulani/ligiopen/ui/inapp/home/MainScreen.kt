@@ -119,7 +119,7 @@ fun MainScreenComposable(
         viewModel.resetStatus()
     }
 
-    BackHandler(onBack = { (context as Activity?)?.finish() })
+
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -156,6 +156,14 @@ fun MainScreenComposable(
     var currentTab by rememberSaveable {
         mutableStateOf(HomeScreenTab.HOME)
     }
+
+    BackHandler(onBack = {
+        if(currentTab != HomeScreenTab.HOME) {
+            currentTab = HomeScreenTab.HOME
+        } else {
+            (context as Activity?)?.finish()
+        }
+    })
 
     Box(
         modifier = Modifier

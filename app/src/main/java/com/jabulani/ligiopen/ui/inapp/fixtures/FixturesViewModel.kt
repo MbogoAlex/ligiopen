@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jabulani.ligiopen.data.db.DBRepository
@@ -18,10 +19,19 @@ import kotlinx.coroutines.withContext
 
 class FixturesViewModel(
     private val apiRepository: ApiRepository,
-    private val dbRepository: DBRepository
+    private val dbRepository: DBRepository,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _uiState = MutableStateFlow(FixturesUiData())
     val uiState: StateFlow<FixturesUiData> = _uiState.asStateFlow()
+
+    fun updateClubId(clubId: Int) {
+        _uiState.update {
+            it.copy(
+                clubId = clubId
+            )
+        }
+    }
 
     private fun getMatchFixtures() {
 //        _uiState.update {
@@ -34,7 +44,8 @@ class FixturesViewModel(
             try {
                val response = apiRepository.getMatchFixtures(
                    token = uiState.value.userAccount.token,
-                   status = null
+                   status = null,
+                   clubId = uiState.value.clubId
                )
 
                 if(response.isSuccessful) {

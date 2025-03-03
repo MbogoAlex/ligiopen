@@ -2,7 +2,7 @@ package com.jabulani.ligiopen.ui.inapp.clubs
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,21 +10,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,13 +52,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
 import com.jabulani.ligiopen.data.network.model.club.club
 import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
-import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureItemCell
+import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
+import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
+import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.news.newsItem
 import com.jabulani.ligiopen.ui.nav.AppNavigation
@@ -77,6 +84,8 @@ fun ClubDetailsScreenComposable(
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
+    navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as Activity
@@ -97,14 +106,14 @@ fun ClubDetailsScreenComposable(
             tab = ClubScreenTab.NEWS
         ),
         ClubScreenTabItem(
-            name = "Fixtures",
-            icon = R.drawable.standings,
-            tab = ClubScreenTab.FIXTURES
+            name = "Matches",
+            icon = R.drawable.matches,
+            tab = ClubScreenTab.MATCHES
         ),
         ClubScreenTabItem(
-            name = "Scores",
-            icon = R.drawable.matches,
-            tab = ClubScreenTab.SCORES
+            name = "Shop",
+            icon = R.drawable.shop,
+            tab = ClubScreenTab.SHOP
         ),
     )
 
@@ -112,28 +121,32 @@ fun ClubDetailsScreenComposable(
         mutableStateOf(ClubScreenTab.INFO)
     }
 
-    ElevatedCard(
-        shape = RoundedCornerShape(0.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Box(
-            modifier = Modifier
-                .safeDrawingPadding()
-        ) {
-            ClubDetailsScreen(
-                clubDetails = uiState.clubDetails,
-                tabs = tabs,
-                onChangeTab = {
-                    selectedTab = it
-                },
-                selectedTab = selectedTab,
-                navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
-                navigateToPreviousScreen = navigateToPreviousScreen,
-                navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
-                navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
-            )
+    BackHandler(onBack = {
+        if(selectedTab != ClubScreenTab.INFO) {
+            selectedTab = ClubScreenTab.INFO
+        } else {
+            navigateToPreviousScreen()
         }
+    })
+
+    Box(
+        modifier = Modifier
+            .safeDrawingPadding()
+    ) {
+        ClubDetailsScreen(
+            clubDetails = uiState.clubDetails,
+            tabs = tabs,
+            onChangeTab = {
+                selectedTab = it
+            },
+            selectedTab = selectedTab,
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
+            navigateToPreviousScreen = navigateToPreviousScreen,
+            navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+            navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen,
+            navigateToPostMatchScreen = navigateToPostMatchScreen,
+            navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs
+        )
     }
 
 }
@@ -148,6 +161,8 @@ fun ClubDetailsScreen(
     navigateToNewsDetailsScreen: () -> Unit,
     navigateToPreviousScreen: () -> Unit,
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
+    navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -186,12 +201,19 @@ fun ClubDetailsScreen(
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.club_logo),
-                contentDescription = null,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(clubDetails.clubLogo.link)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                error = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.Crop,
+                contentDescription = "Club logo",
                 modifier = Modifier
                     .size(screenWidth(x = 24.0))
                     .clip(CircleShape)
+
             )
             Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
             Text(
@@ -210,29 +232,30 @@ fun ClubDetailsScreen(
                 )
             }
             ClubScreenTab.NEWS -> {
-                ClubNewsScreen(
+                NewsScreenComposable(
                     navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
                     modifier = Modifier
                         .weight(1f)
                 )
             }
-            ClubScreenTab.FIXTURES -> {
-                ClubFixturesScreen(
-                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+            ClubScreenTab.MATCHES -> {
+                FixturesScreenComposable(
+                    navigateToPostMatchScreen = navigateToPostMatchScreen,
+                    navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
+                    clubId = clubDetails.clubId,
                     modifier = Modifier
-                        .padding(
-                            vertical = screenHeight(x = 16.0),
-                            horizontal = screenWidth(x = 16.0)
-                        )
                         .weight(1f)
                 )
             }
-            ClubScreenTab.SCORES -> {
-                ClubScoresScreen(
-                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
+            ClubScreenTab.SHOP -> {
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
+                        .fillMaxSize()
                         .weight(1f)
-                )
+                ) {
+                    Text(text = "${clubDetails.name} shop")
+                }
             }
         }
         ClubDetailsScreenBottomBar(
@@ -243,75 +266,111 @@ fun ClubDetailsScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClubOverviewScreen(
     clubDetails: ClubDetails,
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val rows = listOf(1, 2, 3, 4, 5)
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    val painter = rememberAsyncImagePainter(
-        model = clubDetails.clubMainPhoto?.link ?: R.drawable.no_photo
-        , // Fallback to local drawable if URL is null
-        placeholder = painterResource(id = R.drawable.loading),
-        error = painterResource(id = R.drawable.broken_image)
-    )
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(screenHeight(x = 16.0))
     ) {
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Column(
-            modifier = Modifier
-                .padding(
-                    vertical = screenHeight(x = 16.0),
-                    horizontal = screenWidth(x = 16.0)
+        item {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(clubDetails.clubMainPhoto?.link)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                error = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.Crop,
+                contentDescription = "Club main photo",
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        vertical = screenHeight(x = 16.0),
+                        horizontal = screenWidth(x = 16.0)
+                    )
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = "${clubDetails.name} (${clubDetails.clubAbbreviation})",
+                    fontSize = screenFontSize(x = 22.0).sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
-        ) {
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = clubDetails.description,
+                    fontSize = screenFontSize(x = 14.0).sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        }
+
+        // 🔥 Sticky Header for Players Section
+        stickyHeader {
             Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                text = clubDetails.name,
-                fontSize = screenFontSize(x = 16.0).sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                text = clubDetails.description,
-                fontSize = screenFontSize(x = 14.0).sp
-            )
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
                 text = "Players",
-                fontSize = screenFontSize(x = 16.0).sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = screenFontSize(x = 18.0).sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(
+                        horizontal = screenWidth(x = 16.0)
+                    )
             )
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            clubDetails.players.forEach { player ->
-                PlayerCell(
-                    playerDetails = player,
-                    modifier = Modifier
-                        .padding(
-                            vertical = screenHeight(x = 8.0)
-                        )
-                        .clickable {
-                            navigateToPlayerDetailsScreen(player.playerId.toString())
-                        }
-                )
+        }
+
+        // 🔥 LazyVerticalGrid for Players
+        item {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(screenHeight(x = 8.0)),
+                horizontalArrangement = Arrangement.spacedBy(screenWidth(x = 8.0)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = screenHeight * 0.8f) // Limits the height so grid scrolls within LazyColumn
+                    .padding(
+                        start = screenWidth(16.0),
+                        end = screenWidth(16.0),
+                        bottom = screenHeight(16.0)
+                    )
+            ) {
+                items(clubDetails.players) { player ->
+                    PlayerCell(
+                        playerDetails = player,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navigateToPlayerDetailsScreen(player.playerId.toString())
+                            }
+                            .padding(4.dp)
+                    )
+                }
             }
         }
     }
 }
+
+
+
+
+
 
 @Composable
 fun PlayerCell(
@@ -325,57 +384,67 @@ fun PlayerCell(
         error = painterResource(id = R.drawable.broken_image)
     )
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = painter,
-            contentDescription = null,
-            modifier = Modifier
-                .size(screenWidth(x = 72.0))
-        )
-//                Spacer(modifier = Modifier.weight(1f))
+    Card(modifier = modifier) {
         Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = "Name: ",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 14.0).sp
-                )
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = playerDetails.username,
-                    fontSize = screenFontSize(x = 14.0).sp
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = "Age: ",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 14.0).sp
-                )
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = "${playerDetails.age} years",
-                    fontSize = screenFontSize(x = 14.0).sp
-                )
-            }
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                text = playerDetails.playerPosition.name.lowercase().replaceFirstChar { it.uppercase() },
-                fontSize = screenFontSize(x = 14.0).sp
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(playerDetails.mainPhoto?.link)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                error = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.Crop,
+                contentDescription = "Player photo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f) // Force square aspect ratio
             )
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+            Column(
+                modifier = Modifier
+                    .padding(screenWidth(x = 8.0))
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Name: ",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = playerDetails.username,
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "Age: ",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                    Text(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = "${playerDetails.age} years",
+                        fontSize = screenFontSize(x = 14.0).sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = playerDetails.playerPosition.name.lowercase().replaceFirstChar { it.uppercase() },
+                    fontSize = screenFontSize(x = 14.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
@@ -416,41 +485,6 @@ fun ClubNewsScreen(
     }
 }
 
-@Composable
-fun ClubFixturesScreen(
-    navigateToFixtureDetailsScreen: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = modifier
-    ) {
-        items(10) {
-            Column(
-                modifier = Modifier
-                    .clickable {
-                        navigateToFixtureDetailsScreen()
-                    }
-            ) {
-                FixtureItemCell(
-                    navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
-                    modifier = Modifier
-                        .padding(
-                            start = screenWidth(x = 4.0),
-                            end = screenWidth(x = 4.0),
-//                            top = screenHeight(x = 8.0),
-                            bottom = screenHeight(x = 8.0)
-                        )
-                        .clickable {
-                            navigateToFixtureDetailsScreen()
-                        }
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-            }
-        }
-    }
-}
 
 @Composable
 fun ClubScoresScreen(
@@ -532,12 +566,12 @@ fun ClubDetailsScreenPreview() {
         ClubScreenTabItem(
             name = "Fixtures",
             icon = R.drawable.standings,
-            tab = ClubScreenTab.FIXTURES
+            tab = ClubScreenTab.MATCHES
         ),
         ClubScreenTabItem(
             name = "Scores",
             icon = R.drawable.matches,
-            tab = ClubScreenTab.FIXTURES
+            tab = ClubScreenTab.MATCHES
         ),
     )
 
@@ -556,7 +590,9 @@ fun ClubDetailsScreenPreview() {
             navigateToFixtureDetailsScreen = { /*TODO*/ },
             navigateToNewsDetailsScreen = { /*TODO*/ },
             navigateToPreviousScreen = { /*TODO*/ },
-            navigateToPlayerDetailsScreen = {}
+            navigateToPlayerDetailsScreen = {},
+            navigateToPostMatchScreen = { _ , _, _, ->},
+            navigateToLoginScreenWithArgs = { _ , _, ->}
         )
     }
 }

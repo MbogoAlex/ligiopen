@@ -34,7 +34,8 @@ class MainScreenViewModel(
             try {
                 val response = apiRepository.getMatchFixtures(
                     token = uiState.value.userAccount.token,
-                    status = null
+                    status = null,
+                    clubId = null
                 )
 
                 if(response.isSuccessful) {

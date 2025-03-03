@@ -1,6 +1,5 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -49,19 +47,36 @@ import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
 import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
+import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 
+object FixturesScreenDestination: AppNavigation {
+    override val title: String = "Fixtures screen"
+    override val route: String = "fixtures-screen"
+    val clubId: String = "clubId"
+    val routeWithClubId: String = "$route/{$clubId}"
+}
+
 @Composable
 fun FixturesScreenComposable(
+    clubId: Int? = null,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: FixturesViewModel = viewModel(factory = AppViewModelFactory.Factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if(clubId != null) {
+            viewModel.updateClubId(
+                clubId = clubId
+            )
+        }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -125,13 +140,26 @@ fun FixturesScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn {
-                items(fixtures) { fixture ->
-                    FixtureCard(
-                        fixtureData = fixture,
-                        navigateToPostMatchScreen = navigateToPostMatchScreen
+            if(fixtures.isEmpty()) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "No fixtures found",
+                        fontSize = screenFontSize(x = 14.0).sp
                     )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                }
+            } else {
+                LazyColumn {
+                    items(fixtures) { fixture ->
+                        FixtureCard(
+                            fixtureData = fixture,
+                            navigateToPostMatchScreen = navigateToPostMatchScreen
+                        )
+                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                    }
                 }
             }
 
@@ -183,7 +211,8 @@ fun FixtureCard(
                         Column {
                             Text(
                                 text = fixtureData.homeClub.name,
-                                fontSize = screenFontSize(x = 16.0).sp
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                             Text(
@@ -240,6 +269,7 @@ fun FixtureCard(
                         ) {
                             Text(
                                 text = fixtureData.awayClub.name,
+                                fontWeight = FontWeight.Bold,
                                 fontSize = screenFontSize(x = 16.0).sp
                             )
                             Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))

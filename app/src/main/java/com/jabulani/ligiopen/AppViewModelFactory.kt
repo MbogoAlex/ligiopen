@@ -93,7 +93,8 @@ object AppViewModelFactory {
         initializer {
             FixturesViewModel(
                 apiRepository = ligiopenApplication().container.apiRepository,
-                dbRepository = ligiopenApplication().container.dbRepository
+                dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
             )
         }
 
