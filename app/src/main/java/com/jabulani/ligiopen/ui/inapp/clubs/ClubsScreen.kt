@@ -57,7 +57,6 @@ fun ClubsScreenComposable(
     navigateToClubDetailsScreen: (clubId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BackHandler(onBack = switchToHomeTab)
 
     val viewModel: ClubsViewModel = viewModel(factory = AppViewModelFactory.Factory)
     val uiState by viewModel.uiState.collectAsState()
