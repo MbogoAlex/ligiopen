@@ -9,6 +9,8 @@ import com.jabulani.ligiopen.data.network.model.match.commentary.FullMatchRespon
 import com.jabulani.ligiopen.data.network.model.match.commentary.MatchCommentaryResponseBody
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureResponseBody
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixturesResponseBody
+import com.jabulani.ligiopen.data.network.model.news.NewsResponseBody
+import com.jabulani.ligiopen.data.network.model.news.SingleNewsResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginRequestBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationRequestBody
@@ -83,4 +85,18 @@ interface ApiRepository {
         token: String,
         playerId: Int,
     ): Response<PlayerResponseBody>
+
+    //    Get all news
+
+    suspend fun getAllNews(
+        token: String,
+        clubId: Int?
+    ): Response<NewsResponseBody>
+
+    //    Get single news
+
+    suspend fun getSingleNews(
+        token: String,
+        newsId: Int,
+    ): Response<SingleNewsResponseBody>
 }

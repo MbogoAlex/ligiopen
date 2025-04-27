@@ -9,6 +9,8 @@ import com.jabulani.ligiopen.data.network.model.match.commentary.FullMatchRespon
 import com.jabulani.ligiopen.data.network.model.match.commentary.MatchCommentaryResponseBody
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureResponseBody
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixturesResponseBody
+import com.jabulani.ligiopen.data.network.model.news.NewsResponseBody
+import com.jabulani.ligiopen.data.network.model.news.SingleNewsResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginRequestBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationRequestBody
@@ -104,6 +106,21 @@ class ApiRepositoryImpl(private val apiService: ApiService): ApiRepository {
             token = "Bearer $token",
             playerId = playerId
         )
+
+    override suspend fun getAllNews(token: String, clubId: Int?): Response<NewsResponseBody> =
+        apiService.getAllNews(
+            token = "Bearer $token",
+            clubId = clubId
+        )
+
+    override suspend fun getSingleNews(
+        token: String,
+        newsId: Int
+    ): Response<SingleNewsResponseBody> =
+        apiService.getSingleNews(
+        token = "Bearer $token",
+        newsId = newsId
+    )
 
 
 }

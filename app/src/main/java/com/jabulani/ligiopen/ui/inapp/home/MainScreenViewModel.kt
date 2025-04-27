@@ -76,12 +76,44 @@ class MainScreenViewModel(
         }
     }
 
+    private fun getNews() {
+        _uiState.update {
+            it.copy(
+                loadingStatus = LoadingStatus.LOADING
+            )
+        }
+        viewModelScope.launch {
+            try {
+                val response = apiRepository.getAllNews(
+                    token = uiState.value.userAccount.token,
+                    clubId = null
+                )
+
+                if(response.isSuccessful) {
+                    _uiState.update {
+                        it.copy(
+                            news = response.body()?.data!!,
+                            loadingStatus = LoadingStatus.SUCCESS
+                        )
+                    }
+                } else {
+                    Log.e("fetchNews", "response: $response")
+                }
+
+            } catch (e: Exception) {
+                Log.e("fetchNews", "e: $e")
+
+            }
+        }
+    }
+
     fun getInitialData() {
         viewModelScope.launch {
             while (uiState.value.userAccount.id == 0) {
                 delay(1000)
             }
             getMatchFixtures()
+            getNews()
         }
     }
 

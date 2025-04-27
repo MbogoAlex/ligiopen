@@ -14,6 +14,8 @@ import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesViewModel
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenViewModel
 import com.jabulani.ligiopen.ui.inapp.home.HomeViewModel
 import com.jabulani.ligiopen.ui.inapp.home.MainScreenViewModel
+import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsViewModel
+import com.jabulani.ligiopen.ui.inapp.news.NewsViewModel
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileViewModel
 import com.jabulani.ligiopen.ui.start.SplashViewModel
 
@@ -102,6 +104,21 @@ object AppViewModelFactory {
             MainScreenViewModel(
                 apiRepository = ligiopenApplication().container.apiRepository,
                 dbRepository = ligiopenApplication().container.dbRepository
+            )
+        }
+
+        initializer {
+            NewsViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository
+            )
+        }
+
+        initializer {
+            NewsDetailsViewModel(
+                apiRepository = ligiopenApplication().container.apiRepository,
+                dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
             )
         }
     }

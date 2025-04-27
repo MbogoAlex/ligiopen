@@ -1,7 +1,9 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
 import android.app.Activity
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -59,12 +62,14 @@ import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
 import com.jabulani.ligiopen.data.network.model.club.club
+import com.jabulani.ligiopen.data.network.model.news.NewsDto
+import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
+import com.jabulani.ligiopen.ui.inapp.news.NewsItemCard
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
-import com.jabulani.ligiopen.ui.inapp.news.newsItem
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -78,10 +83,11 @@ object ClubDetailsScreenDestination : AppNavigation {
     val routeWithArgs: String = "$route/{$clubId}"
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ClubDetailsScreenComposable(
     navigateToFixtureDetailsScreen: () -> Unit,
-    navigateToNewsDetailsScreen: () -> Unit,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     navigateToPreviousScreen: () -> Unit,
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
@@ -135,6 +141,7 @@ fun ClubDetailsScreenComposable(
     ) {
         ClubDetailsScreen(
             clubDetails = uiState.clubDetails,
+            clubNews = uiState.clubNews,
             tabs = tabs,
             onChangeTab = {
                 selectedTab = it
@@ -151,14 +158,16 @@ fun ClubDetailsScreenComposable(
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ClubDetailsScreen(
     clubDetails: ClubDetails,
+    clubNews: List<NewsDto>,
     tabs: List<ClubScreenTabItem>,
     onChangeTab: (tab: ClubScreenTab) -> Unit,
     selectedTab: ClubScreenTab,
     navigateToFixtureDetailsScreen: () -> Unit,
-    navigateToNewsDetailsScreen: () -> Unit,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     navigateToPreviousScreen: () -> Unit,
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
@@ -234,6 +243,7 @@ fun ClubDetailsScreen(
             ClubScreenTab.NEWS -> {
                 NewsScreenComposable(
                     navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
+                    clubId = clubDetails.clubId,
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -450,41 +460,6 @@ fun PlayerCell(
 }
 
 
-@Composable
-fun ClubNewsScreen(
-    navigateToNewsDetailsScreen: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(
-//                vertical = screenHeight(x = 16.0),
-//                horizontal = screenWidth(x = 16.0)
-            )
-    ) {
-        LazyColumn {
-            items(10) {index ->
-                Column(
-                    modifier = Modifier
-                        .clickable {
-                            navigateToNewsDetailsScreen()
-                        }
-                ) {
-                    NewsTile(
-                        newsItem = newsItem,
-                        modifier = Modifier
-//                            .padding(
-//                                top = screenHeight(x = 8.0)
-//                            )
-                    )
-                    HorizontalDivider()
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun ClubScoresScreen(
@@ -582,6 +557,7 @@ fun ClubDetailsScreenPreview() {
     LigiopenTheme {
         ClubDetailsScreen(
             clubDetails = club,
+            clubNews = news,
             tabs = tabs,
             onChangeTab = {
                 selectedTab = it

@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
 import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
+import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -122,47 +124,81 @@ fun FixturesScreen(
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                vertical = screenHeight(x = 16.0),
-                horizontal = screenWidth(x = 16.0)
-            )
-    ) {
-        if(loadingStatus == LoadingStatus.LOADING) {
-            Box(
-                contentAlignment = Alignment.Center,
+    Column {
+        Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = screenWidth(x = 8.0)
+                )
+
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                CircularProgressIndicator()
+                    .size(screenWidth(x = 56.0))
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+            Text(
+                text = HomeScreenTab.MATCHES.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                fontSize = screenFontSize(x = 26.0).sp,
+                fontWeight = FontWeight.W900
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                enabled = false,
+                onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.more),
+                    contentDescription = "More"
+                )
             }
-        } else {
-            if(fixtures.isEmpty()) {
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    vertical = screenHeight(x = 16.0),
+                    horizontal = screenWidth(x = 16.0)
+                )
+        ) {
+            if(loadingStatus == LoadingStatus.LOADING) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    Text(
-                        text = "No fixtures found",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
+                    CircularProgressIndicator()
                 }
             } else {
-                LazyColumn {
-                    items(fixtures) { fixture ->
-                        FixtureCard(
-                            fixtureData = fixture,
-                            navigateToPostMatchScreen = navigateToPostMatchScreen
+                if(fixtures.isEmpty()) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No fixtures found",
+                            fontSize = screenFontSize(x = 14.0).sp
                         )
-                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                    }
+                } else {
+                    LazyColumn {
+                        items(fixtures) { fixture ->
+                            FixtureCard(
+                                fixtureData = fixture,
+                                navigateToPostMatchScreen = navigateToPostMatchScreen
+                            )
+                            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        }
                     }
                 }
-            }
 
+            }
         }
     }
 }

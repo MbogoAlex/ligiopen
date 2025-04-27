@@ -1,9 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.news
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,121 +15,218 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
+import com.jabulani.ligiopen.data.network.model.news.NewsDto
+import com.jabulani.ligiopen.data.network.model.news.news
+import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
+import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
+import java.time.LocalDateTime
 
-val newsItem = NewsItem(
-    title = "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-    body = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)",
-    author = "Mike Kevin",
-    dateTime = "3:40 PM, July 15th, 2024",
-    titleImage = R.drawable.sports_news_item
-)
-
-val news = List(10) {
-    NewsItem(
-        title = "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        body = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)",
-        author = "Mike Kevin",
-        dateTime = "3:40 PM, July 15th, 2024",
-        titleImage = R.drawable.sports_news_item
-    )
-}
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NewsScreenComposable(
-    addTopPadding: Boolean = false,
-    navigateToNewsDetailsScreen: () -> Unit,
+    addTopPadding: Boolean = true,
+    clubId: Int? = null,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val viewModel: NewsViewModel = viewModel(factory = AppViewModelFactory.Factory)
+    val uiState by viewModel.uiState.collectAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        when(lifecycleState) {
+            Lifecycle.State.DESTROYED -> {}
+            Lifecycle.State.INITIALIZED -> {
+                viewModel.setClubId(clubId = clubId)
+            }
+            Lifecycle.State.CREATED -> {
+
+            }
+            Lifecycle.State.STARTED -> {
+
+            }
+            Lifecycle.State.RESUMED -> {
+                viewModel.getInitialData()
+            }
+        }
+    }
 
     Box(
         modifier = modifier
     ) {
         NewsScreen(
+            news = uiState.news,
             addTopPadding = addTopPadding,
-            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
+            loadingStatus = uiState.loadingStatus,
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
         )
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NewsScreen(
+    news: List<NewsDto>,
     addTopPadding: Boolean,
-    navigateToNewsDetailsScreen: () -> Unit,
+    loadingStatus: LoadingStatus,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = if(addTopPadding) modifier
-            .fillMaxSize()
-            .padding(
-                vertical = screenHeight(x = 16.0),
-                horizontal = screenWidth(x = 16.0)
-            ) else modifier
-            .fillMaxSize()
-            .padding(
-//                vertical = screenHeight(x = 16.0),
-                horizontal = screenWidth(x = 16.0)
-            )
-    ) {
-        LazyColumn {
-            item {
-                NewsTile(
-                    newsItem = newsItem,
-                    fullScreen = true,
-                    modifier = Modifier
+    Column {
+        Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = screenWidth(x = 8.0)
                 )
-                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(screenWidth(x = 56.0))
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+            Text(
+                text = HomeScreenTab.NEWS.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                fontSize = screenFontSize(x = 26.0).sp,
+                fontWeight = FontWeight.W900
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                enabled = false,
+                onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.more),
+                    contentDescription = "More"
+                )
             }
-            items(news) { newsItem ->
-                Column(
+        }
+        Column(
+            modifier = if(addTopPadding) modifier
+                .fillMaxSize()
+                .padding(
+                    vertical = screenHeight(x = 16.0),
+                    horizontal = screenWidth(x = 16.0)
+                ) else modifier
+                .fillMaxSize()
+                .padding(
+//                vertical = screenHeight(x = 16.0),
+                    horizontal = screenWidth(x = 16.0)
+                )
+        ) {
+            if(loadingStatus == LoadingStatus.LOADING) {
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .clickable {
-                            navigateToNewsDetailsScreen()
-                        }
+                        .fillMaxSize()
                 ) {
-                    NewsTile(
-                        newsItem = newsItem,
+                    CircularProgressIndicator()
+                }
+            } else {
+                if(news.isEmpty()) {
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "No news found",
+                            fontSize = screenFontSize(x = 14.0).sp
+                        )
+                    }
+                } else {
+                    LazyColumn {
+                        item {
+                            NewsTile(
+                                news = news[0],
+                                fullScreen = true,
+                                modifier = Modifier
+                            )
+                            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                        }
+                        items(news) { singleNews ->
+                            Column(
+                                modifier = Modifier
+                                    .clickable {
+                                        navigateToNewsDetailsScreen(singleNews.id.toString())
+                                    }
+                            ) {
+                                NewsTile(
+                                    news = singleNews,
+                                    modifier = Modifier
+                                )
+                                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                            }
+                        }
+
+                    }
                 }
             }
         }
     }
+
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NewsTile(
-    newsItem: NewsItem,
+    news: NewsDto,
     fullScreen: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     if(fullScreen) {
         Column {
             Card {
-                Image(
-                    painter = painterResource(id = R.drawable.gor_celebrate2),
-                    contentDescription = null,
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(news.coverPhoto.link)
+                        .crossfade(true)
+                        .build(),
+//                    placeholder = painterResource(id = R.drawable.loading_img),
+                    error = painterResource(id = R.drawable.loading_img),
                     contentScale = ContentScale.Crop,
+                    contentDescription = "Club logo",
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -139,14 +234,14 @@ fun NewsTile(
             Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = newsItem.title,
+                text = news.title,
                 fontSize = screenFontSize(x = 18.0).sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
-                text = newsItem.dateTime,
+                text = LocalDateTime.now().toString(),
                 fontSize = screenFontSize(x = 12.0).sp,
                 fontStyle = FontStyle.Italic
             )
@@ -166,11 +261,17 @@ fun NewsTile(
                     .width(screenWidth(x = 140.0))
                     .height(screenHeight(x = 80.0))
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sports_news_item),
-                    contentDescription = null,
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(news.coverPhoto.link)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(id = R.drawable.loading_img),
+                    error = painterResource(id = R.drawable.loading_img),
                     contentScale = ContentScale.Crop,
+                    contentDescription = "Club logo",
                     modifier = Modifier
+                        .fillMaxWidth()
 
                 )
             }
@@ -178,7 +279,7 @@ fun NewsTile(
             Column {
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    text = newsItem.title,
+                    text = news.title,
                     maxLines = 2,
                     fontSize = screenFontSize(x = 14.0).sp,
                     fontWeight = FontWeight.Bold
@@ -186,7 +287,7 @@ fun NewsTile(
                 Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    text = newsItem.dateTime,
+                    text = LocalDateTime.now().toString(),
                     fontSize = screenFontSize(x = 12.0).sp,
                     fontStyle = FontStyle.Italic
                 )
@@ -195,13 +296,16 @@ fun NewsTile(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun NewsScreenPreview() {
     LigiopenTheme {
         NewsScreen(
+            news = news,
             addTopPadding = false,
-            navigateToNewsDetailsScreen = {}
+            loadingStatus = LoadingStatus.INITIAL,
+            navigateToNewsDetailsScreen = {},
         )
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,6 +26,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +49,7 @@ import coil.request.ImageRequest
 import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.club.ClubDetails
+import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
@@ -80,48 +84,83 @@ fun ClubsScreen(
     loadingStatus: LoadingStatus,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                horizontal = screenWidth(x = 16.0),
-                vertical = screenHeight(x = 16.0)
-            )
-    ) {
-        if(loadingStatus == LoadingStatus.LOADING) {
-            Box(
-                contentAlignment = Alignment.Center,
+    Column {
+        Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = screenWidth(x = 8.0)
+                )
+
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                CircularProgressIndicator()
+                    .size(screenWidth(x = 56.0))
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+            Text(
+                text = HomeScreenTab.CLUBS.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                fontSize = screenFontSize(x = 26.0).sp,
+                fontWeight = FontWeight.W900
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                enabled = false,
+                onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.more),
+                    contentDescription = "More"
+                )
             }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(clubs) { club ->
-                    Column(
-                        modifier = Modifier
-                            .clickable {
-                                navigateToClubDetailsScreen(club.clubId.toString())
-                            }
-                            .padding(screenHeight(x = 8.0))
-                            .fillMaxWidth()
-                    ) {
-                        ClubItemTile(
-                            clubName = club.name,
-                            clubLogo = club.clubLogo.link,
-                            clubPhoto = club.clubMainPhoto?.link,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = screenWidth(x = 16.0),
+                    vertical = screenHeight(x = 16.0)
+                )
+        ) {
+            if(loadingStatus == LoadingStatus.LOADING) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(clubs) { club ->
+                        Column(
+                            modifier = Modifier
+                                .clickable {
+                                    navigateToClubDetailsScreen(club.clubId.toString())
+                                }
+                                .padding(screenHeight(x = 8.0))
+                                .fillMaxWidth()
+                        ) {
+                            ClubItemTile(
+                                clubName = club.name,
+                                clubLogo = club.clubLogo.link,
+                                clubPhoto = club.clubMainPhoto?.link,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
+
 }
 
 @Composable

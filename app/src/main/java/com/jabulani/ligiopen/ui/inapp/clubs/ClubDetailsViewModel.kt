@@ -1,5 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,12 +43,40 @@ class ClubDetailsViewModel(
                     _uiState.update {
                         it.copy(
                             clubDetails = response.body()?.data!!,
-                            loadingStatus = LoadingStatus.SUCCESS
+
                         )
                     }
+                    getNews()
                 }
 
             } catch (e: Exception) {
+
+            }
+        }
+    }
+
+    private fun getNews() {
+
+        viewModelScope.launch {
+            try {
+                val response = apiRepository.getAllNews(
+                    token = uiState.value.userAccount.token,
+                    clubId = uiState.value.clubDetails.clubId
+                )
+
+                if(response.isSuccessful) {
+                    _uiState.update {
+                        it.copy(
+                            clubNews = response.body()?.data!!,
+                            loadingStatus = LoadingStatus.SUCCESS
+                        )
+                    }
+                } else {
+                    Log.e("fetchNews", "response: $response")
+                }
+
+            } catch (e: Exception) {
+                Log.e("fetchNews", "e: $e")
 
             }
         }

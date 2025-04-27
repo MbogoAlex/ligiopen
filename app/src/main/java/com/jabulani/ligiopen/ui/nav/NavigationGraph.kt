@@ -1,5 +1,7 @@
 package com.jabulani.ligiopen.ui.nav
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -19,7 +21,6 @@ import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureDetailsScre
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.FixtureDetailsScreenDestination
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenDestination
-import com.jabulani.ligiopen.ui.inapp.home.HomeScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenDestination
 import com.jabulani.ligiopen.ui.inapp.home.MainScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.MainScreenDestination
@@ -28,6 +29,7 @@ import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenDestination
 import com.jabulani.ligiopen.ui.start.SplashScreenComposable
 import com.jabulani.ligiopen.ui.start.SplashScreenDestination
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
@@ -93,7 +95,7 @@ fun NavigationGraph(
             MainScreenComposable(
                 onSwitchTheme = onSwitchTheme,
                 navigateToNewsDetailsScreen = {
-                    navController.navigate(NewsDetailsScreenDestination.route)
+                    navController.navigate("${NewsDetailsScreenDestination.route}/$it")
                 },
                 navigateToClubDetailsScreen = {
                     navController.navigate("${ClubDetailsScreenDestination.route}/${it}")
@@ -112,7 +114,14 @@ fun NavigationGraph(
                 }
             )
         }
-        composable(NewsDetailsScreenDestination.route) {
+        composable(
+            NewsDetailsScreenDestination.routeWithNewsId,
+            arguments = listOf(
+                navArgument(NewsDetailsScreenDestination.newsId) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
             NewsDetailsScreenComposable(
                 navigateToPreviousScreen = {
                     navController.navigateUp()
@@ -122,7 +131,7 @@ fun NavigationGraph(
         composable(ClubDetailsScreenDestination.route) {
             ClubDetailsScreenComposable(
                 navigateToNewsDetailsScreen = {
-                    navController.navigate(NewsDetailsScreenDestination.route)
+                    navController.navigate("${NewsDetailsScreenDestination.route}/$it")
                 },
                 navigateToFixtureDetailsScreen = {
                     navController.navigate(FixtureDetailsScreenDestination.route)
@@ -151,7 +160,7 @@ fun NavigationGraph(
         ) {
             ClubDetailsScreenComposable(
                 navigateToNewsDetailsScreen = {
-                    navController.navigate(NewsDetailsScreenDestination.route)
+                    navController.navigate("${NewsDetailsScreenDestination.route}/$it")
                 },
                 navigateToFixtureDetailsScreen = {
                     navController.navigate(FixtureDetailsScreenDestination.route)

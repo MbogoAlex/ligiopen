@@ -9,6 +9,8 @@ import com.admin.ligiopen.data.network.models.match.location.MatchLocationsRespo
 import com.jabulani.ligiopen.data.network.model.club.ClubResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.PlayerResponseBody
+import com.jabulani.ligiopen.data.network.model.news.NewsResponseBody
+import com.jabulani.ligiopen.data.network.model.news.SingleNewsResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginRequestBody
 import com.jabulani.ligiopen.data.network.model.user.UserLoginResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationRequestBody
@@ -103,6 +105,20 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("playerId") playerId: Int,
     ): Response<PlayerResponseBody>
+
+    //    Get all news
+    @GET("news/all")
+    suspend fun getAllNews(
+        @Header("Authorization") token: String,
+        @Query("clubId") clubId: Int?
+    ): Response<NewsResponseBody>
+
+    //    Get single news
+    @GET("news/{newsId}")
+    suspend fun getSingleNews(
+        @Header("Authorization") token: String,
+        @Path("newsId") newsId: Int,
+    ): Response<SingleNewsResponseBody>
 
 
 }

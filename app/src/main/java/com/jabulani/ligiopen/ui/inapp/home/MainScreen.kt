@@ -1,8 +1,10 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
 import android.app.Activity
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -59,6 +61,8 @@ import com.jabulani.ligiopen.AppViewModelFactory
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
+import com.jabulani.ligiopen.data.network.model.news.NewsDto
+import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.ui.inapp.clubs.ClubsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
@@ -79,10 +83,11 @@ object MainScreenDestination : AppNavigation {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreenComposable(
     onSwitchTheme: () -> Unit,
-    navigateToNewsDetailsScreen: () -> Unit,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     navigateToClubDetailsScreen: (clubId: String) -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
@@ -188,6 +193,7 @@ fun MainScreenComposable(
             },
             tabs = tabs,
             fixtures = uiState.fixtures,
+            news = uiState.news,
             navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
             navigateToClubDetailsScreen = navigateToClubDetailsScreen,
             navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
@@ -199,6 +205,7 @@ fun MainScreenComposable(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     username: String,
@@ -210,7 +217,8 @@ fun MainScreen(
     onChangeTab: (tab: HomeScreenTab) -> Unit,
     tabs: List<HomeScreenTabItem>,
     fixtures: List<FixtureData>,
-    navigateToNewsDetailsScreen: () -> Unit,
+    news: List<NewsDto>,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     navigateToClubDetailsScreen: (clubId: String) -> Unit,
     navigateToFixtureDetailsScreen: () -> Unit,
     navigateToHighlightsScreen: () -> Unit,
@@ -253,47 +261,6 @@ fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = screenWidth(x = 8.0)
-                        )
-
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ligiopen_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(screenWidth(x = 56.0))
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = currentTab.name.lowercase().replaceFirstChar { first -> first.uppercase() },
-                        fontSize = screenFontSize(x = 26.0).sp,
-                        fontWeight = FontWeight.W900
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-//                    Text(
-//                        text = username.take(8),
-//                        fontSize = screenFontSize(x = 14.0).sp,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    IconButton(
-                        enabled = false,
-                        onClick = {
-                        onChangeTab(HomeScreenTab.PROFILE)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.more),
-                            contentDescription = "More"
-                        )
-                    }
-                }
-
                 when(currentTab) {
                     HomeScreenTab.NEWS -> NewsScreenComposable(
                         addTopPadding = true,
@@ -341,6 +308,7 @@ fun MainScreen(
                     HomeScreenTab.HOME -> {
                         HomeScreenComposable(
                             fixtures = fixtures,
+                            news = news,
                             navigateToPostMatchScreen = navigateToPostMatchScreen
                         )
                     }
@@ -469,6 +437,7 @@ fun MainScreenPreview() {
             onChangeTab = {},
             tabs = listOf(),
             fixtures = fixtures,
+            news = news,
             scope = null,
             navigateToNewsDetailsScreen = {},
             navigateToClubDetailsScreen = {},

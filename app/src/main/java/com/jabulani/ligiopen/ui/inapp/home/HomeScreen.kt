@@ -1,5 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,9 +53,10 @@ import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
+import com.jabulani.ligiopen.data.network.model.news.NewsDto
+import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
-import com.jabulani.ligiopen.ui.inapp.news.news
-import com.jabulani.ligiopen.ui.inapp.news.newsItem
+
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.reusables.composables.AutoVideoPlayer
@@ -69,6 +73,7 @@ object HomeScreenDestination : AppNavigation {
 @Composable
 fun HomeScreenComposable(
     fixtures: List<FixtureData>,
+    news: List<NewsDto>,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,167 +88,209 @@ fun HomeScreenComposable(
     ) {
         HomeScreen(
             fixtures = fixtures,
+            news = news,
             navigateToPostMatchScreen = navigateToPostMatchScreen
         )
 
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     fixtures: List<FixtureData>,
+    news: List<NewsDto>,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                vertical = screenHeight(x = 16.0),
-                horizontal = screenWidth(x = 16.0)
-            )
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column {
         Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-        ) {
-            Text(
-                text = "Matches",
-                fontSize = screenFontSize(x = 18.0).sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = { /*TODO*/ }) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "All matches",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(4.0)))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "All matches",
-                        modifier = Modifier
-//                            .size(screenWidth(x = 48.0))
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .fillMaxWidth()
-        ) {
-            fixtures.forEach { fixture ->
-                FixtureCell(
-                    fixtureData = fixture,
-                    navigateToPostMatchScreen = navigateToPostMatchScreen,
-                    modifier = Modifier
-                        .width(screenWidth * 0.7f)
+                .padding(
+                    horizontal = screenWidth(x = 8.0)
                 )
-                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ligiopen_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(screenWidth(x = 56.0))
+            )
+            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+            Text(
+                text = HomeScreenTab.HOME.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                fontSize = screenFontSize(x = 26.0).sp,
+                fontWeight = FontWeight.W900
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                enabled = false,
+                onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.more),
+                    contentDescription = "More"
+                )
             }
         }
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(
+                    vertical = screenHeight(x = 16.0),
+                    horizontal = screenWidth(x = 16.0)
+                )
+                .verticalScroll(rememberScrollState())
         ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Matches",
+                    fontSize = screenFontSize(x = 18.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { /*TODO*/ }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "All matches",
+                            fontSize = screenFontSize(x = 14.0).sp
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(4.0)))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "All matches",
+                            modifier = Modifier
+//                            .size(screenWidth(x = 48.0))
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .fillMaxWidth()
+            ) {
+                fixtures.forEach { fixture ->
+                    FixtureCell(
+                        fixtureData = fixture,
+                        navigateToPostMatchScreen = navigateToPostMatchScreen,
+                        modifier = Modifier
+                            .width(screenWidth * 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Watch",
+                    fontSize = screenFontSize(x = 18.0).sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { /*TODO*/ }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "All videos",
+                            fontSize = screenFontSize(x = 14.0).sp
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(4.0)))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "All videos",
+                            modifier = Modifier
+//                            .size(screenWidth(x = 48.0))
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth() // Ensure the card fills the width
+                    .aspectRatio(16 / 9f) // Maintain a good aspect ratio
+            ) {
+                VideoScreen(
+                    link = "https://drive.google.com/uc?export=download&id=1jDrbU6Xl-Gnmg0jGWvduwvm7ihUq9Zq9",
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CECAFA: Kenya Goal",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = screenFontSize(x = 16.0).sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { /*TODO*/ }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Watch",
+                            fontSize = screenFontSize(x = 14.0).sp
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                        Icon(
+                            painter = painterResource(id = R.drawable.play),
+                            contentDescription = "Watch video"
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Text(
-                text = "Watch",
+                text = "News",
                 fontSize = screenFontSize(x = 18.0).sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = { /*TODO*/ }) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "All videos",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(4.0)))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "All videos",
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+            if(news.isNotEmpty()) {
+                NewsTile(
+                    news = news[0],
+                    fullScreen = true,
+                    modifier = Modifier
+                )
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                news.take(4).forEach { newsItem ->
+                    NewsTile(
+                        news = newsItem,
                         modifier = Modifier
-//                            .size(screenWidth(x = 48.0))
                     )
+                    Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
                 }
-            }
-        }
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth() // Ensure the card fills the width
-                .aspectRatio(16 / 9f) // Maintain a good aspect ratio
-        ) {
-            VideoScreen(
-                link = "https://drive.google.com/uc?export=download&id=1jDrbU6Xl-Gnmg0jGWvduwvm7ihUq9Zq9",
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "CECAFA: Kenya Goal",
-                fontWeight = FontWeight.Bold,
-                fontSize = screenFontSize(x = 16.0).sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = { /*TODO*/ }) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Watch",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    Icon(
-                        painter = painterResource(id = R.drawable.play),
-                        contentDescription = "Watch video"
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        Text(
-            text = "News",
-            fontSize = screenFontSize(x = 18.0).sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        NewsTile(
-            newsItem = newsItem,
-            fullScreen = true,
-            modifier = Modifier
-        )
-        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        news.take(4).forEach { newsItem ->
-            NewsTile(
-                newsItem = newsItem,
-                modifier = Modifier
-            )
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-        }
 
+            }
+
+
+        }
     }
+
 }
 
 @Composable
@@ -447,12 +494,14 @@ fun FixtureCell(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
     LigiopenTheme {
         HomeScreen(
             fixtures = fixtures,
+            news = news,
             navigateToPostMatchScreen = { _, _, _ -> }
         )
     }
