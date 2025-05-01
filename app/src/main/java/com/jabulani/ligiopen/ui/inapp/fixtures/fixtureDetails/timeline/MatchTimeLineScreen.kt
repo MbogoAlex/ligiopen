@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -83,24 +84,50 @@ fun MatchTimelineScreen(
             modifier = Modifier
                 .padding(it)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        start = screenWidth(x = 16.0),
-                        top = 0.dp,
-                        end = screenWidth(x = 16.0),
-                        bottom = screenHeight(x = 16.0),
-                    )
-            ) {
-                LazyColumn {
-                    items(matchCommentaries) { matchCommentary ->
-                        SingleMatchCommentaryComposable(
-                            matchCommentaryData = matchCommentary
+            if(matchStatus == MatchStatus.PENDING) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "Match timeline not available",
+                            fontSize = screenFontSize(x = 16.0).sp,
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        Text(
+                            text = "Check back when the match starts",
+                            fontSize = screenFontSize(x = 14.0).sp,
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            start = screenWidth(x = 16.0),
+                            top = 0.dp,
+                            end = screenWidth(x = 16.0),
+                            bottom = screenHeight(x = 16.0),
+                        )
+                ) {
+                    LazyColumn {
+                        items(matchCommentaries) { matchCommentary ->
+                            SingleMatchCommentaryComposable(
+                                matchCommentaryData = matchCommentary
+                            )
+                            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        }
                     }
                 }
             }
+
         }
     }
 }

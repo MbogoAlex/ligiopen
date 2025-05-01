@@ -58,7 +58,8 @@ interface ApiRepository {
     suspend fun getMatchFixtures(
         token: String,
         status: String?,
-        clubId: Int?
+        clubIds: List<Int>,
+        matchDateTime: String?
     ): Response<FixturesResponseBody>
 
     //    Get match commentary

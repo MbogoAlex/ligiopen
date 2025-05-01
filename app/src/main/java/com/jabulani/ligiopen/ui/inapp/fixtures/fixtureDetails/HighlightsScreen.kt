@@ -106,11 +106,11 @@ fun HighlightsScreenComposable(
             tab = HighlightsScreenTabs.LINEUPS,
             icon = R.drawable.lineup_2
         ),
-        HighlightsScreenTabItem(
-            name = "Stats",
-            tab = HighlightsScreenTabs.STATS,
-            icon = R.drawable.stats
-        ),
+//        HighlightsScreenTabItem(
+//            name = "Stats",
+//            tab = HighlightsScreenTabs.STATS,
+//            icon = R.drawable.stats
+//        ),
 //        HighlightsScreenTabItem(
 //            name = "Edit",
 //            tab = HighlightsScreenTabs.EDIT,
@@ -230,6 +230,7 @@ fun HighlightsScreen(
         when(currentTab) {
             HighlightsScreenTabs.SUMMARY -> {
                 MatchSummaryComposable(
+                    matchStatus = matchFixtureData.matchStatus,
                     matchFixtureData = matchFixtureData,
                     commentaries = commentaries,
                     matchLocation = matchLocation,
@@ -252,6 +253,7 @@ fun HighlightsScreen(
             }
             HighlightsScreenTabs.LINEUPS -> {
                 PlayersLineupScreenComposable(
+                    matchStatus = matchFixtureData.matchStatus,
                     playersInLineup = playersInLineup,
                     matchFixtureData = matchFixtureData,
                     modifier = Modifier
@@ -260,6 +262,7 @@ fun HighlightsScreen(
             }
             HighlightsScreenTabs.STATS -> {
                 MatchStatisticsScreenComposable(
+                    matchStatus = matchFixtureData.matchStatus,
                     matchFixtureData = matchFixtureData,
                     modifier = Modifier
                         .weight(1f)

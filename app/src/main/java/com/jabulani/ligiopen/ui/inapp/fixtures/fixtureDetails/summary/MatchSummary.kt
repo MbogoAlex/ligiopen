@@ -59,6 +59,7 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun MatchSummaryComposable(
+    matchStatus: MatchStatus,
     matchFixtureData: FixtureData,
     commentaries: List<MatchCommentaryData>,
     matchLocation: MatchLocationData,
@@ -73,6 +74,7 @@ fun MatchSummaryComposable(
 
     Box(modifier = modifier) {
         MatchSummary(
+            matchStatus = matchStatus,
             matchFixtureData = matchFixtureData,
             commentaries = commentaries,
             matchLocation = matchLocation,
@@ -86,6 +88,7 @@ fun MatchSummaryComposable(
 
 @Composable
 fun MatchSummary(
+    matchStatus: MatchStatus,
     matchFixtureData: FixtureData,
     commentaries: List<MatchCommentaryData>,
     matchLocation: MatchLocationData,
@@ -96,7 +99,9 @@ fun MatchSummary(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = if(matchStatus == MatchStatus.PENDING) Modifier
+            .fillMaxSize()
+             else Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
@@ -226,64 +231,90 @@ fun MatchSummary(
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(
-                    horizontal = screenWidth(x = 16.0),
-                    vertical = screenHeight(x = 16.0)
-                )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+        if(matchStatus == MatchStatus.PENDING) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
-                Text(
-                    text = homeClub.clubAbbreviation ?: "${homeClub.name.take(3)} FC",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = screenFontSize(x = 18.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(homeClub.clubLogo.link)
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(id = R.drawable.loading_img),
-                    error = painterResource(id = R.drawable.loading_img),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Home club logo",
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .size(screenWidth(x = 24.0))
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(awayClub.clubLogo.link)
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(id = R.drawable.loading_img),
-                    error = painterResource(id = R.drawable.loading_img),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Away club logo",
-                    modifier = Modifier
-                        .size(screenWidth(x = 24.0))
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                Text(
-                    text = awayClub.clubAbbreviation ?: "${awayClub.name.take(3)} FC",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = screenFontSize(x = 18.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "Match summary not available",
+                        fontSize = screenFontSize(x = 16.0).sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Check back when the match starts",
+                        fontSize = screenFontSize(x = 14.0).sp,
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            commentaries.forEach { commentary ->
-                MatchEventCell(commentary = commentary)
-                HorizontalDivider()
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        horizontal = screenWidth(x = 16.0),
+                        vertical = screenHeight(x = 16.0)
+                    )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = homeClub.clubAbbreviation ?: "${homeClub.name.take(3)} FC",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = screenFontSize(x = 18.0).sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                    AsyncImage(
+                        model = ImageRequest.Builder(context = LocalContext.current)
+                            .data(homeClub.clubLogo.link)
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(id = R.drawable.loading_img),
+                        error = painterResource(id = R.drawable.loading_img),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Home club logo",
+                        modifier = Modifier
+                            .size(screenWidth(x = 24.0))
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    AsyncImage(
+                        model = ImageRequest.Builder(context = LocalContext.current)
+                            .data(awayClub.clubLogo.link)
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(id = R.drawable.loading_img),
+                        error = painterResource(id = R.drawable.loading_img),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Away club logo",
+                        modifier = Modifier
+                            .size(screenWidth(x = 24.0))
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                    Text(
+                        text = awayClub.clubAbbreviation ?: "${awayClub.name.take(3)} FC",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = screenFontSize(x = 18.0).sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                commentaries.forEach { commentary ->
+                    MatchEventCell(commentary = commentary)
+                    HorizontalDivider()
+                }
             }
         }
+
     }
 }
 
@@ -1138,6 +1169,7 @@ fun MatchEventCell(
 fun MatchSummaryPreview() {
     LigiopenTheme {
         MatchSummary(
+            matchStatus = MatchStatus.COMPLETED,
             matchFixtureData = fixture,
             commentaries = matchCommentaries,
             matchLocation = matchLocation,

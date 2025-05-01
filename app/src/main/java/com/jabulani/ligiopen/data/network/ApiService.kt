@@ -69,7 +69,8 @@ interface ApiService {
     suspend fun getMatchFixtures(
         @Header("Authorization") token: String,
         @Query("status") status: String?,
-        @Query("clubId") clubId: Int?
+        @Query("clubId") clubIds: List<Int>,
+        @Query("matchDateTime") matchDateTime: String?
     ): Response<FixturesResponseBody>
 
     //    Get match commentary

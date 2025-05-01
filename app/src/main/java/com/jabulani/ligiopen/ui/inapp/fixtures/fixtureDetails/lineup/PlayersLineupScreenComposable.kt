@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
+import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixture
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -42,6 +43,7 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun PlayersLineupScreenComposable(
+    matchStatus: MatchStatus,
     playersInLineup: List<PlayerInLineup>,
     matchFixtureData: FixtureData,
     modifier: Modifier = Modifier
@@ -52,6 +54,7 @@ fun PlayersLineupScreenComposable(
             .safeDrawingPadding()
     ) {
         PlayersLineupScreen(
+            matchStatus = matchStatus,
             playersInLineup = playersInLineup,
             matchFixtureData = matchFixtureData
         )
@@ -60,6 +63,7 @@ fun PlayersLineupScreenComposable(
 
 @Composable
 fun PlayersLineupScreen(
+    matchStatus: MatchStatus,
     playersInLineup: List<PlayerInLineup>,
     matchFixtureData: FixtureData,
     modifier: Modifier = Modifier
@@ -123,54 +127,80 @@ fun PlayersLineupScreen(
             )
         }
         Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Iterate through positions and display players side by side
-            groupedPlayers.forEach { (position, players) ->
-                val homeTeamPlayers = players.filter { it.home }
-                val awayTeamPlayers = players.filter { !it.home }
-
-                Text(
-                    text = position.name.lowercase().replaceFirstChar { it.uppercase() },
-                    fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 14.0).sp,
+        if(matchStatus == MatchStatus.PENDING) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = screenHeight(x = 8.0))
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = screenHeight(x = 4.0)),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxSize()
                 ) {
-                    // Display home team players
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = screenWidth(x = 8.0))
-                    ) {
-                        homeTeamPlayers.forEach { player ->
-                            PlayerLineupCell(playerInLineup = player)
-                        }
-                    }
+                    Text(
+                        text = "Match lineups not available",
+                        fontSize = screenFontSize(x = 16.0).sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Check back when the match starts",
+                        fontSize = screenFontSize(x = 14.0).sp,
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Iterate through positions and display players side by side
+                groupedPlayers.forEach { (position, players) ->
+                    val homeTeamPlayers = players.filter { it.home }
+                    val awayTeamPlayers = players.filter { !it.home }
 
-                    // Display away team players
-                    Column(
+                    Text(
+                        text = position.name.lowercase().replaceFirstChar { it.uppercase() },
+                        fontWeight = FontWeight.Bold,
+                        fontSize = screenFontSize(x = 14.0).sp,
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(start = screenWidth(x = 8.0))
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = screenHeight(x = 8.0))
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = screenHeight(x = 4.0)),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        awayTeamPlayers.forEach { player ->
-                            PlayerLineupCell(playerInLineup = player)
+                        // Display home team players
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = screenWidth(x = 8.0))
+                        ) {
+                            homeTeamPlayers.forEach { player ->
+                                PlayerLineupCell(playerInLineup = player)
+                            }
+                        }
+
+                        // Display away team players
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = screenWidth(x = 8.0))
+                        ) {
+                            awayTeamPlayers.forEach { player ->
+                                PlayerLineupCell(playerInLineup = player)
+                            }
                         }
                     }
                 }
             }
         }
+
 
     }
 }
@@ -230,6 +260,7 @@ fun PlayerLineupCell(
 fun PlayersLineupScreenPreview() {
     LigiopenTheme {
         PlayersLineupScreen(
+            matchStatus = MatchStatus.COMPLETED,
             matchFixtureData = fixture,
             playersInLineup = playersInlineup
         )

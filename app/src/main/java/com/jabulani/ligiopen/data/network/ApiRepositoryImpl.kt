@@ -69,12 +69,14 @@ class ApiRepositoryImpl(private val apiService: ApiService): ApiRepository {
     override suspend fun getMatchFixtures(
         token: String,
         status: String?,
-        clubId: Int?
+        clubIds: List<Int>,
+        matchDateTime: String?
     ): Response<FixturesResponseBody> =
         apiService.getMatchFixtures(
             token = "Bearer $token",
             status = status,
-            clubId = clubId
+            clubIds = clubIds,
+            matchDateTime = matchDateTime,
         )
 
     override suspend fun getMatchCommentary(

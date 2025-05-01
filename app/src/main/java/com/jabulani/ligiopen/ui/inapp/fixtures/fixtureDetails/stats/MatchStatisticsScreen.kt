@@ -33,6 +33,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.jabulani.ligiopen.R
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
+import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixture
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -41,6 +42,7 @@ import com.jabulani.ligiopen.utils.screenWidth
 
 @Composable
 fun MatchStatisticsScreenComposable(
+    matchStatus: MatchStatus,
     matchFixtureData: FixtureData,
     modifier: Modifier = Modifier
 ) {
