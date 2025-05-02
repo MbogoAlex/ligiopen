@@ -1,5 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.home
 
+import YouTubePlayer
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.jabulani.ligiopen.AppViewModelFactory
@@ -56,9 +59,11 @@ import com.jabulani.ligiopen.data.network.model.match.fixture.fixtures
 import com.jabulani.ligiopen.data.network.model.news.NewsDto
 import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
+import com.jabulani.ligiopen.ui.inapp.videos.SingleVideoCard
 
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
+import com.jabulani.ligiopen.ui.utils.video.FullscreenVideoScreen
 import com.jabulani.ligiopen.utils.reusables.composables.AutoVideoPlayer
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
@@ -194,51 +199,6 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Watch",
-                    fontSize = screenFontSize(x = 18.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(onClick = { /*TODO*/ }) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "All videos",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(4.0)))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = "All videos",
-                            modifier = Modifier
-//                            .size(screenWidth(x = 48.0))
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .fillMaxWidth() // Ensure the card fills the width
-                    .aspectRatio(16 / 9f) // Maintain a good aspect ratio
-            ) {
-                VideoScreen(
-                    link = "https://drive.google.com/uc?export=download&id=1jDrbU6Xl-Gnmg0jGWvduwvm7ihUq9Zq9",
-                    modifier = Modifier
-                        .fillMaxSize()
-                )
-            }
-            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -261,6 +221,72 @@ fun HomeScreen(
                             contentDescription = "Watch video"
                         )
                     }
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+
+            YouTubePlayer(
+                youtubeVideoId = "mUki-_cLdsQ",
+                lifecycleOwner = LocalLifecycleOwner.current,
+                shouldMute = true,
+                shouldAutoPlay = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(screenWidth(16.0))),
+            )
+            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Featured videos",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = screenFontSize(x = 16.0).sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { /*TODO*/ }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "All videos",
+                            fontSize = screenFontSize(x = 14.0).sp
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "All videos"
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
+            LazyRow(
+                modifier = Modifier.height(screenHeight(200.0)) // Add fixed height to the row
+            ) {
+                items(5) { index ->
+                    SingleVideoCard(
+                        videoId = "mUki-_cLdsQ",
+                        title = " Gor Mahia FC vs Kariobangi Sharks 2-0 FKF CUP All Goals Highlights ",
+                        date = "17 hours ago",
+                        modifier = Modifier
+                            .width(screenWidth * 0.6f)
+                            .height(screenHeight(180.0)) // Add fixed height to each player
+                            .padding(end = screenWidth(8.0))
+//                            .clip(RoundedCornerShape(screenWidth(16.0))
+                    )
+//                    YouTubePlayer(
+//                        youtubeVideoId = "mUki-_cLdsQ",
+//                        lifecycleOwner = LocalLifecycleOwner.current,
+//                        shouldMute = true,
+//                        shouldAutoPlay = false,
+//                        modifier = Modifier
+//                            .width(screenWidth * 0.6f)
+//                            .height(screenHeight(180.0)) // Add fixed height to each player
+//                            .padding(end = screenWidth(8.0))
+//                            .clip(RoundedCornerShape(screenWidth(16.0))
+//                    ))
                 }
             }
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))

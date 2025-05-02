@@ -151,11 +151,11 @@ fun MainScreenComposable(
             icon = R.drawable.newspaper,
             tab = HomeScreenTab.NEWS
         ),
-        HomeScreenTabItem(
-            name = "Standings",
-            icon = R.drawable.league_2,
-            tab = HomeScreenTab.STANDINGS
-        ),
+//        HomeScreenTabItem(
+//            name = "Standings",
+//            icon = R.drawable.league_2,
+//            tab = HomeScreenTab.STANDINGS
+//        ),
     )
 
     var currentTab by rememberSaveable {

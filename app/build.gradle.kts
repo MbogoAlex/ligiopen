@@ -55,9 +55,13 @@ android {
 
 dependencies {
 
-    implementation("androidx.media3:media3-exoplayer:1.5.1")
-    implementation("androidx.media3:media3-ui:1.5.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
+    implementation( "com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
+
+
+    //Exo
+    implementation ("androidx.media3:media3-exoplayer:1.2.1")
+    implementation ("androidx.media3:media3-ui:1.2.1")
+    implementation ("androidx.media3:media3-common:1.2.1")
 
     // https://mvnrepository.com/artifact/com.google.android.play/review-ktx
     implementation("com.google.android.play:review-ktx:2.0.2")
