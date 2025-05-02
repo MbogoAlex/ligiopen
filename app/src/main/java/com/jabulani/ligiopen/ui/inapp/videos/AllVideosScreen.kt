@@ -1,6 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.videos
 
-import YouTubePlayer
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,26 +18,31 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.jabulani.ligiopen.ui.inapp.videos.config.youtubeVideos
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
@@ -51,6 +56,7 @@ object AllVideosScreenDestination: AppNavigation {
 @Composable
 fun AllVideosScreenComposable(
     navigateToPreviousScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -58,6 +64,7 @@ fun AllVideosScreenComposable(
             .safeDrawingPadding()
     ) {
         AllVideosScreen(
+            navigateToSingleVideoScreen = navigateToSingleVideoScreen,
             navigateToPreviousScreen = navigateToPreviousScreen
         )
     }
@@ -66,8 +73,34 @@ fun AllVideosScreenComposable(
 @Composable
 fun AllVideosScreen(
     navigateToPreviousScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var error = ""
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if(showDialog) {
+        AlertDialog(
+            title = {
+                Text(text = "Error")
+            },
+            text = {
+                Text(text = error)
+            },
+            onDismissRequest = {
+                showDialog = false
+            },
+            dismissButton = {
+                showDialog = false
+            },
+            confirmButton = {
+                showDialog = false
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,11 +129,30 @@ fun AllVideosScreen(
             )
         }
         LazyColumn {
-            items(10) {
+            items(youtubeVideos.size) { index ->
                 SingleVideoCard(
-                    videoId = "mUki-_cLdsQ",
-                    title = " Gor Mahia FC vs Kariobangi Sharks 2-0 FKF CUP All Goals Highlights ",
-                    date = "17 hours ago"
+                    videoId = youtubeVideos[index].videoId,
+                    title = youtubeVideos[index].videoTitle,
+                    date = youtubeVideos[index].videoDate,
+                    modifier = Modifier
+                        .clickable(
+                            onClick = {
+                                try {
+                                    navigateToSingleVideoScreen(
+                                        youtubeVideos[index].videoId,
+                                        youtubeVideos[index].videoTitle,
+                                        youtubeVideos[index].videoDate
+                                    )
+
+                                } catch (e: Exception) {
+                                    error = e.toString()
+                                    showDialog = true
+//                                    Log.e("videoLoadErr", "${e.message}")
+
+                                }
+
+                            }
+                        )
                 )
                 Spacer(modifier = Modifier.height(screenHeight(16.0)))
             }
@@ -114,12 +166,12 @@ fun SingleVideoCard(
     title: String,
     date: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+//    onClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+//            .clickable { onClick() }
     ) {
         Box(
             modifier = Modifier
@@ -178,6 +230,7 @@ fun SingleVideoCard(
 @Composable
 fun AllVideosScreenPreview() {
     AllVideosScreen(
+        navigateToSingleVideoScreen = {videoId, videoTitle, videoDate ->},
         navigateToPreviousScreen = {}
     )
 }

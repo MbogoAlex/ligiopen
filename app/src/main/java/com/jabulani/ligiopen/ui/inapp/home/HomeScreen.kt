@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +61,8 @@ import com.jabulani.ligiopen.data.network.model.news.NewsDto
 import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.inapp.videos.SingleVideoCard
+import com.jabulani.ligiopen.ui.inapp.videos.config.youtubeVideo
+import com.jabulani.ligiopen.ui.inapp.videos.config.youtubeVideos
 
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
@@ -80,6 +83,8 @@ fun HomeScreenComposable(
     fixtures: List<FixtureData>,
     news: List<NewsDto>,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToAllVideosScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -94,7 +99,9 @@ fun HomeScreenComposable(
         HomeScreen(
             fixtures = fixtures,
             news = news,
-            navigateToPostMatchScreen = navigateToPostMatchScreen
+            navigateToPostMatchScreen = navigateToPostMatchScreen,
+            navigateToSingleVideoScreen = navigateToSingleVideoScreen,
+            navigateToAllVideosScreen = navigateToAllVideosScreen
         )
 
     }
@@ -106,10 +113,15 @@ fun HomeScreen(
     fixtures: List<FixtureData>,
     news: List<NewsDto>,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToAllVideosScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+
+
     Column {
         Row(
 //            horizontalArrangement = Arrangement.SpaceBetween,
@@ -199,15 +211,27 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth() // Ensure Row takes full width
             ) {
                 Text(
-                    text = "CECAFA: Kenya Goal",
+                    text = youtubeVideo.videoTitle,
                     fontWeight = FontWeight.Bold,
-                    fontSize = screenFontSize(x = 16.0).sp
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = screenFontSize(x = 16.0).sp,
+                    modifier = Modifier.weight(1f) // Takes remaining space after the button
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(onClick = { /*TODO*/ }) {
+
+                TextButton(
+                    onClick = {
+                        navigateToSingleVideoScreen(
+                            youtubeVideo.videoId,
+                            youtubeVideo.videoTitle,
+                            youtubeVideo.videoDate
+                        )
+                    }
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -245,7 +269,7 @@ fun HomeScreen(
                     fontSize = screenFontSize(x = 16.0).sp
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                TextButton(onClick = { /*TODO*/ }) {
+                TextButton(onClick = navigateToAllVideosScreen) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -265,6 +289,27 @@ fun HomeScreen(
             LazyRow(
                 modifier = Modifier.height(screenHeight(200.0)) // Add fixed height to the row
             ) {
+                items(youtubeVideos.take(5).size) { index ->
+                    SingleVideoCard(
+                        videoId = youtubeVideos[index].videoId,
+                        title = youtubeVideos[index].videoTitle,
+                        date = youtubeVideos[index].videoDate,
+                        modifier = Modifier
+                            .width(screenWidth * 0.6f)
+                            .height(screenHeight(180.0)) // Add fixed height to each player
+                            .padding(end = screenWidth(8.0))
+                            .clickable(
+                                onClick = {
+                                    navigateToSingleVideoScreen(
+                                        youtubeVideos[index].videoId,
+                                        youtubeVideos[index].videoTitle,
+                                        youtubeVideos[index].videoDate
+                                    )
+                                }
+                            )
+//                            .clip(RoundedCornerShape(screenWidth(16.0))
+                    )
+                }
                 items(5) { index ->
                     SingleVideoCard(
                         videoId = "mUki-_cLdsQ",
@@ -528,6 +573,8 @@ fun HomeScreenPreview() {
         HomeScreen(
             fixtures = fixtures,
             news = news,
+            navigateToSingleVideoScreen = {_,_,_ ->},
+            navigateToAllVideosScreen = {},
             navigateToPostMatchScreen = { _, _, _ -> }
         )
     }

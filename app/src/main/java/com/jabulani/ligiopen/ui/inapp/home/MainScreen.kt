@@ -93,6 +93,8 @@ fun MainScreenComposable(
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToAllVideosScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -199,7 +201,9 @@ fun MainScreenComposable(
             navigateToFixtureDetailsScreen = navigateToFixtureDetailsScreen,
             navigateToHighlightsScreen = navigateToHighlightsScreen,
             navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
-            navigateToPostMatchScreen = navigateToPostMatchScreen
+            navigateToPostMatchScreen = navigateToPostMatchScreen,
+            navigateToAllVideosScreen = navigateToAllVideosScreen,
+            navigateToSingleVideoScreen = navigateToSingleVideoScreen
         )
 
     }
@@ -224,6 +228,8 @@ fun MainScreen(
     navigateToHighlightsScreen: () -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
+    navigateToAllVideosScreen: () -> Unit,
+    navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
@@ -309,7 +315,9 @@ fun MainScreen(
                         HomeScreenComposable(
                             fixtures = fixtures,
                             news = news,
-                            navigateToPostMatchScreen = navigateToPostMatchScreen
+                            navigateToPostMatchScreen = navigateToPostMatchScreen,
+                            navigateToSingleVideoScreen = navigateToSingleVideoScreen,
+                            navigateToAllVideosScreen = navigateToAllVideosScreen
                         )
                     }
                     HomeScreenTab.STANDINGS -> {
@@ -444,7 +452,9 @@ fun MainScreenPreview() {
             navigateToFixtureDetailsScreen = {},
             navigateToHighlightsScreen = {},
             navigateToLoginScreenWithArgs = {email, password ->},
-            navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->}
+            navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->},
+            navigateToSingleVideoScreen = {_,_,_ ->},
+            navigateToAllVideosScreen = {}
         )
     }
 }

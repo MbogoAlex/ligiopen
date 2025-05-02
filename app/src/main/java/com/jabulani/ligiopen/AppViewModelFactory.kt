@@ -17,6 +17,7 @@ import com.jabulani.ligiopen.ui.inapp.home.MainScreenViewModel
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsViewModel
 import com.jabulani.ligiopen.ui.inapp.news.NewsViewModel
 import com.jabulani.ligiopen.ui.inapp.profile.ProfileViewModel
+import com.jabulani.ligiopen.ui.inapp.videos.SinglePlayerViewViewModel
 import com.jabulani.ligiopen.ui.start.SplashViewModel
 
 object AppViewModelFactory {
@@ -118,6 +119,12 @@ object AppViewModelFactory {
             NewsDetailsViewModel(
                 apiRepository = ligiopenApplication().container.apiRepository,
                 dbRepository = ligiopenApplication().container.dbRepository,
+                savedStateHandle = this.createSavedStateHandle()
+            )
+        }
+
+        initializer {
+            SinglePlayerViewViewModel(
                 savedStateHandle = this.createSavedStateHandle()
             )
         }

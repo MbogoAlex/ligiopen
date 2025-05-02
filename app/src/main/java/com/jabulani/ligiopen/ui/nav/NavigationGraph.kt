@@ -26,6 +26,11 @@ import com.jabulani.ligiopen.ui.inapp.home.MainScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.MainScreenDestination
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsDetailsScreenDestination
+import com.jabulani.ligiopen.ui.inapp.videos.AllVideosScreen
+import com.jabulani.ligiopen.ui.inapp.videos.AllVideosScreenComposable
+import com.jabulani.ligiopen.ui.inapp.videos.AllVideosScreenDestination
+import com.jabulani.ligiopen.ui.inapp.videos.SinglePlayerViewScreenComposable
+import com.jabulani.ligiopen.ui.inapp.videos.SinglePlayerViewScreenDestination
 import com.jabulani.ligiopen.ui.start.SplashScreenComposable
 import com.jabulani.ligiopen.ui.start.SplashScreenDestination
 
@@ -111,6 +116,12 @@ fun NavigationGraph(
                 },
                 navigateToPostMatchScreen = {postMatchId, fixtureId, locationId ->
                     navController.navigate("${HighlightsScreenDestination.route}/${postMatchId}/${fixtureId}/${locationId}")
+                },
+                navigateToAllVideosScreen = {
+                    navController.navigate(AllVideosScreenDestination.route)
+                },
+                navigateToSingleVideoScreen = {videoId, videoTitle, videoDate ->
+                    navController.navigate("${SinglePlayerViewScreenDestination.route}/${videoId}/${videoTitle}/${videoDate}")
                 }
             )
         }
@@ -215,6 +226,39 @@ fun NavigationGraph(
         ) {
             HighlightsScreenComposable(
                 navigateToPreviousScreen = { navController.navigateUp() }
+            )
+        }
+        composable(AllVideosScreenDestination.route) {
+            AllVideosScreenComposable(
+                navigateToSingleVideoScreen = {videoId, videoTitle, videoDate ->
+                    navController.navigate("${SinglePlayerViewScreenDestination.route}/${videoId}/${videoTitle}/${videoDate}")
+                },
+                navigateToPreviousScreen = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable(
+            SinglePlayerViewScreenDestination.routeWithVideoId,
+            arguments = listOf(
+                navArgument(SinglePlayerViewScreenDestination.videoId) {
+                    type = NavType.StringType
+                },
+                navArgument(SinglePlayerViewScreenDestination.videoTitle) {
+                    type = NavType.StringType
+                },
+                navArgument(SinglePlayerViewScreenDestination.videoDate) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SinglePlayerViewScreenComposable(
+                navigateToSingleVideoScreen = {videoId, videoTitle, videoDate ->
+                    navController.navigate("${SinglePlayerViewScreenDestination.route}/${videoId}/${videoTitle}/${videoDate}")
+                },
+                navigateToPreviousScreen = {
+                    navController.navigateUp()
+                }
             )
         }
     }
