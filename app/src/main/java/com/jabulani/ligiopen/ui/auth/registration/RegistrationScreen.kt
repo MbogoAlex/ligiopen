@@ -283,7 +283,7 @@ fun RegistrationScreen(
                     .padding(horizontal = 16.dp, vertical = 24.dp)
             ) {
                 SoccerTextField(
-                    label = "Manager Name",
+                    label = "Username",
                     value = username,
                     onValueChange = onChangeUsername,
                     leadingIcon = R.drawable.person,
