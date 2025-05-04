@@ -29,6 +29,7 @@ class NewsViewModel(
                 clubId = clubId
             )
         }
+        getInitialData()
     }
 
     fun getNews() {
@@ -38,6 +39,7 @@ class NewsViewModel(
 //            )
 //        }
         viewModelScope.launch {
+            Log.d("fetchingNews", "Club ID: ${uiState.value.clubId}")
             try {
                 val response = apiRepository.getAllNews(
                     token = uiState.value.userAccount.token,
@@ -95,7 +97,7 @@ class NewsViewModel(
 
     init {
         loadUserData()
-        getInitialData()
+//        getInitialData()
     }
 
 }

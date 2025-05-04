@@ -60,6 +60,7 @@ class RegistrationViewModel(
         val userRegistrationRequestBody = UserRegistrationRequestBody(
             username = uiState.value.username,
             email = uiState.value.email,
+            role = "USER",
             password = uiState.value.password,
         )
         viewModelScope.launch {

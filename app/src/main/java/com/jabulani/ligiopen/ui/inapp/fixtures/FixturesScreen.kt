@@ -1,8 +1,6 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures
 
 import android.os.Build
-import android.widget.CalendarView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -26,16 +24,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,16 +53,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -98,12 +91,8 @@ import com.jabulani.ligiopen.ui.utils.formatLocalDate
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.TextStyle
-import java.util.Locale
 
 object FixturesScreenDestination: AppNavigation {
     override val title: String = "Fixtures screen"
@@ -117,6 +106,7 @@ object FixturesScreenDestination: AppNavigation {
 fun FixturesScreenComposable(
     showTopBanner: Boolean = true,
     clubId: Int? = null,
+    singleClubMode: Boolean = false,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
     modifier: Modifier = Modifier
@@ -125,10 +115,14 @@ fun FixturesScreenComposable(
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
+        viewModel.setSingleClubMode(singleClubMode, clubId)
         if(clubId != null) {
+            viewModel.setClubIsNull(false)
             viewModel.updateClubId(
                 clubId = clubId
             )
+        } else {
+            viewModel.setClubIsNull(true)
         }
     }
 
@@ -142,7 +136,14 @@ fun FixturesScreenComposable(
             Lifecycle.State.CREATED -> {}
             Lifecycle.State.STARTED -> {}
             Lifecycle.State.RESUMED -> {
-                viewModel.getInitialData()
+                if(clubId != null) {
+                    viewModel.setClubIsNull(false)
+                    viewModel.updateClubId(
+                        clubId = clubId
+                    )
+                } else {
+                    viewModel.setClubIsNull(true)
+                }
             }
         }
     }
@@ -224,19 +225,19 @@ fun FixturesScreen(
             )
         ) {
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(screenWidth(16.0)),
                 color = surfaceColor
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(screenWidth(16.0))
                 ) {
                     Text(
                         text = "SELECT MATCH DATE",
                         style = MaterialTheme.typography.headlineMedium,
                         color = primaryColor,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = screenHeight(16.0))
                     )
 
                     LazyColumn(modifier = Modifier.weight(1f, false)) {
@@ -244,9 +245,9 @@ fun FixturesScreen(
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                elevation = if (selectedDate == date) CardDefaults.cardElevation(8.dp)
-                                else CardDefaults.cardElevation(2.dp),
+                                    .padding(vertical = screenHeight(4.0)),
+                                elevation = if (selectedDate == date) CardDefaults.cardElevation(screenHeight(8.0))
+                                else CardDefaults.cardElevation(screenHeight(2.0)),
                                 colors = CardDefaults.cardColors(
                                     containerColor = if (selectedDate == date) primaryColor.copy(alpha = 0.2f)
                                     else surfaceVariantLight
@@ -274,7 +275,7 @@ fun FixturesScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp),
+                            .padding(top = screenHeight(16.0)),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         OutlinedButton(
@@ -286,9 +287,12 @@ fun FixturesScreen(
                                 containerColor = errorColor.copy(alpha = 0.1f),
                                 contentColor = errorColor
                             ),
-                            border = BorderStroke(1.dp, errorColor)
+                            border = BorderStroke(screenWidth(1.0), errorColor)
                         ) {
-                            Text("RESET")
+                            Text(
+                                "RESET",
+                                fontSize = screenFontSize(14.0).sp
+                            )
                         }
 
                         Button(
@@ -298,7 +302,10 @@ fun FixturesScreen(
                                 contentColor = onPrimaryLight
                             )
                         ) {
-                            Text("DONE")
+                            Text(
+                                "DONE",
+                                fontSize = screenFontSize(14.0).sp
+                            )
                         }
                     }
                 }
@@ -316,19 +323,19 @@ fun FixturesScreen(
             )
         ) {
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(screenWidth(16.0)),
                 color = surfaceColor
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(screenWidth(16.0))
                 ) {
                     Text(
                         text = "SELECT CLUBS",
                         style = MaterialTheme.typography.headlineMedium,
                         color = primaryColor,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = screenHeight(16.0))
                     )
 
                     LazyColumn(modifier = Modifier.weight(1f, false)) {
@@ -336,9 +343,9 @@ fun FixturesScreen(
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                elevation = if (selectedClubs.contains(club)) CardDefaults.cardElevation(8.dp)
-                                else CardDefaults.cardElevation(2.dp),
+                                    .padding(vertical = screenHeight(4.0)),
+                                elevation = if (selectedClubs.contains(club)) CardDefaults.cardElevation(screenHeight(8.0))
+                                else CardDefaults.cardElevation(screenHeight(2.0)),
                                 colors = CardDefaults.cardColors(
                                     containerColor = if (selectedClubs.contains(club)) primaryColor.copy(alpha = 0.2f)
                                     else surfaceVariantLight
@@ -347,18 +354,18 @@ fun FixturesScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(8.dp),
+                                        .padding(screenWidth(8.0)),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     AsyncImage(
                                         model = club.clubLogo.link,
                                         contentDescription = club.name,
                                         modifier = Modifier
-                                            .size(32.dp)
+                                            .size(screenWidth(32.0))
                                             .clip(CircleShape)
                                     )
 
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Spacer(modifier = Modifier.width(screenWidth(8.0)))
 
                                     Text(
                                         text = club.name,
@@ -392,7 +399,7 @@ fun FixturesScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp),
+                            .padding(top = screenHeight(16.0)),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         OutlinedButton(
@@ -404,9 +411,12 @@ fun FixturesScreen(
                                 containerColor = errorColor.copy(alpha = 0.1f),
                                 contentColor = errorColor
                             ),
-                            border = BorderStroke(1.dp, errorColor)
+                            border = BorderStroke(screenWidth(1.0), errorColor)
                         ) {
-                            Text("RESET")
+                            Text(
+                                "RESET",
+                                fontSize = screenFontSize(14.0).sp
+                            )
                         }
 
                         Button(
@@ -416,7 +426,10 @@ fun FixturesScreen(
                                 contentColor = onPrimaryLight
                             )
                         ) {
-                            Text("DONE")
+                            Text(
+                                "DONE",
+                                fontSize = screenFontSize(14.0).sp
+                            )
                         }
                     }
                 }
@@ -436,8 +449,8 @@ fun FixturesScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
+                        .padding(screenWidth(8.0)),
+                    elevation = CardDefaults.cardElevation(screenHeight(8.0)),
                     colors = CardDefaults.cardColors(
                         containerColor = surfaceColor
                     ),
@@ -446,7 +459,7 @@ fun FixturesScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(screenWidth(8.0))
                     ) {
                         // Date filter button
                         OutlinedButton(
@@ -455,7 +468,7 @@ fun FixturesScreen(
                                 containerColor = surfaceVariantLight,
                                 contentColor = primaryColor
                             ),
-                            border = BorderStroke(1.dp, primaryColor),
+                            border = BorderStroke(screenWidth(1.0), primaryColor),
                             modifier = Modifier.weight(1f)
                         ) {
                             Row(
@@ -467,15 +480,16 @@ fun FixturesScreen(
                                     contentDescription = "Date",
                                     tint = primaryColor
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(screenWidth(8.0)))
                                 Text(
                                     text = selectedDate?.let { formatLocalDate(it) } ?: "All Dates",
+                                    fontSize = screenFontSize(14.0).sp,
                                     color = primaryColor
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(screenWidth(8.0)))
 
                         // Club filter button
                         OutlinedButton(
@@ -484,7 +498,7 @@ fun FixturesScreen(
                                 containerColor = surfaceVariantLight,
                                 contentColor = primaryColor
                             ),
-                            border = BorderStroke(1.dp, primaryColor),
+                            border = BorderStroke(screenWidth(1.0), primaryColor),
                             modifier = Modifier.weight(1f)
                         ) {
                             Row(
@@ -496,22 +510,23 @@ fun FixturesScreen(
                                     contentDescription = "Clubs",
                                     tint = primaryColor
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(screenWidth(8.0)))
                                 Text(
                                     text = if (selectedClubs.isEmpty()) "All Clubs"
                                     else "${selectedClubs.size} Selected",
+                                    fontSize = screenFontSize(14.0).sp,
                                     color = primaryColor
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(screenWidth(8.0)))
 
                         // Close button
                         IconButton(
                             onClick = { showFilter = false },
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(screenWidth(40.0))
                                 .background(primaryColor, CircleShape)
                         ) {
                             Icon(
@@ -536,18 +551,18 @@ fun FixturesScreen(
                                 )
                             )
                         )
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .padding(horizontal = screenWidth(16.0), vertical = screenHeight(12.0))
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ligiopen_icon),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(2.dp, accentColor, RoundedCornerShape(8.dp))
+                            .size(screenWidth(48.0))
+                            .clip(RoundedCornerShape(screenWidth(8.0)))
+                            .border(screenWidth(2.0), accentColor, RoundedCornerShape(screenWidth(8.0)))
                     )
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(12.0)))
 
                     Text(
                         text = HomeScreenTab.MATCHES.name
@@ -556,9 +571,9 @@ fun FixturesScreen(
                         style = MaterialTheme.typography.headlineMedium,
                         color = onPrimaryLight,
                         fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp,
+                        letterSpacing = screenFontSize(1.0).sp,
                         modifier = Modifier
-                            .shadow(4.dp, shape = RoundedCornerShape(4.dp))
+                            .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(4.0)))
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -568,7 +583,7 @@ fun FixturesScreen(
                         IconButton(
                             onClick = { showFilter = true },
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(screenWidth(40.0))
                                 .background(accentColor, CircleShape)
                         ) {
                             Icon(
@@ -583,14 +598,14 @@ fun FixturesScreen(
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .size(16.dp)
+                                    .size(screenWidth(16.0))
                                     .background(errorColor, CircleShape)
                                     .border(2.dp, surfaceColor, CircleShape)
                             ) {
                                 Text(
                                     text = "!",
                                     color = onErrorLight,
-                                    fontSize = 10.sp,
+                                    fontSize = screenFontSize(10.0).sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.align(Alignment.Center)
                                 )
@@ -605,7 +620,7 @@ fun FixturesScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = screenWidth(8.0))
         ) {
             when (loadingStatus) {
                 LoadingStatus.LOADING -> {
@@ -614,8 +629,8 @@ fun FixturesScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(64.dp),
-                            strokeWidth = 4.dp,
+                            modifier = Modifier.size(screenWidth(64.0)),
+                            strokeWidth = screenWidth(4.0),
                             color = accentColor
                         )
                     }
@@ -633,23 +648,27 @@ fun FixturesScreen(
                                     painter = painterResource(R.drawable.cancel_event),
                                     contentDescription = "No matches",
                                     tint = primaryColor.copy(alpha = 0.5f),
-                                    modifier = Modifier.size(64.dp)
+                                    modifier = Modifier.size(screenWidth(64.0))
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(screenHeight(16.0)))
                                 Text(
                                     text = "NO MATCHES FOUND",
                                     color = primaryColor.copy(alpha = 0.7f),
+                                    fontSize = screenFontSize(16.0).sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 if (selectedDate != null || selectedClubs.isNotEmpty()) {
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Spacer(modifier = Modifier.height(screenHeight(8.0)))
                                     TextButton(
                                         onClick = {
                                             onSelectDate(null)
                                             onResetClubs()
                                         }
                                     ) {
-                                        Text("RESET FILTERS")
+                                        Text(
+                                            "RESET FILTERS",
+                                            fontSize = screenFontSize(14.0).sp,
+                                        )
                                     }
                                 }
                             }
@@ -657,14 +676,14 @@ fun FixturesScreen(
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(vertical = 8.dp)
+                            verticalArrangement = Arrangement.spacedBy(screenWidth(12.0)),
+                            contentPadding = PaddingValues(vertical = screenHeight(8.0))
                         ) {
                             items(fixtures) { fixture ->
                                 FixtureCard(
                                     fixtureData = fixture,
                                     navigateToPostMatchScreen = navigateToPostMatchScreen,
-                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                    modifier = Modifier.padding(horizontal = screenWidth(4.0))
                                 )
                             }
                         }
@@ -724,15 +743,15 @@ fun FixtureCard(
         },
         modifier = modifier
             .fillMaxWidth()
-            .shadow(4.dp, shape = RoundedCornerShape(12.dp)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+            .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(12.0))),
+        shape = RoundedCornerShape(screenWidth(12.0)),
+        elevation = CardDefaults.cardElevation(screenHeight(4.0)),
         colors = CardDefaults.cardColors(
             containerColor = surfaceContainerHighLight
         ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(screenWidth(16.0))
         ) {
             // Match status bar
             Row(
@@ -740,9 +759,9 @@ fun FixtureCard(
                     .fillMaxWidth()
                     .background(
                         color = matchStatusColor.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(screenWidth(4.0))
                     )
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                    .padding(vertical = screenHeight(4.0), horizontal = screenWidth(8.0)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -750,20 +769,21 @@ fun FixtureCard(
                     painter = painterResource(id = matchStatusIcon),
                     contentDescription = fixtureData.matchStatus.name,
                     tint = matchStatusColor,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(screenWidth(16.0))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(screenWidth(8.0)))
                 Text(
                     text = fixtureData.matchStatus.name
                         .lowercase()
                         .replace("_", " ")
                         .replaceFirstChar { it.uppercase() },
                     color = matchStatusColor,
+                    fontSize = screenFontSize(12.0).sp,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(screenHeight(12.0)))
 
             // Teams and score
             Row(
@@ -779,22 +799,23 @@ fun FixtureCard(
                         model = fixtureData.homeClub.clubLogo.link,
                         contentDescription = fixtureData.homeClub.name,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(screenWidth(48.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = fixtureData.homeClub.name,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
+                        fontSize = screenFontSize(14.0).sp,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "HOME",
                         color = primaryColor.copy(alpha = 0.7f),
-                        fontSize = 10.sp,
+                        fontSize = screenFontSize(10.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -816,17 +837,20 @@ fun FixtureCard(
                             Text(
                                 text = fixtureData.homeClubScore?.toString() ?: "0",
                                 style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Black
+                                fontWeight = FontWeight.Black,
+                                fontSize = screenFontSize(14.0).sp,
                             )
                             Text(
                                 text = " : ",
                                 style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Black
+                                fontWeight = FontWeight.Black,
+                                fontSize = screenFontSize(14.0).sp,
                             )
                             Text(
                                 text = fixtureData.awayClubScore?.toString() ?: "0",
                                 style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Black
+                                fontWeight = FontWeight.Black,
+                                fontSize = screenFontSize(14.0).sp,
                             )
                         }
                     } else {
@@ -834,17 +858,18 @@ fun FixtureCard(
                             text = "VS",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Black,
-                            color = primaryColor
+                            color = primaryColor,
+                            fontSize = screenFontSize(14.0).sp,
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
 
                     // Match time
                     Text(
                         text = formatIsoDateTime(LocalDateTime.parse(fixtureData.matchDateTime)),
                         color = onSurfaceVariantLight,
-                        fontSize = 12.sp,
+                        fontSize = screenFontSize(12.0).sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -858,22 +883,23 @@ fun FixtureCard(
                         model = fixtureData.awayClub.clubLogo.link,
                         contentDescription = fixtureData.awayClub.name,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(screenWidth(48.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = fixtureData.awayClub.name,
                         fontWeight = FontWeight.Bold,
+                        fontSize = screenFontSize(14.0).sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = "AWAY",
                         color = primaryColor.copy(alpha = 0.7f),
-                        fontSize = 10.sp,
+                        fontSize = screenFontSize(10.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -883,7 +909,7 @@ fun FixtureCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
+                    .height(screenHeight(2.0))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(

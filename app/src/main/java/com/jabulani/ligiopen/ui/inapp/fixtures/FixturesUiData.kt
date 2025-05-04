@@ -17,5 +17,8 @@ data class FixturesUiData(
     val matchDateTimes: List<String> = emptyList(),
     val matchDateTimesFetched: Boolean = false,
     val unauthorized: Boolean = false,
+    val clubIsNull: Boolean = true,
+    val singleClubMode: Boolean = false,
+    val singleClubId: Int? = null,
     val loadingStatus: LoadingStatus = LoadingStatus.LOADING
 )

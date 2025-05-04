@@ -169,18 +169,18 @@ fun HomeScreen(
                         )
                     )
                 )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = screenWidth(16.0), vertical = screenHeight(12.0))
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ligiopen_icon),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(2.dp, accentColor, RoundedCornerShape(8.dp))
+                    .size(screenWidth(48.0))
+                    .clip(RoundedCornerShape(screenWidth(8.0)))
+                    .border(screenWidth(2.0), accentColor, RoundedCornerShape(screenWidth(8.0)))
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(screenWidth(12.0)))
 
             Text(
                 text = HomeScreenTab.HOME.name
@@ -189,9 +189,9 @@ fun HomeScreen(
                 style = MaterialTheme.typography.headlineMedium,
                 color = onPrimaryLight,
                 fontWeight = FontWeight.Black,
-                letterSpacing = 1.sp,
+                letterSpacing = screenFontSize(1.0).sp,
                 modifier = Modifier
-                    .shadow(4.dp, shape = RoundedCornerShape(4.dp))
+                    .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(4.0)))
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -201,7 +201,7 @@ fun HomeScreen(
                 IconButton(
                     onClick = { /* Handle notifications */ },
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(screenWidth(40.0))
                         .background(accentColor, CircleShape)
                 ) {
                     Icon(
@@ -235,32 +235,32 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = screenWidth(8.0))
         ) {
             // Upcoming Matches section
             SectionHeader(
                 title = "Upcoming Matches",
                 actionText = "View All",
                 onActionClick = { /* TODO */ },
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = screenHeight(16.0))
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
 
             if (fixtures.isEmpty()) {
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(screenWidth(12.0)),
+                    contentPadding = PaddingValues(horizontal = screenWidth(8.0))
                 ) {
                     items(3) { index ->
                         // Shimmer placeholder card
                         Card(
                             modifier = Modifier
-                                .width(280.dp)
-                                .height(180.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = CardDefaults.cardElevation(4.dp),
+                                .width(screenWidth(280.0))
+                                .height(screenHeight(180.0)),
+                            shape = RoundedCornerShape(screenWidth(12.0)),
+                            elevation = CardDefaults.cardElevation(screenHeight(4.0)),
                             colors = CardDefaults.cardColors(
                                 containerColor = surfaceVariantLight
                             ),
@@ -269,20 +269,20 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
 //                                    .shimmerEffect()
-                                    .padding(16.dp)
+                                    .padding(screenWidth(16.0))
                             ) {
                                 // Placeholder status
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(24.dp)
+                                        .height(screenHeight(24.0))
                                         .background(
                                             color = surfaceContainerHighLight,
-                                            shape = RoundedCornerShape(4.dp)
+                                            shape = RoundedCornerShape(screenWidth(4.0))
                                         )
                                 )
 
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(screenHeight(12.0)))
 
                                 // Placeholder teams and score
                                 Row(
@@ -296,22 +296,22 @@ fun HomeScreen(
                                     ) {
                                         Box(
                                             modifier = Modifier
-                                                .size(48.dp)
+                                                .size(screenWidth(48.0))
                                                 .clip(CircleShape)
                                                 .background(surfaceContainerHighLight)
                                         )
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(screenHeight(8.0)))
                                         Box(
                                             modifier = Modifier
-                                                .width(60.dp)
-                                                .height(16.dp)
+                                                .width(screenWidth(60.0))
+                                                .height(screenHeight(16.0))
                                                 .background(surfaceContainerHighLight)
                                         )
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.height(screenHeight(4.0)))
                                         Box(
                                             modifier = Modifier
-                                                .width(40.dp)
-                                                .height(12.dp)
+                                                .width(screenWidth(40.0))
+                                                .height(screenHeight(12.0))
                                                 .background(surfaceContainerHighLight)
                                         )
                                     }
@@ -323,15 +323,15 @@ fun HomeScreen(
                                     ) {
                                         Box(
                                             modifier = Modifier
-                                                .width(80.dp)
-                                                .height(24.dp)
+                                                .width(screenWidth(80.0))
+                                                .height(screenHeight(24.0))
                                                 .background(surfaceContainerHighLight)
                                         )
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.height(screenHeight(4.0)))
                                         Box(
                                             modifier = Modifier
-                                                .width(120.dp)
-                                                .height(14.dp)
+                                                .width(screenWidth(120.0))
+                                                .height(screenHeight(14.0))
                                                 .background(surfaceContainerHighLight)
                                         )
                                     }
@@ -343,22 +343,22 @@ fun HomeScreen(
                                     ) {
                                         Box(
                                             modifier = Modifier
-                                                .size(48.dp)
+                                                .size(screenWidth(48.0))
                                                 .clip(CircleShape)
                                                 .background(surfaceContainerHighLight)
                                         )
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(screenHeight(8.0)))
                                         Box(
                                             modifier = Modifier
-                                                .width(60.dp)
-                                                .height(16.dp)
+                                                .width(screenWidth(60.0))
+                                                .height(screenHeight(16.0))
                                                 .background(surfaceContainerHighLight)
                                         )
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.height(screenHeight(4.0)))
                                         Box(
                                             modifier = Modifier
-                                                .width(40.dp)
-                                                .height(12.dp)
+                                                .width(screenWidth(40.0))
+                                                .height(screenHeight(12.0))
                                                 .background(surfaceContainerHighLight)
                                         )
                                     }
@@ -369,7 +369,7 @@ fun HomeScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(2.dp)
+                                        .height(screenHeight(2.0))
                                         .background(surfaceContainerHighLight)
                                 )
                             }
@@ -379,8 +379,8 @@ fun HomeScreen(
             } else {
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(screenWidth(12.0)),
+                    contentPadding = PaddingValues(horizontal = screenWidth(8.0))
                 ) {
                     items(fixtures) { fixture ->
                         FixtureCard(
@@ -392,7 +392,7 @@ fun HomeScreen(
                                     fixture.matchLocationId.toString()
                                 )
                             },
-                            modifier = Modifier.width(280.dp)
+                            modifier = Modifier.width(screenWidth(280.0))
                         )
                     }
                 }
@@ -400,7 +400,7 @@ fun HomeScreen(
 
 
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(screenHeight(24.0)))
 
             // Featured Video section
             SectionHeader(
@@ -415,14 +415,14 @@ fun HomeScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
 
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
+                    .padding(horizontal = screenWidth(8.0)),
+                shape = RoundedCornerShape(screenWidth(16.0)),
+                elevation = CardDefaults.cardElevation(screenHeight(8.0))
             ) {
                 Box {
                     YouTubePlayer(
@@ -453,7 +453,7 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
 
             Text(
                 text = youtubeVideo.videoTitle,
@@ -461,19 +461,19 @@ fun HomeScreen(
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = screenWidth(16.0))
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(screenHeight(4.0)))
 
             Text(
                 text = youtubeVideo.videoDate,
                 color = onSurfaceVariantLight,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                fontSize = screenFontSize(12.0).sp,
+                modifier = Modifier.padding(horizontal = screenWidth(16.0))
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(screenHeight(24.0)))
 
             // Video Highlights section
             SectionHeader(
@@ -482,12 +482,12 @@ fun HomeScreen(
                 onActionClick = navigateToAllVideosScreen
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp)
+                horizontalArrangement = Arrangement.spacedBy(screenWidth(12.0)),
+                contentPadding = PaddingValues(horizontal = screenWidth(8.0))
             ) {
                 items(youtubeVideos.take(5)) { video ->
                     VideoHighlightCard(
@@ -499,12 +499,12 @@ fun HomeScreen(
                                 video.videoDate
                             )
                         },
-                        modifier = Modifier.width(240.dp)
+                        modifier = Modifier.width(screenWidth(240.0))
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(screenHeight(24.0)))
 
             // Latest News section
             SectionHeader(
@@ -513,7 +513,7 @@ fun HomeScreen(
                 onActionClick = { /* TODO */ }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
 
             if (news.isNotEmpty()) {
                 // Featured news item
@@ -521,10 +521,10 @@ fun HomeScreen(
                     news = news[0],
                     isFeatured = true,
                     onClick = { navigateToNewsDetailsScreen(news[0].id.toString()) },
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = screenWidth(8.0))
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(screenHeight(16.0)))
 
                 // Other news items
                 news.drop(1).take(3).forEach { newsItem ->
@@ -533,7 +533,7 @@ fun HomeScreen(
                         isFeatured = false,
                         onClick = { navigateToNewsDetailsScreen(newsItem.id.toString()) }
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(16.0)))
                 }
 //                LazyColumn(
 //                    modifier = Modifier.fillMaxWidth(),
@@ -553,7 +553,7 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
+                        .height(screenHeight(120.0))
                 ) {
                     Text(
                         text = "No news available",
@@ -562,7 +562,7 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(screenHeight(24.0)))
         }
     }
 }
@@ -578,7 +578,7 @@ private fun SectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = screenWidth(8.0))
     ) {
         Text(
             text = title,
@@ -596,11 +596,11 @@ private fun SectionHeader(
             )
         ) {
             Text(text = actionText)
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(screenWidth(4.0)))
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(screenWidth(16.0))
             )
         }
     }
@@ -620,8 +620,8 @@ private fun VideoHighlightCard(
     Card(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        shape = RoundedCornerShape(screenWidth(12.0)),
+        elevation = CardDefaults.cardElevation(screenWidth(4.0))
     ) {
         Column {
             // Thumbnail container
@@ -664,9 +664,9 @@ private fun VideoHighlightCard(
                         contentDescription = "Play",
                         tint = Color.White,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(screenWidth(48.0))
                             .align(Alignment.Center)
-                            .shadow(4.dp)
+                            .shadow(screenWidth(4.0))
                     )
                 }
 
@@ -674,14 +674,14 @@ private fun VideoHighlightCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(8.dp)
-                        .background(Color.Black.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
-                        .padding(horizontal = 6.dp, vertical = 4.dp)
+                        .padding(screenWidth(8.0))
+                        .background(Color.Black.copy(alpha = 0.7f), RoundedCornerShape(screenWidth(4.0)))
+                        .padding(horizontal = screenWidth(6.0), vertical = screenHeight(4.0))
                 ) {
                     Text(
                         text = "2:45", // You might want to get actual duration from your data
                         color = Color.White,
-                        fontSize = 12.sp,
+                        fontSize = screenFontSize(12.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -689,7 +689,7 @@ private fun VideoHighlightCard(
 
             // Video info
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(screenWidth(12.0))
             ) {
                 Text(
                     text = video.videoTitle,
@@ -698,7 +698,7 @@ private fun VideoHighlightCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(screenHeight(4.0)))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -707,13 +707,13 @@ private fun VideoHighlightCard(
                         painter = painterResource(id = R.drawable.clock),
                         contentDescription = "Duration",
                         tint = onSurfaceVariantLight,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(screenWidth(14.0))
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(4.0)))
                     Text(
                         text = video.videoDate,
                         color = onSurfaceVariantLight,
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -722,13 +722,13 @@ private fun VideoHighlightCard(
                         painter = painterResource(id = R.drawable.play_views),
                         contentDescription = "Views",
                         tint = onSurfaceVariantLight,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(screenWidth(14.0))
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(4.0)))
                     Text(
                         text = "1.2K", // Example view count
                         color = onSurfaceVariantLight,
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp
                     )
                 }
             }
@@ -737,7 +737,7 @@ private fun VideoHighlightCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
+                    .height(screenHeight(2.0))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
@@ -779,14 +779,14 @@ private fun FixtureCard(
     Card(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+        shape = RoundedCornerShape(screenWidth(12.0)),
+        elevation = CardDefaults.cardElevation(screenHeight(4.0)),
         colors = CardDefaults.cardColors(
             containerColor = surfaceContainerHighLight
         ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(screenWidth(16.0))
         ) {
             // Match status
             Row(
@@ -794,9 +794,9 @@ private fun FixtureCard(
                     .fillMaxWidth()
                     .background(
                         color = matchStatusColor.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(screenWidth(4.0))
                     )
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                    .padding(vertical = screenHeight(4.0), horizontal = screenWidth(8.0)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -811,9 +811,9 @@ private fun FixtureCard(
                     ),
                     contentDescription = fixtureData.matchStatus.name,
                     tint = matchStatusColor,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(screenWidth(16.0))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(screenWidth(8.0)))
                 Text(
                     text = fixtureData.matchStatus.name
                         .lowercase()
@@ -824,7 +824,7 @@ private fun FixtureCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(screenHeight(12.0)))
 
             // Teams and score
             Row(
@@ -840,21 +840,21 @@ private fun FixtureCard(
                         model = fixtureData.homeClub.clubLogo.link,
                         contentDescription = fixtureData.homeClub.name,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(screenWidth(48.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = fixtureData.homeClub.clubAbbreviation ?:
                         fixtureData.homeClub.name.take(3).uppercase(),
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = "HOME",
                         color = primaryColor.copy(alpha = 0.7f),
-                        fontSize = 10.sp,
+                        fontSize = screenFontSize(10.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -898,13 +898,13 @@ private fun FixtureCard(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
 
                     // Match time
                     Text(
                         text = formatIsoDateTime(LocalDateTime.parse(fixtureData.matchDateTime)),
                         color = onSurfaceVariantLight,
-                        fontSize = 12.sp,
+                        fontSize = screenFontSize(12.0).sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -918,21 +918,21 @@ private fun FixtureCard(
                         model = fixtureData.awayClub.clubLogo.link,
                         contentDescription = fixtureData.awayClub.name,
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(screenWidth(48.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenWidth(4.0)))
                     Text(
                         text = fixtureData.awayClub.clubAbbreviation ?:
                         fixtureData.awayClub.name.take(3).uppercase(),
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     Text(
                         text = "AWAY",
                         color = primaryColor.copy(alpha = 0.7f),
-                        fontSize = 10.sp,
+                        fontSize = screenFontSize(10.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -942,7 +942,7 @@ private fun FixtureCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
+                    .height(screenHeight(2.0))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(

@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class UserRegistrationRequestBody(
     val username: String,
     val email: String,
+    val role: String,
     val password: String,
 )

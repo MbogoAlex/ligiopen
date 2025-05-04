@@ -45,6 +45,8 @@ import com.jabulani.ligiopen.ui.theme.primaryDark
 import com.jabulani.ligiopen.ui.theme.primaryLight
 import com.jabulani.ligiopen.ui.theme.secondaryDark
 import com.jabulani.ligiopen.ui.theme.secondaryLight
+import com.jabulani.ligiopen.utils.screenFontSize
+import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
 import kotlinx.coroutines.delay
 
@@ -129,9 +131,9 @@ fun SplashScreen(
         // App logo with stadium-like border
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .size(screenWidth(200.0))
                 .shadow(
-                    elevation = 16.dp,
+                    elevation = screenWidth(16.0),
                     shape = CircleShape,
                     spotColor = primaryColor.copy(alpha = 0.3f)
                 )
@@ -145,7 +147,7 @@ fun SplashScreen(
                     shape = CircleShape
                 )
                 .border(
-                    width = 3.dp,
+                    width = screenWidth(3.0),
                     brush = Brush.horizontalGradient(
                         colors = listOf(
                             primaryColor,
@@ -161,7 +163,7 @@ fun SplashScreen(
                 painter = painterResource(id = R.drawable.ligiopen_icon),
                 contentDescription = "Ligi Open Logo",
                 tint = onPrimaryColor,
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(screenWidth(120.0))
             )
         }
 
@@ -169,12 +171,12 @@ fun SplashScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 64.dp)
+                .padding(bottom = screenHeight(64.0))
         ) {
             CircularProgressIndicator(
                 color = primaryColor,
-                modifier = Modifier.size(36.dp),
-                strokeWidth = 3.dp
+                modifier = Modifier.size(screenWidth(36.0)),
+                strokeWidth = screenWidth(3.0)
             )
         }
 
@@ -182,12 +184,12 @@ fun SplashScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 120.dp)
+                .padding(bottom = screenHeight(120.0))
         ) {
             Text(
                 text = "LIGI OPEN",
                 color = onPrimaryColor,
-                fontSize = 24.sp,
+                fontSize = screenFontSize(24.0).sp,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineLarge.copy(
                     shadow = Shadow(

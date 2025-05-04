@@ -31,6 +31,26 @@ class FixturesViewModel(
     private val _uiState = MutableStateFlow(FixturesUiData())
     val uiState: StateFlow<FixturesUiData> = _uiState.asStateFlow()
 
+    fun setSingleClubMode(singleClubMode: Boolean, clubId: Int?) {
+        _uiState.update {
+            it.copy(
+                singleClubMode = singleClubMode,
+                singleClubId = clubId
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setClubIsNull(clubIsNull: Boolean) {
+        _uiState.update {
+            it.copy(
+                clubIsNull = clubIsNull
+            )
+        }
+        getInitialData()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateClubId(clubId: Int) {
         val clubIds = uiState.value.clubIds.toMutableList()
         if(clubIds.contains(clubId)) {
@@ -43,6 +63,7 @@ class FixturesViewModel(
                 clubIds = clubIds
             )
         }
+        getMatchFixtures()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -106,10 +127,17 @@ class FixturesViewModel(
                    matchDateTime = if(uiState.value.selectedDate != null) uiState.value.selectedDate.toString() else null,
                )
 
+                val awayClubIds = response.body()?.data!!.map { it.awayClub.clubId }
+                val homeClubIds = response.body()?.data!!.map { it.homeClub.clubId }
+
+                val totalClubIds = awayClubIds + homeClubIds
+
+                val fixtureClubIds = totalClubIds.distinct()
+
                 if(response.isSuccessful) {
                     _uiState.update {
                         it.copy(
-                            fixtures = response.body()?.data!!,
+                            fixtures = if(!uiState.value.clubIsNull && uiState.value.singleClubMode && !fixtureClubIds.contains(uiState.value.singleClubId)) emptyList() else response.body()?.data!!,
                             loadingStatus = LoadingStatus.SUCCESS
                         )
                     }
@@ -169,6 +197,7 @@ class FixturesViewModel(
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getInitialData() {
         viewModelScope.launch {
             while (uiState.value.userAccount.id == 0) {
@@ -202,6 +231,5 @@ class FixturesViewModel(
 
     init {
         loadUserData()
-        getInitialData()
     }
 }

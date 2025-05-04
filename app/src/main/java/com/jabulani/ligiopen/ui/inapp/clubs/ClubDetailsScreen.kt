@@ -18,24 +18,19 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +45,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -80,10 +74,7 @@ import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
 import com.jabulani.ligiopen.data.network.model.player.PlayerPosition
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
-import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
-import com.jabulani.ligiopen.ui.inapp.news.NewsItemCard
 import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
-import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.ui.theme.backgroundLight
@@ -195,7 +186,7 @@ fun ClubDetailsScreen(
     modifier: Modifier = Modifier
 ) {
 
-
+    Log.d("clubDetailsScreen", "Club ID: ${clubDetails.clubId}")
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -275,6 +266,7 @@ fun ClubDetailsScreen(
                     navigateToPostMatchScreen = navigateToPostMatchScreen,
                     navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
                     clubId = clubDetails.clubId,
+                    singleClubMode = true,
                     modifier = Modifier
                         .weight(1f)
                 )

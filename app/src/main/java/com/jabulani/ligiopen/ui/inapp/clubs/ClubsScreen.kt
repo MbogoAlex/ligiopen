@@ -1,6 +1,5 @@
 package com.jabulani.ligiopen.ui.inapp.clubs
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,19 +19,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -132,18 +127,18 @@ fun ClubsScreen(
                         )
                     )
                 )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = screenWidth(16.0), vertical = screenHeight(12.0))
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ligiopen_icon),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(2.dp, accentColor, RoundedCornerShape(8.dp))
+                    .size(screenWidth(48.0))
+                    .clip(RoundedCornerShape(screenWidth(8.0)))
+                    .border(screenWidth(2.0), accentColor, RoundedCornerShape(screenWidth(8.0)))
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(screenWidth(12.0)))
 
             Text(
                 text = HomeScreenTab.CLUBS.name
@@ -154,7 +149,7 @@ fun ClubsScreen(
                 fontWeight = FontWeight.Black,
                 letterSpacing = 1.sp,
                 modifier = Modifier
-                    .shadow(4.dp, shape = RoundedCornerShape(4.dp))
+                    .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(4.0)))
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -162,7 +157,7 @@ fun ClubsScreen(
             IconButton(
                 onClick = { /* Filter or sort action */ },
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(screenWidth(40.0))
                     .background(accentColor, CircleShape)
             ) {
                 Icon(
@@ -181,8 +176,8 @@ fun ClubsScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(64.dp),
-                        strokeWidth = 4.dp,
+                        modifier = Modifier.size(screenWidth(64.0)),
+                        strokeWidth = screenWidth(4.0),
                         color = accentColor
                     )
                 }
@@ -191,9 +186,9 @@ fun ClubsScreen(
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(screenWidth(16.0)),
+                    verticalArrangement = Arrangement.spacedBy(screenHeight(16.0)),
+                    horizontalArrangement = Arrangement.spacedBy(screenWidth(16.0))
                 ) {
                     items(clubs) { club ->
                         ClubCard(
@@ -213,7 +208,7 @@ fun ClubCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(screenWidth(16.0))
     val primaryColor = primaryLight
     val accentColor = tertiaryLight
     val backgroundColor = backgroundLight
@@ -227,8 +222,8 @@ fun ClubCard(
             .clickable(onClick = onClick),
         shape = shape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 4.dp
+            defaultElevation = screenHeight(8.0),
+            pressedElevation = screenHeight(4.0)
         ),
         colors = CardDefaults.cardColors(
             containerColor = surfaceContainerHighLight
@@ -271,14 +266,14 @@ fun ClubCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(12.dp)
-                        .size(48.dp)
+                        .padding(screenWidth(12.0))
+                        .size(screenWidth(48.0))
                         .background(
                             color = surfaceContainerHighLight,
                             shape = CircleShape
                         )
                         .border(
-                            width = 2.dp,
+                            width = screenWidth(2.0),
                             color = accentColor,
                             shape = CircleShape
                         ),
@@ -290,14 +285,14 @@ fun ClubCard(
                             .crossfade(true)
                             .build(),
                         contentDescription = "Club logo",
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(screenWidth(36.0))
                     )
                 }
             }
 
             // Club info
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(screenWidth(12.0))
             ) {
                 Text(
                     text = club.name,
@@ -308,7 +303,7 @@ fun ClubCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(screenHeight(4.0)))
 
                 // Additional club info could go here
                 // For example: location, founded year, etc.
@@ -318,7 +313,7 @@ fun ClubCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(4.dp)
+                    .height(screenHeight(4.0))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(accentColor, primaryColor)

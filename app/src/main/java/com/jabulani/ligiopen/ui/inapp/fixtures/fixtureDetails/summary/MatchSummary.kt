@@ -147,7 +147,7 @@ fun MatchSummary(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(280.dp)
+                    .height(screenHeight(280.0))
                     .graphicsLayer {
                         alpha = 0.9f
                     }
@@ -173,7 +173,7 @@ fun MatchSummary(
             Row(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = screenWidth(16.0)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -186,15 +186,15 @@ fun MatchSummary(
                         model = homeClub.clubLogo.link,
                         contentDescription = homeClub.name,
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(screenWidth(64.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(8.0)))
                     Text(
                         text = homeClub.clubAbbreviation ?: homeClub.name.take(3).uppercase(),
                         color = Color.White,
-                        fontSize = 18.sp,
+                        fontSize = screenFontSize(18.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -202,23 +202,23 @@ fun MatchSummary(
                 // Score
                 Card(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .width(120.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
+                        .padding(horizontal = screenWidth(16.0))
+                        .width(screenWidth(120.0)),
+                    shape = RoundedCornerShape(screenWidth(12.0)),
+                    elevation = CardDefaults.cardElevation(screenHeight(8.0)),
                     colors = CardDefaults.cardColors(
                         containerColor = surfaceColor
                     ),
                 ) {
                     Row(
-                        modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.padding(vertical = screenHeight(8.0)),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = homeClubScore.toString(),
                             color = primaryColor,
-                            fontSize = 32.sp,
+                            fontSize = screenFontSize(32.0).sp,
                             fontWeight = FontWeight.Black,
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center
@@ -226,13 +226,13 @@ fun MatchSummary(
                         Text(
                             text = ":",
                             color = onSurfaceColor,
-                            fontSize = 32.sp,
+                            fontSize = screenFontSize(32.0).sp,
                             fontWeight = FontWeight.Black
                         )
                         Text(
                             text = awayClubScore.toString(),
                             color = primaryColor,
-                            fontSize = 32.sp,
+                            fontSize = screenFontSize(32.0).sp,
                             fontWeight = FontWeight.Black,
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center
@@ -249,15 +249,15 @@ fun MatchSummary(
                         model = awayClub.clubLogo.link,
                         contentDescription = awayClub.name,
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(screenWidth(64.0))
                             .clip(CircleShape)
-                            .border(2.dp, primaryColor, CircleShape)
+                            .border(screenWidth(2.0), primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(8.0)))
                     Text(
                         text = awayClub.clubAbbreviation ?: awayClub.name.take(3).uppercase(),
                         color = Color.White,
-                        fontSize = 18.sp,
+                        fontSize = screenFontSize(18.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -268,28 +268,28 @@ fun MatchSummary(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(16.dp)
+                        .padding(screenWidth(16.0))
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .background(
                                 color = errorLight.copy(alpha = 0.8f),
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(screenWidth(16.0))
                             )
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .padding(horizontal = screenWidth(12.0), vertical = screenHeight(6.0))
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.live),
                             contentDescription = "Live",
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(screenWidth(16.0))
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(screenWidth(8.0)))
                         Text(
                             text = matchStatus.displayName(),
                             color = Color.White,
-                            fontSize = 14.sp,
+                            fontSize = screenFontSize(14.0).sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -306,25 +306,27 @@ fun MatchSummary(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(32.dp)
+                    modifier = Modifier.padding(screenWidth(32.0))
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.clock),
                         contentDescription = "Pending",
                         tint = primaryColor.copy(alpha = 0.6f),
-                        modifier = Modifier.size(64.dp)
+                        modifier = Modifier.size(screenWidth(64.0))
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(16.0)))
                     Text(
                         text = "Match Summary Not Available",
                         style = MaterialTheme.typography.labelMedium,
                         color = primaryColor,
+                        fontSize = screenFontSize(14.0).sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(screenHeight(8.0)))
                     Text(
                         text = "Check back when the match starts",
                         color = onSurfaceVariantLight,
+                        fontSize = screenFontSize(14.0).sp,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -334,37 +336,38 @@ fun MatchSummary(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = screenWidth(16.0))
             ) {
                 // Match info card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = RoundedCornerShape(12.dp),
+                        .padding(vertical = screenHeight(16.0)),
+                    elevation = CardDefaults.cardElevation(screenHeight(4.0)),
+                    shape = RoundedCornerShape(screenWidth(12.0)),
                     colors = CardDefaults.cardColors(
                         containerColor = surfaceColor
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(screenWidth(16.0))
                     ) {
                         // Match date and time
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = screenHeight(8.0))
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.calendar),
                                 contentDescription = "Date",
                                 tint = primaryColor,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(screenWidth(20.0))
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(screenWidth(8.0)))
                             Text(
                                 text = formatIsoDateTime(LocalDateTime.parse(matchFixtureData.matchDateTime)),
                                 color = onSurfaceColor,
+                                fontSize = screenFontSize(14.0).sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -372,18 +375,19 @@ fun MatchSummary(
                         // Stadium info
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = screenHeight(8.0))
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.stadium),
                                 contentDescription = "Stadium",
                                 tint = primaryColor,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(screenWidth(20.0))
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(screenWidth(8.0)))
                             Text(
                                 text = matchLocation.venueName,
                                 color = onSurfaceColor,
+                                fontSize = screenFontSize(14.0).sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -416,18 +420,19 @@ fun MatchSummary(
                     style = MaterialTheme.typography.bodySmall,
                     color = primaryColor,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = screenWidth(8.0)),
+                    fontSize = screenFontSize(14.0).sp,
                 )
 
                 // Match events timeline
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = screenHeight(16.0))
                 ) {
                     commentaries.forEach { commentary ->
                         MatchEventCell(commentary = commentary)
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(screenHeight(4.0)))
                     }
                 }
             }
@@ -475,9 +480,9 @@ fun MatchEventCell(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(2.dp),
-        shape = RoundedCornerShape(8.dp),
+            .padding(vertical = screenHeight(4.0)),
+        elevation = CardDefaults.cardElevation(screenHeight(2.0)),
+        shape = RoundedCornerShape(screenWidth(8.0)),
         colors = CardDefaults.cardColors(
             containerColor = surfaceColor
         )
@@ -487,7 +492,7 @@ fun MatchEventCell(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(screenWidth(12.0)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -497,28 +502,30 @@ fun MatchEventCell(
                         model = commentary.homeClub.clubLogo.link,
                         contentDescription = commentary.homeClub.name,
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(screenWidth(24.0))
                             .clip(CircleShape)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = commentary.matchEventType.displayName(),
                         color = primaryColor,
+                        fontSize = screenFontSize(14.0).sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(16.0)))
                     AsyncImage(
                         model = commentary.awayClub.clubLogo.link,
                         contentDescription = commentary.awayClub.name,
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(screenWidth(24.0))
                             .clip(CircleShape)
                     )
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(screenHeight(4.0)))
                 Text(
                     text = "${commentary.minute}'",
                     color = onSurfaceVariantLight,
+                    fontSize = screenFontSize(14.0).sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -527,19 +534,19 @@ fun MatchEventCell(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(screenWidth(12.0)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = if (isHomeTeam) Arrangement.Start else Arrangement.End
             ) {
                 if (isHomeTeam) {
                     // Home team event layout
                     MinuteBadge(commentary.minute.takeIf { it != null }.toString())
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(16.0)))
                     EventContent(commentary, isHomeTeam = true)
                 } else {
                     // Away team event layout
                     EventContent(commentary, isHomeTeam = false)
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(16.0)))
                     MinuteBadge(commentary.minute.takeIf { it != null }.toString())
                 }
             }
@@ -553,12 +560,13 @@ private fun MinuteBadge(minute: String) {
         modifier = Modifier
             .background(
                 color = primaryLight.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(4.dp)
+                shape = RoundedCornerShape(screenWidth(4.0))
             )
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = screenWidth(8.0), vertical = screenHeight(4.0))
     ) {
         Text(
             text = "$minute'",
+            fontSize = screenFontSize(14.0).sp,
             color = primaryLight,
             fontWeight = FontWeight.Bold
         )
@@ -628,9 +636,9 @@ private fun EventContent(
                 painter = painterResource(id = eventConfig.icon),
                 contentDescription = commentary.matchEventType.displayName(),
                 tint = eventConfig.iconTint,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(screenWidth(24.0))
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(screenWidth(8.0)))
         }
 
         Column {
@@ -644,7 +652,7 @@ private fun EventContent(
                         Text(
                             text = "(Own Goal)",
                             color = Color(0xFFF44336),
-                            fontSize = 12.sp
+                            fontSize = screenFontSize(12.0).sp
                         )
                     }
                 }
@@ -652,49 +660,52 @@ private fun EventContent(
                     Text(
                         text = "Substitution",
                         color = primaryLight,
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp
                     )
                     Text(
                         text = "In: ${commentary.mainPlayer?.username}",
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = screenFontSize(14.0).sp,
                     )
                     Text(
                         text = "Out: ${commentary.secondaryPlayer?.username ?: ""}",
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp,
                     )
                 }
                 MatchEventType.FOUL -> {
                     Text(
                         text = "Foul by ${commentary.mainPlayer?.username}",
+                        fontSize = screenFontSize(14.0).sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     if (commentary.secondaryPlayer != null) {
                         Text(
                             text = "on ${commentary.secondaryPlayer.username}",
-                            fontSize = 12.sp
+                            fontSize = screenFontSize(12.0).sp,
                         )
                     }
                 }
                 else -> {
                     Text(
                         text = commentary.matchEventType.displayName(),
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = screenFontSize(14.0).sp,
                     )
                     Text(
                         text = commentary.mainPlayer?.username ?: "",
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp,
                     )
                 }
             }
         }
 
         if (!isHomeTeam) {
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(screenWidth(8.0)))
             Icon(
                 painter = painterResource(id = eventConfig.icon),
                 contentDescription = commentary.matchEventType.displayName(),
                 tint = eventConfig.iconTint,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(screenWidth(24.0))
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.jabulani.ligiopen.ui.inapp.news
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -98,18 +99,24 @@ fun NewsScreenComposable(
 
     LaunchedEffect(lifecycleState) {
         when(lifecycleState) {
-            Lifecycle.State.DESTROYED -> {}
+            Lifecycle.State.DESTROYED -> {
+                Log.d("lifecycle", "Destroyed: CLUB ID: $clubId")
+            }
             Lifecycle.State.INITIALIZED -> {
+                Log.d("lifecycle", "Initialized: CLUB ID: $clubId")
                 viewModel.setClubId(clubId = clubId)
             }
             Lifecycle.State.CREATED -> {
+                Log.d("lifecycle", "Created: CLUB ID: $clubId")
 
             }
             Lifecycle.State.STARTED -> {
+                Log.d("lifecycle", "Started: CLUB ID: $clubId")
 
             }
             Lifecycle.State.RESUMED -> {
-                viewModel.getInitialData()
+                Log.d("lifecycle", "Resumed: CLUB ID: $clubId")
+                viewModel.setClubId(clubId = clubId)
             }
         }
     }
@@ -160,18 +167,18 @@ fun NewsScreen(
                             )
                         )
                     )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = screenWidth(16.0), vertical = screenHeight(12.0))
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ligiopen_icon),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(2.dp, accentColor, RoundedCornerShape(8.dp))
+                        .size(screenWidth(48.0))
+                        .clip(RoundedCornerShape(screenWidth(8.0)))
+                        .border(screenWidth(2.0), accentColor, RoundedCornerShape(screenWidth(8.0)))
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(screenWidth(12.0)))
 
                 Text(
                     text = HomeScreenTab.NEWS.name
@@ -180,9 +187,9 @@ fun NewsScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     color = onPrimaryLight,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp,
+                    letterSpacing = screenFontSize(1.0).sp,
                     modifier = Modifier
-                        .shadow(4.dp, shape = RoundedCornerShape(4.dp))
+                        .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(4.0)))
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -191,7 +198,7 @@ fun NewsScreen(
                 IconButton(
                     onClick = { /* Handle refresh */ },
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(screenWidth(40.0))
                         .background(accentColor, CircleShape)
                 ) {
                     Icon(
@@ -207,7 +214,7 @@ fun NewsScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = screenWidth(8.0))
         ) {
             when (loadingStatus) {
                 LoadingStatus.LOADING -> {
@@ -216,8 +223,8 @@ fun NewsScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(64.dp),
-                            strokeWidth = 4.dp,
+                            modifier = Modifier.size(screenWidth(64.0)),
+                            strokeWidth = screenWidth(4.0),
                             color = accentColor
                         )
                     }
@@ -235,15 +242,15 @@ fun NewsScreen(
                                     painter = painterResource(R.drawable.newspaper2),
                                     contentDescription = "No news",
                                     tint = primaryColor.copy(alpha = 0.5f),
-                                    modifier = Modifier.size(64.dp)
+                                    modifier = Modifier.size(screenWidth(64.0))
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(screenHeight(16.0)))
                                 Text(
                                     text = "NO NEWS AVAILABLE",
                                     color = primaryColor.copy(alpha = 0.7f),
                                     fontWeight = FontWeight.Bold
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(screenHeight(8.0)))
                                 Text(
                                     text = "Check back later for updates",
                                     color = onSurfaceVariantLight
@@ -253,8 +260,8 @@ fun NewsScreen(
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(vertical = 8.dp)
+                            verticalArrangement = Arrangement.spacedBy(screenWidth(16.0)),
+                            contentPadding = PaddingValues(vertical = screenHeight(8.0))
                         ) {
                             // Featured news item (first item)
                             item {
@@ -262,7 +269,7 @@ fun NewsScreen(
                                     news = news[0],
                                     isFeatured = true,
                                     onClick = { navigateToNewsDetailsScreen(news[0].id.toString()) },
-                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                    modifier = Modifier.padding(horizontal = screenWidth(4.0))
                                 )
                             }
 
@@ -272,7 +279,7 @@ fun NewsScreen(
                                     news = newsItem,
                                     isFeatured = false,
                                     onClick = { navigateToNewsDetailsScreen(newsItem.id.toString()) },
-                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                    modifier = Modifier.padding(horizontal = screenWidth(4.0))
                                 )
                             }
                         }
@@ -315,9 +322,9 @@ fun NewsTile(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .shadow(4.dp, shape = RoundedCornerShape(12.dp)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+            .shadow(screenWidth(4.0), shape = RoundedCornerShape(screenWidth(12.0))),
+        shape = RoundedCornerShape(screenWidth(12.0)),
+        elevation = CardDefaults.cardElevation(screenHeight(4.0)),
         colors = CardDefaults.cardColors(
             containerColor = surfaceContainerHighLight
         ),
@@ -327,7 +334,7 @@ fun NewsTile(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(if (isFeatured) 240.dp else 160.dp)
+                    .height(if (isFeatured) screenHeight(240.0) else screenHeight(160.0))
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -343,12 +350,12 @@ fun NewsTile(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(12.dp)
+                        .padding(screenWidth(12.0))
                         .background(
                             color = primaryColor.copy(alpha = 0.9f),
-                            shape = RoundedCornerShape(4.dp)
+                            shape = RoundedCornerShape(screenWidth(4.0))
                         )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = screenWidth(8.0), vertical = screenHeight(4.0))
                 ) {
 //                    Text(
 //                        text = news.category?.uppercase() ?: "NEWS",
@@ -359,7 +366,7 @@ fun NewsTile(
                     Text(
                         text = "NEWS",
                         color = onPrimaryLight,
-                        fontSize = 12.sp,
+                        fontSize = screenFontSize(12.0).sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -382,7 +389,7 @@ fun NewsTile(
 
             // News content
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(screenWidth(16.0))
             ) {
                 Text(
                     text = news.title,
@@ -390,7 +397,7 @@ fun NewsTile(
                     else MaterialTheme.typography.labelSmall,
                     color = onSurfaceColor,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = screenHeight(8.0))
                 )
 
                 Text(
@@ -398,7 +405,7 @@ fun NewsTile(
                     color = onSurfaceVariantLight,
                     maxLines = if (isFeatured) 3 else 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = screenHeight(8.0))
                 )
 
                 Row(
@@ -409,13 +416,13 @@ fun NewsTile(
                         painter = painterResource(R.drawable.clock),
                         contentDescription = "Time",
                         tint = onSurfaceVariantLight,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(screenWidth(16.0))
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(screenWidth(8.0)))
                     Text(
                         text = formattedDate,
                         color = onSurfaceVariantLight,
-                        fontSize = 12.sp
+                        fontSize = screenFontSize(12.0).sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -427,12 +434,15 @@ fun NewsTile(
                             contentColor = primaryColor
                         )
                     ) {
-                        Text("READ MORE")
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            "READ MORE",
+                            fontSize = screenFontSize(14.0).sp,
+                        )
+                        Spacer(modifier = Modifier.width(screenWidth(4.0)))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "Read more",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(screenWidth(16.0))
                         )
                     }
                 }
@@ -442,7 +452,7 @@ fun NewsTile(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
+                    .height(screenHeight(2.0))
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
