@@ -52,6 +52,9 @@ fun NavigationGraph(
                 },
                 navigateToLoginScreen = {
                     navController.navigate(LoginScreenDestination.route)
+                },
+                navigateToRegistrationScreen = {
+                    navController.navigate(RegistrationScreenDestination.route)
                 }
             )
         }

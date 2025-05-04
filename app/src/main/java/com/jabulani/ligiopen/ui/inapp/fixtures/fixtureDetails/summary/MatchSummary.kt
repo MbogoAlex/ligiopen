@@ -1,7 +1,10 @@
 package com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.summary
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,23 +21,30 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -54,9 +64,17 @@ import com.jabulani.ligiopen.data.network.model.match.fixture.fixture
 import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenViewModel
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
+import com.jabulani.ligiopen.ui.theme.errorLight
+import com.jabulani.ligiopen.ui.theme.onSurfaceLight
+import com.jabulani.ligiopen.ui.theme.onSurfaceVariantLight
+import com.jabulani.ligiopen.ui.theme.primaryLight
+import com.jabulani.ligiopen.ui.theme.surfaceContainerHighLight
+import com.jabulani.ligiopen.ui.theme.tertiaryLight
+import com.jabulani.ligiopen.ui.utils.formatIsoDateTime
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
+import java.time.LocalDateTime
 
 @Composable
 fun MatchSummaryComposable(
@@ -89,6 +107,7 @@ fun MatchSummaryComposable(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MatchSummary(
     matchStatus: MatchStatus,
@@ -102,1072 +121,604 @@ fun MatchSummary(
     loadingStatus: LoadingStatus,
     modifier: Modifier = Modifier
 ) {
+    val primaryColor = primaryLight
+    val surfaceColor = surfaceContainerHighLight
+    val onSurfaceColor = onSurfaceLight
+    val accentColor = tertiaryLight
+
     Column(
-        modifier = if(matchStatus == MatchStatus.PENDING) Modifier
+        modifier = Modifier
             .fillMaxSize()
-             else Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Box {
+        // Header with stadium image and score
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp)
+        ) {
+            // Stadium image with parallax effect
             AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
+                model = ImageRequest.Builder(LocalContext.current)
                     .data(matchLocation.photos?.get(0)?.link)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.loading_img),
+                contentDescription = "Stadium",
                 contentScale = ContentScale.Crop,
-                contentDescription = "Match location",
                 modifier = Modifier
-                    .background(Color.Black)
-                    .alpha(0.3f)
                     .fillMaxWidth()
-                    .height(screenHeight(x = 250.0))
+                    .height(280.dp)
+                    .graphicsLayer {
+                        alpha = 0.9f
+                    }
             )
+
+            // Dark overlay for better text visibility
             Box(
                 modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.5f),
+                                Color.Transparent
+                            ),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    )
+            )
+
+            // Score display
+            Row(
+                modifier = Modifier
                     .align(Alignment.Center)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                // Home team
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
                 ) {
+                    AsyncImage(
+                        model = homeClub.clubLogo.link,
+                        contentDescription = homeClub.name,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, primaryColor, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = homeClub.clubAbbreviation ?: "${homeClub.name.take(3)} FC",
+                        text = homeClub.clubAbbreviation ?: homeClub.name.take(3).uppercase(),
                         color = Color.White,
-                        fontSize = screenFontSize(x = 18.0).sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(homeClub.clubLogo.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.loading_img),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Home club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 50.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Card(
-                        shape = RoundedCornerShape(
-                            topStart = screenWidth(x = 5.0),
-                            bottomStart = screenWidth(x = 5.0)
-                        )
+                }
+
+                // Score
+                Card(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .width(120.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = surfaceColor
+                    ),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = homeClubScore.toString(),
-                            fontSize = screenFontSize(x = 18.0).sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(screenWidth(x = 12.0))
+                            color = primaryColor,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
                         )
-                    }
-                    ElevatedCard(
-                        shape = RoundedCornerShape(
-                            topEnd = screenWidth(x = 5.0),
-                            bottomEnd = screenWidth(x = 5.0)
+                        Text(
+                            text = ":",
+                            color = onSurfaceColor,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black
                         )
-                    ) {
                         Text(
                             text = awayClubScore.toString(),
-                            fontSize = screenFontSize(x = 18.0).sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(screenWidth(x = 12.0))
+                            color = primaryColor,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
                         )
                     }
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                }
+
+                // Away team
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
                     AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(awayClub.clubLogo.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.loading_img),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Away club logo",
+                        model = awayClub.clubLogo.link,
+                        contentDescription = awayClub.name,
                         modifier = Modifier
-                            .size(screenWidth(x = 50.0))
+                            .size(64.dp)
                             .clip(CircleShape)
+                            .border(2.dp, primaryColor, CircleShape)
                     )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = awayClub.clubAbbreviation ?: "${awayClub.name.take(3)} FC",
+                        text = awayClub.clubAbbreviation ?: awayClub.name.take(3).uppercase(),
                         color = Color.White,
-                        fontSize = screenFontSize(x = 18.0).sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            if(matchFixtureData.matchStatus == MatchStatus.FIRST_HALF || matchFixtureData.matchStatus == MatchStatus.SECOND_HALF || matchFixtureData.matchStatus == MatchStatus.HALF_TIME || matchFixtureData.matchStatus == MatchStatus.SECOND_HALF || matchFixtureData.matchStatus == MatchStatus.EXTRA_TIME_FIRST_HALF || matchFixtureData.matchStatus == MatchStatus.EXTRA_TIME_SECOND_HALF || matchFixtureData.matchStatus == MatchStatus.PENALTY_SHOOTOUT) {
+            // Match status indicator
+            if (matchStatus.isLive()) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
+                        .padding(16.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(
-                                vertical = screenHeight(x = 8.0),
-                                horizontal = screenWidth(x = 16.0)
+                            .background(
+                                color = errorLight.copy(alpha = 0.8f),
+                                shape = RoundedCornerShape(16.dp)
                             )
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
-                        Image(
+                        Icon(
                             painter = painterResource(id = R.drawable.live),
-                            contentDescription = "Live match",
-                            modifier = Modifier
-                                .size(screenWidth(x = 48.0))
+                            contentDescription = "Live",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = matchFixtureData.matchStatus.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            text = matchStatus.displayName(),
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
         }
-        if(matchStatus == MatchStatus.PENDING && loadingStatus != LoadingStatus.LOADING) {
+
+        // Match details
+        if (matchStatus == MatchStatus.PENDING && loadingStatus != LoadingStatus.LOADING) {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.padding(32.dp)
                 ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.clock),
+                        contentDescription = "Pending",
+                        tint = primaryColor.copy(alpha = 0.6f),
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Match summary not available",
-                        fontSize = screenFontSize(x = 16.0).sp,
+                        text = "Match Summary Not Available",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = primaryColor,
                         fontWeight = FontWeight.Bold
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Check back when the match starts",
-                        fontSize = screenFontSize(x = 14.0).sp,
+                        color = onSurfaceVariantLight,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         } else {
             Column(
                 modifier = Modifier
-                    .padding(
-                        horizontal = screenWidth(x = 16.0),
-                        vertical = screenHeight(x = 16.0)
-                    )
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                // Match info card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = surfaceColor
+                    )
                 ) {
-                    Text(
-                        text = homeClub.clubAbbreviation ?: "${homeClub.name.take(3)} FC",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = screenFontSize(x = 18.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(homeClub.clubLogo.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.loading_img),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Home club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(awayClub.clubLogo.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.loading_img),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Away club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                    Text(
-                        text = awayClub.clubAbbreviation ?: "${awayClub.name.take(3)} FC",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = screenFontSize(x = 18.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        // Match date and time
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.calendar),
+                                contentDescription = "Date",
+                                tint = primaryColor,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = formatIsoDateTime(LocalDateTime.parse(matchFixtureData.matchDateTime)),
+                                color = onSurfaceColor,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        // Stadium info
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.stadium),
+                                contentDescription = "Stadium",
+                                tint = primaryColor,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = matchLocation.venueName,
+                                color = onSurfaceColor,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        // Attendance (if available)
+//                        if (matchFixtureData.attendance != null) {
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                Icon(
+//                                    painter = painterResource(id = R.drawable.attendance),
+//                                    contentDescription = "Attendance",
+//                                    tint = primaryColor,
+//                                    modifier = Modifier.size(20.dp)
+//                                )
+//                                Spacer(modifier = Modifier.width(8.dp))
+//                                Text(
+//                                    text = "Attendance: ${NumberFormat.getNumberInstance(Locale.US).format(matchFixtureData.attendance)}",
+//                                    color = onSurfaceColor,
+//                                    fontWeight = FontWeight.SemiBold
+//                                )
+//                            }
+//                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-                commentaries.forEach { commentary ->
-                    MatchEventCell(commentary = commentary)
-                    HorizontalDivider()
+
+                // Match events header
+                Text(
+                    text = "MATCH EVENTS",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = primaryColor,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                // Match events timeline
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    commentaries.forEach { commentary ->
+                        MatchEventCell(commentary = commentary)
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
                 }
             }
         }
-
     }
 }
 
+@Composable
+private fun MatchStatus.isLive(): Boolean {
+    return this == MatchStatus.FIRST_HALF ||
+            this == MatchStatus.SECOND_HALF ||
+            this == MatchStatus.HALF_TIME ||
+            this == MatchStatus.EXTRA_TIME_FIRST_HALF ||
+            this == MatchStatus.EXTRA_TIME_SECOND_HALF ||
+            this == MatchStatus.PENALTY_SHOOTOUT
+}
 
+@Composable
+private fun MatchStatus.displayName(): String {
+    return when (this) {
+        MatchStatus.FIRST_HALF -> "1st Half"
+        MatchStatus.SECOND_HALF -> "2nd Half"
+        MatchStatus.HALF_TIME -> "Half Time"
+        MatchStatus.EXTRA_TIME_FIRST_HALF -> "ET 1st Half"
+        MatchStatus.EXTRA_TIME_SECOND_HALF -> "ET 2nd Half"
+        MatchStatus.PENALTY_SHOOTOUT -> "Penalties"
+        else -> this.name
+    }
+}
 
 @Composable
 fun MatchEventCell(
     commentary: MatchCommentaryData,
     modifier: Modifier = Modifier
 ) {
-    if(commentary.mainPlayer?.clubId == commentary.homeClub.clubId && commentary.matchEventType != MatchEventType.KICK_OFF) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(screenWidth(x = 8.0))
-        ) {
-            Text(
-                text = "${commentary.minute}'",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = screenFontSize(x = 14.0).sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.width(screenWidth(x = 16.0)))
-            when(commentary.matchEventType) {
-                MatchEventType.GOAL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.goal),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.OWN_GOAL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.goal),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = "${commentary.mainPlayer.username} (OWN)",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.SUBSTITUTION -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.substitution),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Column {
-                            Text(
-                                text = "In: ${commentary.mainPlayer.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                            Text(
-                                text = "Out: ${commentary.secondaryPlayer?.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                        }
-                    }
-                }
-                MatchEventType.FOUL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if(commentary.foulEvent!!.isYellowCard) {
-                            Image(
-                                painter = painterResource(id = R.drawable.yellow_card),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        } else if (commentary.foulEvent.isRedCard) {
-                            Image(
-                                painter = painterResource(id = R.drawable.red_card),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.foul),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Column {
-                            Text(
-                                text = "Offender: ${commentary.mainPlayer.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                            Text(
-                                text = "Victim: ${commentary.secondaryPlayer?.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                        }
-                    }
-                }
-                MatchEventType.YELLOW_CARD -> {}
-                MatchEventType.RED_CARD -> {}
-                MatchEventType.OFFSIDE -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.offside),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.CORNER_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.corner_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.FREE_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.free_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        if(commentary.penaltyEvent!!.isScored) {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Scored)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Missed)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-                MatchEventType.PENALTY -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.free_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        if(commentary.penaltyEvent!!.isScored) {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Scored)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Missed)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-                MatchEventType.PENALTY_MISSED -> {}
-                MatchEventType.INJURY -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.injury),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.THROW_IN -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.throw_in),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.GOAL_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.goal_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                    }
-                }
-                MatchEventType.KICK_OFF -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Kick-Off",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                MatchEventType.HALF_TIME -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Half-Time",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                MatchEventType.FULL_TIME -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Full-Time",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-        }
-    } else if(commentary.mainPlayer?.clubId == commentary.awayClub.clubId) {
-        Row(
-            modifier = Modifier
-                .padding(screenWidth(x = 8.0))
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-            when(commentary.matchEventType) {
-                MatchEventType.GOAL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.goal),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.OWN_GOAL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${commentary.mainPlayer.username} (OWN)",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.goal),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.SUBSTITUTION -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "In: ${commentary.mainPlayer.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                            Text(
-                                text = "Out: ${commentary.secondaryPlayer?.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.substitution),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.FOUL -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Offender: ${commentary.mainPlayer.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                            Text(
-                                text = "Victim: ${commentary.secondaryPlayer?.username}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = screenFontSize(x = 14.0).sp,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        if(commentary.foulEvent!!.isYellowCard) {
-                            Image(
-                                painter = painterResource(id = R.drawable.yellow_card),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        } else if (commentary.foulEvent.isRedCard) {
-                            Image(
-                                painter = painterResource(id = R.drawable.red_card),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.foul),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(screenWidth(x = 24.0))
-                            )
-                        }
-                    }
-                }
-                MatchEventType.YELLOW_CARD -> {}
-                MatchEventType.RED_CARD -> {}
-                MatchEventType.OFFSIDE -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.offside),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.CORNER_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.corner_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.FREE_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        if(commentary.penaltyEvent?.isScored != null) {
-                            if(commentary.penaltyEvent.isScored) {
-                                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                                Text(
-                                    text = "(Scored)",
-                                    fontSize = screenFontSize(x = 14.0).sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            } else {
-                                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                                Text(
-                                    text = "(Missed)",
-                                    fontSize = screenFontSize(x = 14.0).sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        } else {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Missed)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.free_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.PENALTY -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        if(commentary.penaltyEvent!!.isScored) {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Scored)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                            Text(
-                                text = "(Missed)",
-                                fontSize = screenFontSize(x = 14.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.free_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.PENALTY_MISSED -> {}
-                MatchEventType.INJURY -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.injury),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.THROW_IN -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.throw_in),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.GOAL_KICK -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = commentary.mainPlayer.username,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 14.0).sp,
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.goal_kick),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                        )
-                    }
-                }
-                MatchEventType.KICK_OFF -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Kick-Off",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                MatchEventType.HALF_TIME -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Half-Time",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                MatchEventType.FULL_TIME -> {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Full-Time",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.width(screenWidth(x = 16.0)))
-            Text(
-                text = "${commentary.minute}'",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = screenFontSize(x = 14.0).sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    } else {
-        if(commentary.matchEventType == MatchEventType.KICK_OFF) {
-            HorizontalDivider()
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = screenHeight(x = 8.0)
-                    )
-            ) {
-                Text(
-                    text = "${commentary.minute}'",
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
+    val primaryColor = primaryLight
+    val surfaceColor = surfaceContainerHighLight
+    val onSurfaceColor = onSurfaceLight
 
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.homeClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = "Kickoff".uppercase(),
-                        fontSize = screenFontSize(x = 14.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.awayClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                }
-            }
-        } else if(commentary.matchEventType == MatchEventType.HALF_TIME) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = screenHeight(x = 8.0)
-                    )
-            ) {
-                Text(
-                    text = "${commentary.minute}'",
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.homeClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = commentary.halfTimeEvent?.homeClubScore.toString(),
-                        fontSize = screenFontSize(x = 16.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = "Half-time".uppercase(),
-                        fontSize = screenFontSize(x = 14.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = commentary.halfTimeEvent?.awayClubScore.toString(),
-                        fontSize = screenFontSize(x = 16.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.awayClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                }
-            }
-        } else if(commentary.matchEventType == MatchEventType.FULL_TIME) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = screenHeight(x = 8.0)
-                    )
-            ) {
-                Text(
-                    text = "${commentary.minute}'",
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.homeClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = commentary.fullTimeEvent?.homeClubScore.toString(),
-                        fontSize = screenFontSize(x = 16.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = "Full-time".uppercase(),
-                        fontSize = screenFontSize(x = 14.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    Text(
-                        text = commentary.fullTimeEvent?.awayClubScore.toString(),
-                        fontSize = screenFontSize(x = 16.0).sp
-                    )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(commentary.awayClub!!.clubLogo?.link)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Club logo",
-                        modifier = Modifier
-                            .size(screenWidth(x = 24.0))
-                            .clip(CircleShape)
-                    )
-                }
+    val isHomeTeam = commentary.mainPlayer?.clubId == commentary.homeClub.clubId
+    val isNeutralEvent = commentary.matchEventType == MatchEventType.KICK_OFF ||
+            commentary.matchEventType == MatchEventType.HALF_TIME ||
+            commentary.matchEventType == MatchEventType.FULL_TIME
 
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = surfaceColor
+        )
+    ) {
+        if (isNeutralEvent) {
+            // Neutral events (kickoff, half time, full time)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AsyncImage(
+                        model = commentary.homeClub.clubLogo.link,
+                        contentDescription = commentary.homeClub.name,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = commentary.matchEventType.displayName(),
+                        color = primaryColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    AsyncImage(
+                        model = commentary.awayClub.clubLogo.link,
+                        contentDescription = commentary.awayClub.name,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${commentary.minute}'",
+                    color = onSurfaceVariantLight,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        } else {
+            // Team-specific events
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = if (isHomeTeam) Arrangement.Start else Arrangement.End
+            ) {
+                if (isHomeTeam) {
+                    // Home team event layout
+                    MinuteBadge(commentary.minute.takeIf { it != null }.toString())
+                    Spacer(modifier = Modifier.width(16.dp))
+                    EventContent(commentary, isHomeTeam = true)
+                } else {
+                    // Away team event layout
+                    EventContent(commentary, isHomeTeam = false)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    MinuteBadge(commentary.minute.takeIf { it != null }.toString())
+                }
             }
         }
     }
-
 }
 
+@Composable
+private fun MinuteBadge(minute: String) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = primaryLight.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(4.dp)
+            )
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = "$minute'",
+            color = primaryLight,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun EventContent(
+    commentary: MatchCommentaryData,
+    isHomeTeam: Boolean
+) {
+    val eventConfig = remember(commentary.matchEventType) {
+        when (commentary.matchEventType) {
+            MatchEventType.GOAL -> EventConfig(
+                icon = R.drawable.goal,
+                iconTint = Color(0xFF4CAF50)
+            )
+            MatchEventType.OWN_GOAL -> EventConfig(
+                icon = R.drawable.goal,
+                iconTint = Color(0xFFF44336)
+            )
+            MatchEventType.SUBSTITUTION -> EventConfig(
+                icon = R.drawable.substitution,
+                iconTint = primaryLight
+            )
+            MatchEventType.FOUL -> EventConfig(
+                icon = when {
+                    commentary.foulEvent?.isRedCard == true -> R.drawable.red_card
+                    commentary.foulEvent?.isYellowCard == true -> R.drawable.yellow_card
+                    else -> R.drawable.foul
+                },
+                iconTint = when {
+                    commentary.foulEvent?.isRedCard == true -> Color(0xFFF44336)
+                    commentary.foulEvent?.isYellowCard == true -> Color(0xFFFFC107)
+                    else -> primaryLight
+                }
+            )
+            MatchEventType.PENALTY -> EventConfig(
+                icon = R.drawable.penalty_kick,
+                iconTint = primaryLight
+            )
+            MatchEventType.CORNER_KICK -> EventConfig(
+                icon = R.drawable.corner_kick,
+                iconTint = primaryLight
+            )
+            MatchEventType.FREE_KICK -> EventConfig(
+                icon = R.drawable.free_kick,
+                iconTint = primaryLight
+            )
+            MatchEventType.INJURY -> EventConfig(
+                icon = R.drawable.injury,
+                iconTint = Color(0xFFF44336)
+            )
+            else -> EventConfig(
+                icon = R.drawable.stadium,
+                iconTint = primaryLight
+            )
+        }
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = if (isHomeTeam) Arrangement.Start else Arrangement.End
+    ) {
+        if (isHomeTeam) {
+            Icon(
+                painter = painterResource(id = eventConfig.icon),
+                contentDescription = commentary.matchEventType.displayName(),
+                tint = eventConfig.iconTint,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        Column {
+            when (commentary.matchEventType) {
+                MatchEventType.GOAL -> {
+                    Text(
+                        text = commentary.mainPlayer?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (commentary.matchEventType == MatchEventType.OWN_GOAL) {
+                        Text(
+                            text = "(Own Goal)",
+                            color = Color(0xFFF44336),
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+                MatchEventType.SUBSTITUTION -> {
+                    Text(
+                        text = "Substitution",
+                        color = primaryLight,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = "In: ${commentary.mainPlayer?.username}",
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "Out: ${commentary.secondaryPlayer?.username ?: ""}",
+                        fontSize = 12.sp
+                    )
+                }
+                MatchEventType.FOUL -> {
+                    Text(
+                        text = "Foul by ${commentary.mainPlayer?.username}",
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (commentary.secondaryPlayer != null) {
+                        Text(
+                            text = "on ${commentary.secondaryPlayer.username}",
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+                else -> {
+                    Text(
+                        text = commentary.matchEventType.displayName(),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = commentary.mainPlayer?.username ?: "",
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        }
+
+        if (!isHomeTeam) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                painter = painterResource(id = eventConfig.icon),
+                contentDescription = commentary.matchEventType.displayName(),
+                tint = eventConfig.iconTint,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+private data class EventConfig(
+    val icon: Int,
+    val iconTint: Color
+)
+
+private fun MatchEventType.displayName(): String {
+    return when (this) {
+        MatchEventType.KICK_OFF -> "Kick Off"
+        MatchEventType.HALF_TIME -> "Half Time"
+        MatchEventType.FULL_TIME -> "Full Time"
+        MatchEventType.FREE_KICK -> "Free Kick"
+        else -> this.name
+            .lowercase()
+            .replace("_", " ")
+            .replaceFirstChar { it.uppercase() }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MatchSummaryPreview() {
