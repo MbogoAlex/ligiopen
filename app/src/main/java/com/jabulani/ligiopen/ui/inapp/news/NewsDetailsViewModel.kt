@@ -29,11 +29,11 @@ class NewsDetailsViewModel(
 
     private fun getNews() {
         Log.i("fetchNews", "newsId: $newsId")
-        _uiState.update {
-            it.copy(
-                loadingStatus = LoadingStatus.LOADING
-            )
-        }
+//        _uiState.update {
+//            it.copy(
+//                loadingStatus = LoadingStatus.LOADING
+//            )
+//        }
         viewModelScope.launch {
             try {
                 val response = apiRepository.getSingleNews(

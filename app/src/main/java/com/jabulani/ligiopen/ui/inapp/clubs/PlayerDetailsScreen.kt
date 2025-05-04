@@ -109,7 +109,7 @@ fun PlayerDetailsScreen(
             .fillMaxSize()
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+//            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -128,144 +128,145 @@ fun PlayerDetailsScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
 //        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-        Column(
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(playerDetails.mainPhoto?.link)
+                .crossfade(true)
+                .build(),
+            placeholder = painterResource(id = R.drawable.loading_img),
+            error = painterResource(id = R.drawable.loading_img),
+            contentScale = ContentScale.FillWidth, // Ensures the whole image is visible
+            contentDescription = "Player photo",
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+                .weight(2f)
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(playerDetails.mainPhoto?.link)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.loading_img),
-                contentScale = ContentScale.Crop,
-                contentDescription = "Player photo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9f) // Adjust the ratio as needed
-            )
-
-            Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
-            ElevatedCard(
-                modifier = Modifier
-                    .padding(
-                        horizontal = screenWidth(x = 16.0)
-                    )
-                    .fillMaxWidth()
-            ) {
-                Column(
+            Column {
+                Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                ElevatedCard(
                     modifier = Modifier
                         .padding(
-                            vertical = screenHeight(x = 16.0),
                             horizontal = screenWidth(x = 16.0)
                         )
+                        .fillMaxWidth()
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .padding(
+                                vertical = screenHeight(x = 16.0),
+                                horizontal = screenWidth(x = 16.0)
+                            )
                     ) {
-                        Text(
-                            text = playerDetails.number.toString(),
-                            fontSize = screenFontSize(x = 26.0).sp,
-                            color = Color.Green,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 16.0)))
-                        Text(
-                            text = playerDetails.username,
-                            fontSize = screenFontSize(x = 20.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painter2,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 48.0))
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = clubDetails.name,
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Age: ",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = playerDetails.age.toString(),
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "Position: ",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = playerDetails.playerPosition.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Height: ",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = playerDetails.height.toString(),
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "Country: ",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Image(
-                            painter = painterResource(id = R.drawable.kenya_flag),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(screenWidth(x = 48.0))
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Weight: ",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                        Text(
-                            text = playerDetails.weight.toString(),
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.W600
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = playerDetails.number.toString(),
+                                fontSize = screenFontSize(x = 26.0).sp,
+                                color = Color.Green,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 16.0)))
+                            Text(
+                                text = playerDetails.username,
+                                fontSize = screenFontSize(x = 20.0).sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painter2,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(screenWidth(x = 48.0))
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Text(
+                                text = clubDetails.name,
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Age: ",
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Text(
+                                text = playerDetails.age.toString(),
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "Position: ",
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Text(
+                                text = playerDetails.playerPosition.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Height: ",
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Text(
+                                text = playerDetails.height.toString(),
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "Country: ",
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Image(
+                                painter = painterResource(id = R.drawable.kenya_flag),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(screenWidth(x = 48.0))
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Weight: ",
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                            Text(
+                                text = playerDetails.weight.toString(),
+                                fontSize = screenFontSize(x = 16.0).sp,
+                                fontWeight = FontWeight.W600
+                            )
+                        }
                     }
                 }
             }

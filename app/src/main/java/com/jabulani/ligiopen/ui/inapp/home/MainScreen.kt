@@ -317,7 +317,8 @@ fun MainScreen(
                             news = news,
                             navigateToPostMatchScreen = navigateToPostMatchScreen,
                             navigateToSingleVideoScreen = navigateToSingleVideoScreen,
-                            navigateToAllVideosScreen = navigateToAllVideosScreen
+                            navigateToAllVideosScreen = navigateToAllVideosScreen,
+                            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
                         )
                     }
                     HomeScreenTab.STANDINGS -> {

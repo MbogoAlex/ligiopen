@@ -87,6 +87,7 @@ object FixturesScreenDestination: AppNavigation {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FixturesScreenComposable(
+    showTopBanner: Boolean = true,
     clubId: Int? = null,
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     navigateToLoginScreenWithArgs: (email: String, password: String) -> Unit,
@@ -133,6 +134,7 @@ fun FixturesScreenComposable(
             .safeDrawingPadding()
     ) {
         FixturesScreen(
+            showTopBanner = showTopBanner,
             selectedDate = uiState.selectedDate,
             onSelectDate = viewModel::selectDate,
             clubs = uiState.clubs,
@@ -151,6 +153,7 @@ fun FixturesScreenComposable(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FixturesScreen(
+    showTopBanner: Boolean,
     selectedDate: LocalDate?,
     clubs: List<ClubDetails>,
     selectedClubs: List<ClubDetails>,
@@ -369,84 +372,87 @@ fun FixturesScreen(
 
 
     Column {
-        if(showFilter) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = screenWidth(x = 8.0),
-                        vertical = screenHeight(x = 4.0)
-                    )
-            ) {
-                OutlinedButton(onClick = { showDatePicker = !showDatePicker }) {
-                    Text(
-                        text = selectedDate?.let { formatLocalDate(it) } ?: "Date: All",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                OutlinedButton(onClick = { showClubsPicker = !showClubsPicker }) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Club",
-                            fontSize = screenFontSize(x = 14.0).sp
+        if(showTopBanner) {
+            if(showFilter) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = screenWidth(x = 8.0),
+                            vertical = screenHeight(x = 4.0)
                         )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                        Text(text = "|")
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                ) {
+                    OutlinedButton(onClick = { showDatePicker = !showDatePicker }) {
                         Text(
-                            text = if(selectedClubs.isEmpty()) "All" else selectedClubs.size.toString(),
+                            text = selectedDate?.let { formatLocalDate(it) } ?: "Date: All",
                             fontSize = screenFontSize(x = 14.0).sp
                         )
                     }
-                    
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { showFilter = false }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close filtering"
-                    )
-                }
-            }
-            
-        } else {
-            Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = screenWidth(x = 8.0)
-                    )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                    OutlinedButton(onClick = { showClubsPicker = !showClubsPicker }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Club",
+                                fontSize = screenFontSize(x = 14.0).sp
+                            )
+                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                            Text(text = "|")
+                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                            Text(
+                                text = if(selectedClubs.isEmpty()) "All" else selectedClubs.size.toString(),
+                                fontSize = screenFontSize(x = 14.0).sp
+                            )
+                        }
 
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ligiopen_icon),
-                    contentDescription = null,
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { showFilter = false }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close filtering"
+                        )
+                    }
+                }
+
+            } else {
+                Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(screenWidth(x = 56.0))
-                )
-                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                Text(
-                    text = HomeScreenTab.MATCHES.name.lowercase().replaceFirstChar { first -> first.uppercase() },
-                    fontSize = screenFontSize(x = 26.0).sp,
-                    fontWeight = FontWeight.W900
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    enabled = true,
-                    onClick = {showFilter = true}) {
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = screenWidth(x = 8.0)
+                        )
+
+                ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.filter),
-                        contentDescription = "Filter"
+                        painter = painterResource(id = R.drawable.ligiopen_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(screenWidth(x = 56.0))
                     )
+                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                    Text(
+                        text = HomeScreenTab.MATCHES.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                        fontSize = screenFontSize(x = 26.0).sp,
+                        fontWeight = FontWeight.W900
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        enabled = true,
+                        onClick = {showFilter = true}) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.filter),
+                            contentDescription = "Filter"
+                        )
+                    }
                 }
             }
         }
+
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -751,11 +757,13 @@ fun FixtureCard(
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun FixturesScreenPreview() {
     LigiopenTheme {
         FixturesScreen(
+            showTopBanner = true,
             selectedClubs = emptyList(),
             onSelectClub = {},
             onResetClubs = {},

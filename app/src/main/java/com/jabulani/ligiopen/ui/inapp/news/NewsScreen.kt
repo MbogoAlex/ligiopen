@@ -110,38 +110,41 @@ fun NewsScreen(
     modifier: Modifier = Modifier
 ) {
     Column {
-        Row(
+        if(addTopPadding) {
+            Row(
 //            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = screenWidth(x = 8.0)
-                )
-
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ligiopen_icon),
-                contentDescription = null,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .size(screenWidth(x = 56.0))
-            )
-            Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-            Text(
-                text = HomeScreenTab.NEWS.name.lowercase().replaceFirstChar { first -> first.uppercase() },
-                fontSize = screenFontSize(x = 26.0).sp,
-                fontWeight = FontWeight.W900
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                enabled = false,
-                onClick = {}) {
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = screenWidth(x = 8.0)
+                    )
+
+            ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.more),
-                    contentDescription = "More"
+                    painter = painterResource(id = R.drawable.ligiopen_icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(screenWidth(x = 56.0))
                 )
+                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+                Text(
+                    text = HomeScreenTab.NEWS.name.lowercase().replaceFirstChar { first -> first.uppercase() },
+                    fontSize = screenFontSize(x = 26.0).sp,
+                    fontWeight = FontWeight.W900
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    enabled = false,
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.more),
+                        contentDescription = "More"
+                    )
+                }
             }
         }
+
         Column(
             modifier = if(addTopPadding) modifier
                 .fillMaxSize()
@@ -182,6 +185,9 @@ fun NewsScreen(
                                 news = news[0],
                                 fullScreen = true,
                                 modifier = Modifier
+                                    .clickable(
+                                        onClick = { navigateToNewsDetailsScreen(news[0].id.toString()) }
+                                    )
                             )
                             Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
                         }
@@ -216,7 +222,7 @@ fun NewsTile(
     modifier: Modifier = Modifier
 ) {
     if(fullScreen) {
-        Column {
+        Column(modifier = modifier) {
             Card {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)

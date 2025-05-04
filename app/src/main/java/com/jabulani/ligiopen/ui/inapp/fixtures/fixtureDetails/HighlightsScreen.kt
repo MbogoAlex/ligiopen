@@ -52,6 +52,7 @@ import com.jabulani.ligiopen.data.network.model.match.commentary.MatchCommentary
 import com.jabulani.ligiopen.data.network.model.match.commentary.matchCommentaries
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixture
+import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -139,6 +140,7 @@ fun HighlightsScreenComposable(
             onChangeTab = {
                 currentTab = it
             },
+            loadingStatus = uiState.loadingStatus,
             navigateToPreviousScreen = navigateToPreviousScreen
         )
     }
@@ -159,6 +161,7 @@ fun HighlightsScreen(
     tabs: List<HighlightsScreenTabItem>,
     currentTab: HighlightsScreenTabs,
     onChangeTab: (tab: HighlightsScreenTabs) -> Unit,
+    loadingStatus: LoadingStatus,
     navigateToPreviousScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -238,6 +241,7 @@ fun HighlightsScreen(
                     awayClub = awayClub,
                     homeClubScore = homeClubScore,
                     awayClubScore = awayClubScore,
+                    loadingStatus = loadingStatus,
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -365,6 +369,7 @@ fun HighlightsScreenPreview() {
             onChangeTab = {
                 currentTab = it
             },
+            loadingStatus = LoadingStatus.INITIAL,
             navigateToPreviousScreen = {}
         )
     }

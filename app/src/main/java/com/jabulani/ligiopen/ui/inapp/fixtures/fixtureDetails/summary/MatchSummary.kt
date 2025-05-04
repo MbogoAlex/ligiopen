@@ -51,6 +51,7 @@ import com.jabulani.ligiopen.data.network.model.match.events.MatchEventType
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureData
 import com.jabulani.ligiopen.data.network.model.match.fixture.MatchStatus
 import com.jabulani.ligiopen.data.network.model.match.fixture.fixture
+import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.inapp.fixtures.fixtureDetails.HighlightsScreenViewModel
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -67,6 +68,7 @@ fun MatchSummaryComposable(
     homeClubScore: Int,
     awayClub: ClubDetails,
     homeClub: ClubDetails,
+    loadingStatus: LoadingStatus,
     modifier: Modifier = Modifier
 ) {
     val viewModel: HighlightsScreenViewModel = viewModel(factory = AppViewModelFactory.Factory)
@@ -81,6 +83,7 @@ fun MatchSummaryComposable(
             awayClubScore = awayClubScore,
             homeClubScore = homeClubScore,
             awayClub = awayClub,
+            loadingStatus = loadingStatus,
             homeClub = homeClub
         )
     }
@@ -96,6 +99,7 @@ fun MatchSummary(
     homeClubScore: Int,
     awayClub: ClubDetails,
     homeClub: ClubDetails,
+    loadingStatus: LoadingStatus,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -231,7 +235,7 @@ fun MatchSummary(
                 }
             }
         }
-        if(matchStatus == MatchStatus.PENDING) {
+        if(matchStatus == MatchStatus.PENDING && loadingStatus != LoadingStatus.LOADING) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -1176,7 +1180,8 @@ fun MatchSummaryPreview() {
             awayClub = club,
             homeClub = club,
             awayClubScore = 0,
-            homeClubScore = 0
+            homeClubScore = 0,
+            loadingStatus = LoadingStatus.INITIAL
         )
     }
 }

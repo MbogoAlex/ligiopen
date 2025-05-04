@@ -32,11 +32,11 @@ class NewsViewModel(
     }
 
     fun getNews() {
-        _uiState.update {
-            it.copy(
-                loadingStatus = LoadingStatus.LOADING
-            )
-        }
+//        _uiState.update {
+//            it.copy(
+//                loadingStatus = LoadingStatus.LOADING
+//            )
+//        }
         viewModelScope.launch {
             try {
                 val response = apiRepository.getAllNews(

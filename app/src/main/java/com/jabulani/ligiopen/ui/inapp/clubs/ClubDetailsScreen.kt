@@ -116,11 +116,11 @@ fun ClubDetailsScreenComposable(
             icon = R.drawable.score2,
             tab = ClubScreenTab.MATCHES
         ),
-        ClubScreenTabItem(
-            name = "Shop",
-            icon = R.drawable.shop,
-            tab = ClubScreenTab.SHOP
-        ),
+//        ClubScreenTabItem(
+//            name = "Shop",
+//            icon = R.drawable.shop,
+//            tab = ClubScreenTab.SHOP
+//        ),
     )
 
     var selectedTab by rememberSaveable {
@@ -244,12 +244,14 @@ fun ClubDetailsScreen(
                 NewsScreenComposable(
                     navigateToNewsDetailsScreen = navigateToNewsDetailsScreen,
                     clubId = clubDetails.clubId,
+                    addTopPadding = false,
                     modifier = Modifier
                         .weight(1f)
                 )
             }
             ClubScreenTab.MATCHES -> {
                 FixturesScreenComposable(
+                    showTopBanner = false,
                     navigateToPostMatchScreen = navigateToPostMatchScreen,
                     navigateToLoginScreenWithArgs = navigateToLoginScreenWithArgs,
                     clubId = clubDetails.clubId,

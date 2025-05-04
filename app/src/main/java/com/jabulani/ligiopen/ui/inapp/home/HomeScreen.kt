@@ -85,6 +85,7 @@ fun HomeScreenComposable(
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     navigateToAllVideosScreen: () -> Unit,
     navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -101,7 +102,8 @@ fun HomeScreenComposable(
             news = news,
             navigateToPostMatchScreen = navigateToPostMatchScreen,
             navigateToSingleVideoScreen = navigateToSingleVideoScreen,
-            navigateToAllVideosScreen = navigateToAllVideosScreen
+            navigateToAllVideosScreen = navigateToAllVideosScreen,
+            navigateToNewsDetailsScreen = navigateToNewsDetailsScreen
         )
 
     }
@@ -115,6 +117,7 @@ fun HomeScreen(
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     navigateToAllVideosScreen: () -> Unit,
     navigateToSingleVideoScreen: (videoId: String, videoTitle: String, videoDate: String) -> Unit,
+    navigateToNewsDetailsScreen: (newsId: String) -> Unit,
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
@@ -346,14 +349,29 @@ fun HomeScreen(
                     news = news[0],
                     fullScreen = true,
                     modifier = Modifier
+                        .clickable(
+                            onClick = {
+                                navigateToNewsDetailsScreen(news[0].id.toString())
+                            }
+                        )
                 )
                 Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
                 news.take(4).forEach { newsItem ->
-                    NewsTile(
-                        news = newsItem,
+                    Column(
                         modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                            .clickable(
+                                onClick = {
+                                    navigateToNewsDetailsScreen(news[0].id.toString())
+                                }
+                            )
+                    ) {
+                        NewsTile(
+                            news = newsItem,
+                            modifier = Modifier
+                        )
+                        Spacer(modifier = Modifier.height(screenHeight(x = 16.0)))
+                    }
+
                 }
 
             }
@@ -575,7 +593,8 @@ fun HomeScreenPreview() {
             news = news,
             navigateToSingleVideoScreen = {_,_,_ ->},
             navigateToAllVideosScreen = {},
-            navigateToPostMatchScreen = { _, _, _ -> }
+            navigateToPostMatchScreen = { _, _, _ -> },
+            navigateToNewsDetailsScreen = {}
         )
     }
 }
