@@ -124,7 +124,6 @@ fun ClubsScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
@@ -133,7 +132,7 @@ fun ClubsScreen(
                         )
                     )
                 )
-                .padding(horizontal = 8.dp, vertical = 12.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ligiopen_icon),
