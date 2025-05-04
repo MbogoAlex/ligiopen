@@ -4,9 +4,15 @@ import android.os.Build
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material.icons.Icons
@@ -25,12 +32,16 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,15 +54,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -65,6 +81,18 @@ import com.jabulani.ligiopen.ui.inapp.clubs.LoadingStatus
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
+import com.jabulani.ligiopen.ui.theme.backgroundLight
+import com.jabulani.ligiopen.ui.theme.errorLight
+import com.jabulani.ligiopen.ui.theme.onErrorLight
+import com.jabulani.ligiopen.ui.theme.onPrimaryLight
+import com.jabulani.ligiopen.ui.theme.onSurfaceLight
+import com.jabulani.ligiopen.ui.theme.onSurfaceVariantLight
+import com.jabulani.ligiopen.ui.theme.onTertiaryLight
+import com.jabulani.ligiopen.ui.theme.primaryLight
+import com.jabulani.ligiopen.ui.theme.surfaceContainerHighLight
+import com.jabulani.ligiopen.ui.theme.surfaceLight
+import com.jabulani.ligiopen.ui.theme.surfaceVariantLight
+import com.jabulani.ligiopen.ui.theme.tertiaryLight
 import com.jabulani.ligiopen.ui.utils.formatIsoDateTime
 import com.jabulani.ligiopen.ui.utils.formatLocalDate
 import com.jabulani.ligiopen.utils.screenFontSize
@@ -150,6 +178,7 @@ fun FixturesScreenComposable(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FixturesScreen(
@@ -167,356 +196,485 @@ fun FixturesScreen(
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val allowedDates: List<LocalDate> = rememberSaveable(matchDateTimes) {
-        matchDateTimes
-            .mapNotNull { runCatching {              // (a) safest way—ignore bad input
-                LocalDateTime.parse(it)              // ISO-8601: “2025-05-10T14:00:00”
-                    .toLocalDate()
-            }.getOrNull() }
-            
+    // Theme colors
+    val primaryColor = primaryLight
+    val surfaceColor = surfaceContainerHighLight
+    val onSurfaceColor = onSurfaceLight
+    val accentColor = tertiaryLight
+    val errorColor = errorLight
+
+    val allowedDates = rememberSaveable(matchDateTimes) {
+        matchDateTimes.mapNotNull {
+            runCatching { LocalDateTime.parse(it).toLocalDate() }.getOrNull()
+        }
     }
 
-
-
-    var showFilter by rememberSaveable {
-        mutableStateOf(false)
-    }
-    
-    var showClubsPicker by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-
+    var showFilter by rememberSaveable { mutableStateOf(false) }
+    var showClubsPicker by rememberSaveable { mutableStateOf(false) }
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
 
-
+    // Game-style date picker
     if (showDatePicker) {
         AlertDialog(
             onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                Button(onClick = { showDatePicker = false }) {
-                    Text(
-                        "Done",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
-            },
-            dismissButton = {
-                Row {
-                    TextButton(
-                        onClick = { showDatePicker = false },
-                        modifier = Modifier
-                    ) {
-                        Text(
-                            text = "Dismiss",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
-                    }
-                }
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    ),
-                    onClick = {
-                        onSelectDate(null)
-                        showDatePicker = false
-                    },
-                    modifier = Modifier
-                ) {
-                    Text(
-                        text = "Reset",
-                        color = MaterialTheme.colorScheme.onError,
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
-            },
-            text = {
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            )
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = surfaceColor
+            ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
                     Text(
-                        text = "Select match date",
-                        fontSize = screenFontSize(x = 16.0).sp,
-                        fontWeight = FontWeight.Bold
+                        text = "SELECT MATCH DATE",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = primaryColor,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    LazyColumn {
-                        items(allowedDates) {date ->
-                            if(selectedDate == date) {
-                                Button(
-                                    onClick = { /*TODO*/ },
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-                                    Text(
-                                        text = formatLocalDate(date),
-                                        fontSize = screenFontSize(x = 14.0).sp
-                                    )
-                                }
-                            } else {
-                                TextButton(
-                                    onClick = { onSelectDate(date) },
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-                                    Text(
-                                        text = formatLocalDate(date),
-                                        fontSize = screenFontSize(x = 14.0).sp
-                                    )
-                                }
-                            }
 
-
-                        }
-                    }
-                }
-            }
-        )
-    }
-    
-    if(showClubsPicker) {
-        AlertDialog(
-            onDismissRequest = { showClubsPicker = false },
-            confirmButton = {
-                Button(onClick = { showClubsPicker = false }) {
-                    Text(
-                        "Done",
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
-            },
-            dismissButton = {
-                Row {
-                    TextButton(
-                        onClick = { showClubsPicker = false },
-                        modifier = Modifier
-                    ) {
-                        Text(
-                            text = "Dismiss",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
-                    }
-                }
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    ),
-                    onClick = {
-                        onResetClubs()
-                        showClubsPicker = false
-                    },
-                    modifier = Modifier
-                ) {
-                    Text(
-                        text = "Reset",
-                        color = MaterialTheme.colorScheme.onError,
-                        fontSize = screenFontSize(x = 14.0).sp
-                    )
-                }
-            },
-            text = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Select clubs",
-                        fontSize = screenFontSize(x = 16.0).sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                    LazyColumn {
-                        items(clubs) {club ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
+                    LazyColumn(modifier = Modifier.weight(1f, false)) {
+                        items(allowedDates) { date ->
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                elevation = if (selectedDate == date) CardDefaults.cardElevation(8.dp)
+                                else CardDefaults.cardElevation(2.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (selectedDate == date) primaryColor.copy(alpha = 0.2f)
+                                    else surfaceVariantLight
+                                ),
                             ) {
-                                Text(
-                                    text = club.name,
-                                    fontSize = screenFontSize(x = 14.0).sp
-                                )
-                                Spacer(modifier = Modifier.weight(1f))
-                                if(selectedClubs.contains(club)) {
-                                    IconButton(onClick = { onDeselectClub(club) }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.checked_box),
-                                            contentDescription = "Deselect"
-                                        )
-                                    }
-                                } else {
-                                    IconButton(onClick = { onSelectClub(club) }) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.unchecked_box),
-                                            contentDescription = "Select"
-                                        )
-                                    }
+                                TextButton(
+                                    onClick = {
+                                        onSelectDate(date)
+                                        showDatePicker = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = formatLocalDate(date),
+                                        color = if (selectedDate == date) primaryColor
+                                        else onSurfaceVariantLight,
+                                        fontWeight = if (selectedDate == date) FontWeight.Bold
+                                        else FontWeight.Normal
+                                    )
                                 }
-
-
                             }
+                        }
+                    }
 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                onSelectDate(null)
+                                showDatePicker = false
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = errorColor.copy(alpha = 0.1f),
+                                contentColor = errorColor
+                            ),
+                            border = BorderStroke(1.dp, errorColor)
+                        ) {
+                            Text("RESET")
+                        }
+
+                        Button(
+                            onClick = { showDatePicker = false },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = primaryColor,
+                                contentColor = onPrimaryLight
+                            )
+                        ) {
+                            Text("DONE")
                         }
                     }
                 }
             }
-        )
+        }
     }
 
-
-    Column {
-        if(showTopBanner) {
-            if(showFilter) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+    // Game-style club picker
+    if (showClubsPicker) {
+        AlertDialog(
+            onDismissRequest = { showClubsPicker = false },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            )
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = surfaceColor
+            ) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            horizontal = screenWidth(x = 8.0),
-                            vertical = screenHeight(x = 4.0)
-                        )
+                        .padding(16.dp)
                 ) {
-                    OutlinedButton(onClick = { showDatePicker = !showDatePicker }) {
-                        Text(
-                            text = selectedDate?.let { formatLocalDate(it) } ?: "Date: All",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
+                    Text(
+                        text = "SELECT CLUBS",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = primaryColor,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    LazyColumn(modifier = Modifier.weight(1f, false)) {
+                        items(clubs) { club ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                elevation = if (selectedClubs.contains(club)) CardDefaults.cardElevation(8.dp)
+                                else CardDefaults.cardElevation(2.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (selectedClubs.contains(club)) primaryColor.copy(alpha = 0.2f)
+                                    else surfaceVariantLight
+                                ),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    AsyncImage(
+                                        model = club.clubLogo.link,
+                                        contentDescription = club.name,
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .clip(CircleShape)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Text(
+                                        text = club.name,
+                                        color = if (selectedClubs.contains(club)) primaryColor
+                                        else onSurfaceVariantLight,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    Icon(
+                                        painter = painterResource(
+                                            if (selectedClubs.contains(club)) R.drawable.checked_box
+                                            else R.drawable.unchecked_box
+                                        ),
+                                        contentDescription = null,
+                                        tint = if (selectedClubs.contains(club)) primaryColor
+                                        else onSurfaceVariantLight,
+                                        modifier = Modifier
+                                            .clickable {
+                                                if (selectedClubs.contains(club)) {
+                                                    onDeselectClub(club)
+                                                } else {
+                                                    onSelectClub(club)
+                                                }
+                                            }
+                                    )
+                                }
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-                    OutlinedButton(onClick = { showClubsPicker = !showClubsPicker }) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                onResetClubs()
+                                showClubsPicker = false
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = errorColor.copy(alpha = 0.1f),
+                                contentColor = errorColor
+                            ),
+                            border = BorderStroke(1.dp, errorColor)
                         ) {
-                            Text(
-                                text = "Club",
-                                fontSize = screenFontSize(x = 14.0).sp
-                            )
-                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                            Text(text = "|")
-                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                            Text(
-                                text = if(selectedClubs.isEmpty()) "All" else selectedClubs.size.toString(),
-                                fontSize = screenFontSize(x = 14.0).sp
-                            )
+                            Text("RESET")
                         }
 
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { showFilter = false }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close filtering"
-                        )
+                        Button(
+                            onClick = { showClubsPicker = false },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = primaryColor,
+                                contentColor = onPrimaryLight
+                            )
+                        ) {
+                            Text("DONE")
+                        }
                     }
                 }
+            }
+        }
+    }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Header with game-style gradient
+        if (showTopBanner) {
+            if (showFilter) {
+                // Filter controls with game aesthetics
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = surfaceColor
+                    ),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        // Date filter button
+                        OutlinedButton(
+                            onClick = { showDatePicker = true },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = surfaceVariantLight,
+                                contentColor = primaryColor
+                            ),
+                            border = BorderStroke(1.dp, primaryColor),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.calendar),
+                                    contentDescription = "Date",
+                                    tint = primaryColor
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = selectedDate?.let { formatLocalDate(it) } ?: "All Dates",
+                                    color = primaryColor
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // Club filter button
+                        OutlinedButton(
+                            onClick = { showClubsPicker = true },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = surfaceVariantLight,
+                                contentColor = primaryColor
+                            ),
+                            border = BorderStroke(1.dp, primaryColor),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.team),
+                                    contentDescription = "Clubs",
+                                    tint = primaryColor
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = if (selectedClubs.isEmpty()) "All Clubs"
+                                    else "${selectedClubs.size} Selected",
+                                    color = primaryColor
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // Close button
+                        IconButton(
+                            onClick = { showFilter = false },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(primaryColor, CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = onPrimaryLight
+                            )
+                        }
+                    }
+                }
             } else {
+                // Main header with game logo and title
                 Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            horizontal = screenWidth(x = 8.0)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    primaryColor.copy(alpha = 0.8f),
+                                    primaryColor.copy(alpha = 0.4f)
+                                )
+                            )
                         )
-
+                        .padding(horizontal = 8.dp, vertical = 12.dp)
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.ligiopen_icon),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(screenWidth(x = 56.0))
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(2.dp, accentColor, RoundedCornerShape(8.dp))
                     )
-                    Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
                     Text(
-                        text = HomeScreenTab.MATCHES.name.lowercase().replaceFirstChar { first -> first.uppercase() },
-                        fontSize = screenFontSize(x = 26.0).sp,
-                        fontWeight = FontWeight.W900
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        enabled = true,
-                        onClick = {showFilter = true}) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.filter),
-                            contentDescription = "Filter"
-                        )
-                    }
-                }
-            }
-        }
-
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    vertical = screenHeight(x = 16.0),
-                    horizontal = screenWidth(x = 16.0)
-                )
-        ) {
-            if(loadingStatus == LoadingStatus.LOADING) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                if(fixtures.isEmpty()) {
-                    Box(
-                        contentAlignment = Alignment.Center,
+                        text = HomeScreenTab.MATCHES.name
+                            .lowercase()
+                            .replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = onPrimaryLight,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp,
                         modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        Text(
-                            text = "No fixtures found",
-                            fontSize = screenFontSize(x = 14.0).sp
-                        )
-                    }
-                } else {
-                    LazyColumn {
-                        items(fixtures) { fixture ->
-                            FixtureCard(
-                                fixtureData = fixture,
-                                navigateToPostMatchScreen = navigateToPostMatchScreen
+                            .shadow(4.dp, shape = RoundedCornerShape(4.dp))
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // Filter button with badge if filters are active
+                    Box {
+                        IconButton(
+                            onClick = { showFilter = true },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(accentColor, CircleShape)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.filter),
+                                contentDescription = "Filter",
+                                tint = onTertiaryLight
                             )
-                            Spacer(modifier = Modifier.height(screenHeight(x = 24.0)))
+                        }
+
+                        // Show badge if any filters are active
+                        if (selectedDate != null || selectedClubs.isNotEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .size(16.dp)
+                                    .background(errorColor, CircleShape)
+                                    .border(2.dp, surfaceColor, CircleShape)
+                            ) {
+                                Text(
+                                    text = "!",
+                                    color = onErrorLight,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
                         }
                     }
                 }
+            }
+        }
 
+        // Main content area
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)
+        ) {
+            when (loadingStatus) {
+                LoadingStatus.LOADING -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(64.dp),
+                            strokeWidth = 4.dp,
+                            color = accentColor
+                        )
+                    }
+                }
+                else -> {
+                    if (fixtures.isEmpty()) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.cancel_event),
+                                    contentDescription = "No matches",
+                                    tint = primaryColor.copy(alpha = 0.5f),
+                                    modifier = Modifier.size(64.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "NO MATCHES FOUND",
+                                    color = primaryColor.copy(alpha = 0.7f),
+                                    fontWeight = FontWeight.Bold
+                                )
+                                if (selectedDate != null || selectedClubs.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    TextButton(
+                                        onClick = {
+                                            onSelectDate(null)
+                                            onResetClubs()
+                                        }
+                                    ) {
+                                        Text("RESET FILTERS")
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            contentPadding = PaddingValues(vertical = 8.dp)
+                        ) {
+                            items(fixtures) { fixture ->
+                                FixtureCard(
+                                    fixtureData = fixture,
+                                    navigateToPostMatchScreen = navigateToPostMatchScreen,
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 }
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
-    Row(Modifier.fillMaxWidth()) {
-        daysOfWeek.forEach { dow ->
-            Text(
-                text = dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -525,231 +683,218 @@ fun FixtureCard(
     navigateToPostMatchScreen: (postMatchId: String, fixtureId: String, locationId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val primaryColor = primaryLight
+    val accentColor = tertiaryLight
+    val backgroundColor = backgroundLight
+    val surfaceColor = surfaceLight
+    val onSurfaceColor = onSurfaceLight
+    val surfaceVariantColor = surfaceVariantLight
+    val matchStatusColor = when (fixtureData.matchStatus) {
+        MatchStatus.PENDING -> Color(0xFF9E9E9E)
+        MatchStatus.COMPLETED -> Color(0xFF4CAF50)
+        MatchStatus.CANCELLED -> errorLight
+        MatchStatus.FIRST_HALF -> Color(0xFFFFC107)
+        MatchStatus.HALF_TIME -> Color(0xFFFF9800)
+        MatchStatus.SECOND_HALF -> Color(0xFFFFC107)
+        MatchStatus.EXTRA_TIME_FIRST_HALF -> Color(0xFFFF5722)
+        MatchStatus.EXTRA_TIME_HALF_TIME -> Color(0xFFFF9800)
+        MatchStatus.EXTRA_TIME_SECOND_HALF -> Color(0xFFFF5722)
+        MatchStatus.PENALTY_SHOOTOUT -> Color(0xFF673AB7)
+    }
 
-    ElevatedCard(
+    val matchStatusIcon = when (fixtureData.matchStatus) {
+        MatchStatus.PENDING -> R.drawable.clock
+        MatchStatus.COMPLETED -> R.drawable.check_mark
+        MatchStatus.CANCELLED -> R.drawable.close
+        MatchStatus.FIRST_HALF -> R.drawable.ball
+        MatchStatus.HALF_TIME -> R.drawable.half_time
+        MatchStatus.SECOND_HALF -> R.drawable.ball
+        MatchStatus.EXTRA_TIME_FIRST_HALF -> R.drawable.ball
+        MatchStatus.EXTRA_TIME_HALF_TIME -> R.drawable.half_time
+        MatchStatus.EXTRA_TIME_SECOND_HALF -> R.drawable.ball
+        MatchStatus.PENALTY_SHOOTOUT -> R.drawable.ball
+    }
+
+    Card(
         onClick = {
             navigateToPostMatchScreen(
                 fixtureData.postMatchAnalysisId.toString(),
                 fixtureData.matchFixtureId.toString(),
                 fixtureData.matchLocationId.toString()
             )
-        }
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(4.dp, shape = RoundedCornerShape(12.dp)),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = surfaceContainerHighLight
+        ),
     ) {
         Column(
-            modifier = Modifier
-                .padding(
-                    screenWidth(x = 16.0)
-                )
+            modifier = Modifier.padding(16.dp)
         ) {
+            // Match status bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(screenWidth(x = 4.0)),
+                    .background(
+                        color = matchStatusColor.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                val matchStatusColor = when (fixtureData.matchStatus) {
-                    MatchStatus.PENDING -> Color(0xFF9E9E9E) // Gray - Neutral for pending matches
-                    MatchStatus.COMPLETED -> Color(0xFF4CAF50) // Green - Indicates match completion
-                    MatchStatus.CANCELLED -> Color(0xFFF44336) // Red - Signifies cancellation
-                    MatchStatus.FIRST_HALF -> Color(0xFFFFC107) // Amber - Active but early stage
-                    MatchStatus.HALF_TIME -> Color(0xFFFF9800) // Orange - Signals break time
-                    MatchStatus.SECOND_HALF -> Color(0xFFFFC107) // Amber - Ongoing second half
-                    MatchStatus.EXTRA_TIME_FIRST_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
-                    MatchStatus.EXTRA_TIME_HALF_TIME -> Color(0xFFFF9800) // Orange - Half-time in extra time
-                    MatchStatus.EXTRA_TIME_SECOND_HALF -> Color(0xFFFF5722) // Deep Orange - More intensity
-                    MatchStatus.PENALTY_SHOOTOUT -> Color(0xFF673AB7) // Purple - Indicates a high-stakes moment
-                }
-
-
-                val matchStatusIcon = when (fixtureData.matchStatus) {
-                    MatchStatus.PENDING -> R.drawable.clock // Clock icon
-                    MatchStatus.COMPLETED -> R.drawable.check_mark // Checkmark icon
-                    MatchStatus.CANCELLED -> R.drawable.close // Cross icon
-                    MatchStatus.FIRST_HALF -> R.drawable.ball
-                    MatchStatus.HALF_TIME -> R.drawable.half_time
-                    MatchStatus.SECOND_HALF -> R.drawable.ball
-                    MatchStatus.EXTRA_TIME_FIRST_HALF -> R.drawable.ball
-                    MatchStatus.EXTRA_TIME_HALF_TIME -> R.drawable.half_time
-                    MatchStatus.EXTRA_TIME_SECOND_HALF -> R.drawable.ball
-                    MatchStatus.PENALTY_SHOOTOUT -> R.drawable.ball
-                }
-
                 Icon(
                     painter = painterResource(id = matchStatusIcon),
                     contentDescription = fixtureData.matchStatus.name,
                     tint = matchStatusColor,
-                    modifier = Modifier.size(screenWidth(x = 16.0))
+                    modifier = Modifier.size(16.dp)
                 )
-
-                Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = fixtureData.matchStatus.name,
+                    text = fixtureData.matchStatus.name
+                        .lowercase()
+                        .replace("_", " ")
+                        .replaceFirstChar { it.uppercase() },
                     color = matchStatusColor,
-                    fontSize = screenFontSize(x = 14.0).sp,
                     fontWeight = FontWeight.Bold
                 )
-
-//                Spacer(modifier = Modifier.weight(1f))
-
-
-//                TextButton(
-//                    onClick = {
-//                        navigateToPostMatchScreen(fixtureData.postMatchAnalysisId.toString(), fixtureData.matchFixtureId.toString(), fixtureData.matchLocationId.toString())
-//                    }
-//                ) {
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Text(
-//                            text = "Match details",
-//                            fontSize = screenFontSize(x = 14.0).sp
-//                        )
-//                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                            contentDescription = "Match details"
-//                        )
-//                    }
-//                }
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Teams and score
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
+                // Home team
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Row {
-                        AsyncImage(
-                            model = fixtureData.homeClub.clubLogo.link,
-                            contentDescription = fixtureData.homeClub.name,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                                .clip(RoundedCornerShape(screenWidth(x = 8.0))),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                        Column {
-                            Text(
-                                text = fixtureData.homeClub.name,
-                                fontSize = screenFontSize(x = 16.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                            Text(
-                                text = "HOME",
-                                fontSize = screenFontSize(x = 10.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+                    AsyncImage(
+                        model = fixtureData.homeClub.clubLogo.link,
+                        contentDescription = fixtureData.homeClub.name,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, primaryColor, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = fixtureData.homeClub.name,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "HOME",
+                        color = primaryColor.copy(alpha = 0.7f),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
+                // Score or VS
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(0.8f)
                 ) {
-                    if(fixtureData.matchStatus != MatchStatus.COMPLETED) {
-                        Text(
-                            text = "VS",
-                            fontSize = screenFontSize(x = 16.0).sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    if(fixtureData.matchStatus != MatchStatus.CANCELLED && fixtureData.matchStatus != MatchStatus.PENDING) {
-                        Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
+                    if (fixtureData.matchStatus == MatchStatus.COMPLETED ||
+                        fixtureData.matchStatus == MatchStatus.FIRST_HALF ||
+                        fixtureData.matchStatus == MatchStatus.SECOND_HALF ||
+                        fixtureData.matchStatus == MatchStatus.EXTRA_TIME_FIRST_HALF ||
+                        fixtureData.matchStatus == MatchStatus.EXTRA_TIME_SECOND_HALF ||
+                        fixtureData.matchStatus == MatchStatus.PENALTY_SHOOTOUT) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = fixtureData.homeClubScore!!.toString(),
-                                fontSize = screenFontSize(x = 16.0).sp,
-                                fontWeight = FontWeight.W900
+                                text = fixtureData.homeClubScore?.toString() ?: "0",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Black
                             )
-                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                             Text(
-                                text = ":",
-                                fontSize = screenFontSize(x = 16.0).sp,
-                                fontWeight = FontWeight.W900
+                                text = " : ",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Black
                             )
-                            Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
                             Text(
-                                text = fixtureData.awayClubScore!!.toString(),
-                                fontSize = screenFontSize(x = 16.0).sp,
-                                fontWeight = FontWeight.W900
+                                text = fixtureData.awayClubScore?.toString() ?: "0",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Black
                             )
                         }
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            Text(
-                                text = fixtureData.awayClub.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = screenFontSize(x = 16.0).sp
-                            )
-                            Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                            Text(
-                                text = "AWAY",
-                                fontSize = screenFontSize(x = 10.0).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-                        AsyncImage(
-                            model = fixtureData.awayClub.clubLogo.link,
-                            contentDescription = fixtureData.awayClub.name,
-                            modifier = Modifier
-                                .size(screenWidth(x = 24.0))
-                                .clip(RoundedCornerShape(screenWidth(x = 8.0))),
-                            contentScale = ContentScale.Crop
+                    } else {
+                        Text(
+                            text = "VS",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Black,
+                            color = primaryColor
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Match time
+                    Text(
+                        text = formatIsoDateTime(LocalDateTime.parse(fixtureData.matchDateTime)),
+                        color = onSurfaceVariantLight,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                // Away team
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    AsyncImage(
+                        model = fixtureData.awayClub.clubLogo.link,
+                        contentDescription = fixtureData.awayClub.name,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, primaryColor, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = fixtureData.awayClub.name,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "AWAY",
+                        color = primaryColor.copy(alpha = 0.7f),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-
-
-            Text(
-                text = formatIsoDateTime(LocalDateTime.parse(fixtureData.matchDateTime)),
-                fontSize = screenFontSize(x = 12.0).sp,
+            // Glowing accent at bottom
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                primaryColor.copy(alpha = 0.3f),
+                                primaryColor,
+                                primaryColor.copy(alpha = 0.3f)
+                            )
+                        )
+                    )
             )
-            // Show "Buy Tickets" button if match is PENDING
-//            if (fixtureData.matchStatus == MatchStatus.PENDING) {
-//                Button(
-//                    onClick = { /* Handle ticket purchase */ },
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(0xFF2962FF), // Blue button
-//                        contentColor = Color.White
-//                    )
-//                ) {
-//                    Text(text = "Buy Tickets", fontSize = screenFontSize(x = 14.0).sp)
-//                    Spacer(modifier = Modifier.width(screenWidth(x = 4.0)))
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ticket),
-//                        contentDescription = "Buy Tickets"
-//                    )
-//                }
-//                Spacer(modifier = Modifier.width(screenWidth(x = 8.0)))
-//            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.jabulani.ligiopen.ui.inapp.clubs
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -10,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,14 +24,17 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,12 +50,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,6 +78,7 @@ import com.jabulani.ligiopen.data.network.model.club.club
 import com.jabulani.ligiopen.data.network.model.news.NewsDto
 import com.jabulani.ligiopen.data.network.model.news.news
 import com.jabulani.ligiopen.data.network.model.player.PlayerDetails
+import com.jabulani.ligiopen.data.network.model.player.PlayerPosition
 import com.jabulani.ligiopen.ui.inapp.fixtures.FixturesScreenComposable
 import com.jabulani.ligiopen.ui.inapp.home.HomeScreenTab
 import com.jabulani.ligiopen.ui.inapp.news.NewsItemCard
@@ -72,6 +86,12 @@ import com.jabulani.ligiopen.ui.inapp.news.NewsScreenComposable
 import com.jabulani.ligiopen.ui.inapp.news.NewsTile
 import com.jabulani.ligiopen.ui.nav.AppNavigation
 import com.jabulani.ligiopen.ui.theme.LigiopenTheme
+import com.jabulani.ligiopen.ui.theme.backgroundLight
+import com.jabulani.ligiopen.ui.theme.onSurfaceLight
+import com.jabulani.ligiopen.ui.theme.primaryLight
+import com.jabulani.ligiopen.ui.theme.surfaceLight
+import com.jabulani.ligiopen.ui.theme.surfaceVariantLight
+import com.jabulani.ligiopen.ui.theme.tertiaryLight
 import com.jabulani.ligiopen.utils.screenFontSize
 import com.jabulani.ligiopen.utils.screenHeight
 import com.jabulani.ligiopen.utils.screenWidth
@@ -285,95 +305,234 @@ fun ClubOverviewScreen(
     navigateToPlayerDetailsScreen: (playerId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
+    val primaryColor = primaryLight
+    val accentColor = tertiaryLight
+    val backgroundColor = backgroundLight
+    val surfaceColor = surfaceLight
+    val onSurfaceColor = onSurfaceLight
+    val surfaceVariantColor = surfaceVariantLight
+
+    // Group players by position with null checks
+    val groupedPlayers = clubDetails.players.groupBy { it.playerPosition }
+    val goalkeepers = groupedPlayers[PlayerPosition.GOALKEEPER] ?: emptyList()
+    val defenders = groupedPlayers[PlayerPosition.DEFENDER] ?: emptyList()
+    val midfielders = groupedPlayers[PlayerPosition.MIDFIELDER] ?: emptyList()
+    val forwards = groupedPlayers[PlayerPosition.FORWARD] ?: emptyList()
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(screenHeight(x = 16.0))
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Club Header Section
         item {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(clubDetails.clubMainPhoto?.link)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.loading_img),
-                contentScale = ContentScale.Crop,
-                contentDescription = "Club main photo",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        vertical = screenHeight(x = 16.0),
-                        horizontal = screenWidth(x = 16.0)
-                    )
-                    .fillMaxWidth()
+            Box(
+                modifier =
+                    Modifier
+                        .height(screenHeight(280.0))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(primaryColor, primaryColor.copy(alpha = 0.7f))
+                            )
+                        )
             ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = if(clubDetails.name.isNotEmpty()) "${clubDetails.name} (${clubDetails.clubAbbreviation})" else "",
-                    fontSize = screenFontSize(x = 22.0).sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(clubDetails.clubMainPhoto?.link)
+                        .crossfade(true)
+                        .build(),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Club main photo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .graphicsLayer {
+                            translationY = -scrollState.value * 0.5f
+                            alpha = 0.9f
+                        }
+
                 )
-                Spacer(modifier = Modifier.height(screenHeight(x = 8.0)))
-                Text(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    text = clubDetails.description,
-                    fontSize = screenFontSize(x = 14.0).sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Column(
+                    modifier = Modifier
+                        .padding(screenWidth(16.0))
+                        .fillMaxWidth()
+                        .align(Alignment.BottomStart)
+                ) {
+                    Text(
+                        color = Color.White,
+                        text = if(clubDetails.name.isNotEmpty()) "${clubDetails.name} (${clubDetails.clubAbbreviation})" else "",
+                        style = TextStyle(
+                            fontSize = screenFontSize(22.0).sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = screenFontSize(1.0).sp,
+                            shadow = Shadow(
+                                color = Color.Black,
+                                offset = Offset(1f, 1f),
+                                blurRadius = 4f
+                            )
+                        ),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(screenHeight(8.0)))
+                    Text(
+                        color = Color.White,
+                        text = clubDetails.description,
+                        style = TextStyle(
+                            fontSize = screenFontSize(16.0).sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = screenFontSize(1.0).sp,
+                            shadow = Shadow(
+                                color = Color.Black,
+                                offset = Offset(1f, 1f),
+                                blurRadius = 4f
+                            )
+                        ),
+                    )
+                }
             }
         }
 
-        // 🔥 Sticky Header for Players Section
+        // Players Section
         stickyHeader {
             Text(
                 text = "Players",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = screenFontSize(x = 18.0).sp,
+                fontSize = screenFontSize(18.0).sp,
+                color = primaryColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(
-                        horizontal = screenWidth(x = 16.0)
-                    )
+                    .padding(horizontal = screenWidth(16.0))
             )
+            Spacer(modifier = Modifier.height(screenHeight(8.0)))
         }
 
-        // 🔥 LazyVerticalGrid for Players
-        item {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(screenHeight(x = 8.0)),
-                horizontalArrangement = Arrangement.spacedBy(screenWidth(x = 8.0)),
+        // Goalkeepers Section
+        if (goalkeepers.isNotEmpty()) {
+            item {
+                SectionHeader(
+                    text = "Goalkeepers",
+                )
+            }
+            item {
+                PlayersHorizontalGrid(
+                    players = goalkeepers,
+                    navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
+                )
+            }
+        }
+
+        // Defenders Section
+        if (defenders.isNotEmpty()) {
+            item {
+                SectionHeader(text = "Defenders")
+            }
+            item {
+                PlayersHorizontalGrid(
+                    players = defenders,
+                    navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
+                )
+            }
+        }
+
+        // Midfielders Section
+        if (midfielders.isNotEmpty()) {
+            item {
+                SectionHeader(text = "Midfielders")
+            }
+            item {
+                PlayersHorizontalGrid(
+                    players = midfielders,
+                    navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
+                )
+            }
+        }
+
+        // Forwards Section
+        if (forwards.isNotEmpty()) {
+            item {
+                SectionHeader(text = "Forwards")
+            }
+            item {
+                PlayersHorizontalGrid(
+                    players = forwards,
+                    navigateToPlayerDetailsScreen = navigateToPlayerDetailsScreen
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(text: String) {
+    Text(
+        text = text,
+        color = tertiaryLight,
+        fontWeight = FontWeight.Bold,
+        fontSize = screenFontSize(16.0).sp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = screenWidth(16.0), vertical = screenHeight(8.0))
+    )
+}
+
+@Composable
+private fun PlayersHorizontalGrid(
+    players: List<PlayerDetails>,
+    navigateToPlayerDetailsScreen: (playerId: String) -> Unit
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = screenWidth(16.0)),
+        horizontalArrangement = Arrangement.spacedBy(screenWidth(12.0))
+    ) {
+        items(players) { player ->
+            PlayerCard(
+                player = player,
+                onClick = { navigateToPlayerDetailsScreen(player.playerId.toString()) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun PlayerCard(
+    player: PlayerDetails,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .width(screenWidth(120.0))
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = screenHeight(4.0))
+    ) {
+        Column {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(player.mainPhoto?.link)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Player photo",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = screenHeight * 0.8f) // Limits the height so grid scrolls within LazyColumn
-                    .padding(
-                        start = screenWidth(16.0),
-                        end = screenWidth(16.0),
-                        bottom = screenHeight(16.0)
-                    )
-            ) {
-                items(clubDetails.players) { player ->
-                    PlayerCell(
-                        playerDetails = player,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                navigateToPlayerDetailsScreen(player.playerId.toString())
-                            }
-                            .padding(4.dp)
-                    )
-                }
+                    .aspectRatio(1f)
+            )
+
+            Column(modifier = Modifier.padding(screenWidth(8.0))) {
+                Text(
+                    text = player.username,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "#${player.number}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
             }
         }
     }
@@ -462,36 +621,6 @@ fun PlayerCell(
 }
 
 
-
-@Composable
-fun ClubScoresScreen(
-    navigateToFixtureDetailsScreen: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(
-                horizontal = screenWidth(x = 20.0),
-                vertical = screenHeight(x = 10.0)
-            )
-    ) {
-        LazyColumn {
-            items(10) {
-                Text(text = "Sasa")
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(screenHeight(x = 4.0)))
-            }
-        }
-    }
-}
-
-@Composable
-fun ClubDonationsScreen() {
-
-}
-
 @Composable
 fun ClubDetailsScreenBottomBar(
     tabs: List<ClubScreenTabItem>,
@@ -525,6 +654,7 @@ fun ClubDetailsScreenBottomBar(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ClubDetailsScreenPreview() {
