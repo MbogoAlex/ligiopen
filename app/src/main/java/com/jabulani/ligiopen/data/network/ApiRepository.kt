@@ -2,6 +2,9 @@ package com.jabulani.ligiopen.data.network
 
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationResponseBody
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationsResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkRequestBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubDivisionsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.PlayerResponseBody
@@ -16,13 +19,20 @@ import com.jabulani.ligiopen.data.network.model.user.UserLoginResponseBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationRequestBody
 import com.jabulani.ligiopen.data.network.model.user.UserRegistrationResponseBody
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.Query
 
 interface ApiRepository {
     suspend fun createUserAccount(userRegistrationRequestBody: UserRegistrationRequestBody): Response<UserRegistrationResponseBody>
     suspend fun login(userLoginRequestBody: UserLoginRequestBody): Response<UserLoginResponseBody>
 
     suspend fun getClubs(
-        token: String
+        token: String,
+        clubName: String?,
+        divisionId: Int?,
+        favorite: Boolean,
+        userId: Int
     ): Response<ClubsResponseBody>
 
 
@@ -100,4 +110,15 @@ interface ApiRepository {
         token: String,
         newsId: Int,
     ): Response<SingleNewsResponseBody>
+
+//    Get All leagues
+    suspend fun getAllLeagues(
+        token: String
+    ): Response<ClubDivisionsResponseBody>
+
+//    Bookmark a club
+    suspend fun bookmarkClub(
+        token: String,
+        clubBookmarkRequestBody: ClubBookmarkRequestBody
+    ): Response<ClubBookmarkResponseBody>
 }

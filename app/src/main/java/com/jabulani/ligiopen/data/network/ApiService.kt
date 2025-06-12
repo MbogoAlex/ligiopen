@@ -6,6 +6,9 @@ import com.jabulani.ligiopen.data.network.model.match.fixture.FixtureResponseBod
 import com.jabulani.ligiopen.data.network.model.match.fixture.FixturesResponseBody
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationResponseBody
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationsResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkRequestBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubDivisionsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.PlayerResponseBody
@@ -20,6 +23,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -90,7 +94,11 @@ interface ApiService {
     //    Get clubs
     @GET("club")
     suspend fun getClubs(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Query("clubName") clubName: String?,
+        @Query("divisionId") divisionId: Int?,
+        @Query("favorite") favorite: Boolean,
+        @Query("userId") userId: Int
     ): Response<ClubsResponseBody>
 
     //    Get club
@@ -121,5 +129,17 @@ interface ApiService {
         @Path("newsId") newsId: Int,
     ): Response<SingleNewsResponseBody>
 
+//    Get divisions
+    @GET("league/all")
+    suspend fun getAllLeagues(
+        @Header("Authorization") token: String
+    ): Response<ClubDivisionsResponseBody>
+
+//    Bookmark a club
+    @PUT("club/bookmark")
+    suspend fun bookmarkClub(
+        @Header("Authorization") token: String,
+        @Body clubBookmarkRequestBody: ClubBookmarkRequestBody
+    ): Response<ClubBookmarkResponseBody>
 
 }

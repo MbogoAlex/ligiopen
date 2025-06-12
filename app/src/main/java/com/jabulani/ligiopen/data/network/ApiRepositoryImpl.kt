@@ -2,6 +2,9 @@ package com.jabulani.ligiopen.data.network
 
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationResponseBody
 import com.admin.ligiopen.data.network.models.match.location.MatchLocationsResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkRequestBody
+import com.jabulani.ligiopen.data.network.model.club.ClubBookmarkResponseBody
+import com.jabulani.ligiopen.data.network.model.club.ClubDivisionsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubResponseBody
 import com.jabulani.ligiopen.data.network.model.club.ClubsResponseBody
 import com.jabulani.ligiopen.data.network.model.club.PlayerResponseBody
@@ -26,9 +29,19 @@ class ApiRepositoryImpl(private val apiService: ApiService): ApiRepository {
         userLoginRequestBody: UserLoginRequestBody
     ): Response<UserLoginResponseBody> = apiService.login(userLoginRequestBody = userLoginRequestBody)
 
-    override suspend fun getClubs(token: String): Response<ClubsResponseBody> =
+    override suspend fun getClubs(
+        token: String,
+        clubName: String?,
+        divisionId: Int?,
+        favorite: Boolean,
+        userId: Int
+    ): Response<ClubsResponseBody> =
         apiService.getClubs(
-            token = "Bearer $token"
+            token = "Bearer $token",
+            clubName = clubName,
+            divisionId = divisionId,
+            favorite = favorite,
+            userId = userId
         )
 
     override suspend fun getClubById(token: String, id: Int): Response<ClubResponseBody> =
@@ -123,6 +136,20 @@ class ApiRepositoryImpl(private val apiService: ApiService): ApiRepository {
         token = "Bearer $token",
         newsId = newsId
     )
+
+    override suspend fun getAllLeagues(token: String): Response<ClubDivisionsResponseBody> =
+        apiService.getAllLeagues(
+            token = "Bearer $token"
+        )
+
+    override suspend fun bookmarkClub(
+        token: String,
+        clubBookmarkRequestBody: ClubBookmarkRequestBody
+    ): Response<ClubBookmarkResponseBody> =
+        apiService.bookmarkClub(
+            token = "Bearer $token",
+            clubBookmarkRequestBody = clubBookmarkRequestBody
+        )
 
 
 }
